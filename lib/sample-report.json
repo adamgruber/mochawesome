@@ -1,0 +1,34 @@
+"allSuites" = {
+  "suite 1": {
+    "title": "suite title",
+    "fullTitle": "suite full title",
+    "tests": [{}, {}, {}],
+    "passes": [{}, {}],
+    "failures": [{}],
+    "totalTests": 3,
+    "totalPasses": 2,
+    "totalFailures": 1,
+    "childSuites": {
+      "child1": {
+        "title": "test title",
+        "fullTitle": "test full title",
+        "tests": [{}, {}, {}],
+        "passes": [{}, {}],
+        "failures": [{}],
+        "totalTests": 3,
+        "totalPasses": 2,
+        "totalFailures": 1
+      },
+      "child2": {
+        "title": "test title",
+        "fullTitle": "test full title",
+        "tests": [{}, {}, {}],
+        "passes": [{}, {}],
+        "failures": [{}],
+        "totalTests": 3,
+        "totalPasses": 2,
+        "totalFailures": 1
+      }
+    }
+  }
+}

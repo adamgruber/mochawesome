@@ -1,0 +1,31 @@
+{
+  "name": "mochawesome",
+  "description": "An awesome mocha json html file reporter",
+  "author": "Adam Gruber <adam.gruber@dowjones.com>",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "hogan.js": "^3.0.2",
+    "lodash": "^2.4.1",
+    "mocha": "",
+    "moment": "^2.7.0"
+  },
+  "devDependencies": {
+    "fiveby": "git+https://github.dowjones.net/institutional/fiveby.git",
+    "gulp": "^3.8.1",
+    "gulp-spawn-mocha": "^0.1.5",
+    "should": "^3.3.2",
+    "mochawesome": ""
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "engine": "node >= 0.8.0",
+  "keywords": [
+    "mocha",
+    "reporter",
+    "json",
+    "mustache"
+  ],
+  "license": "ISC"
+}
