@@ -1,0 +1,22 @@
+// Start with bootstrap
+@import 'bootstrap';
+
+// Modify Vars
+@font-family-sans-serif: "Dosis", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+// Tweak as needed
+.summary-count {
+  @size: 100px;
+  .square(@size);
+  text-align: center;
+  border-radius: @size;
+  border: 1px solid;
+  line-height: @size;
+  margin: 0 auto;
+  background: #fff;
+
+  &.summary-suites {}
+  &.summary-tests {}
+  &.summary-passes {}
+  &.summary-failures{}
+}
