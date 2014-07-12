@@ -1,6 +1,10 @@
 <div class="suite panel panel-default">
   <div class="panel-body">
-    <h2>{{title}}<label class="badge pull-right">{{totalTests}}&nbsp;tests</label></h2>
+    <h2>{{title}}
+      <span class="label label-default">{{totalTests}}&nbsp;tests</span>
+      <span class="label label-success">{{totalPasses}}&nbsp;passed</span>
+      <span class="label label-danger">{{totalFailures}}&nbsp;failed</span>
+    </h2>
     <h5>{{file}}</h5>
     <h5>{{endDateStr}}</h5>
 
