@@ -1,6 +1,6 @@
 <div class="suite panel panel-default">
   <div class="panel-body">
-    <h2>{{title}}</h2>
+    <h2>{{title}}<label class="badge pull-right">{{totalTests}}&nbsp;tests</label></h2>
     <h5>{{file}}</h5>
     <h5>{{endDateStr}}</h5>
 
@@ -9,18 +9,7 @@
     {{/each}}
 
     {{#tests}}
-    <div class="test">
-      <h3><span class="glyphicon glyphicon-{{#pass}}ok text-success{{/pass}}{{#fail}}remove text-danger{{/fail}}"></span> {{title}}</h3>
-      <h4>Duration: {{duration}}ms</h4>
-      <pre><code>{{code}}</code></pre>
-      {{err}}
-      {{#err}}
-        Expected:{{expected}}
-        Actual:{{actual}}
-        Message:{{message}}
-        <pre class="bg-danger small hidden">{{stack}}</pre>
-      {{/err}}
-    </div>
+      {{> _test}}
     {{/tests}}
   </div>
 </div>
