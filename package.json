@@ -5,7 +5,8 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "hogan.js": "^3.0.2",
+    "handlebars": "^2.0.0-alpha.4",
+    "handlebars-precompiler": "^1.0.4",
     "lodash": "^2.4.1",
     "mocha": "",
     "moment": "^2.7.0"
@@ -14,8 +15,7 @@
     "fiveby": "git+https://github.dowjones.net/institutional/fiveby.git",
     "gulp": "^3.8.1",
     "gulp-spawn-mocha": "^0.1.5",
-    "should": "^3.3.2",
-    "mochawesome": ""
+    "should": "^3.3.2"
   },
   "scripts": {
     "test": "mocha"
