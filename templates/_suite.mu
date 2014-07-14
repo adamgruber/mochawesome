@@ -10,9 +10,9 @@
     <h5>{{file}}</h5>
     <h5>{{endDateStr}}</h5>
 
-    {{#each childSuites}}
+    {{#suites}}
       {{> _suite}}
-    {{/each}}
+    {{/suites}}
 
     {{#tests}}
       {{> _test}}

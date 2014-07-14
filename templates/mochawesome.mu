@@ -31,9 +31,9 @@
 
     <!-- Suites -->
     <div class="container">
-      {{#each suites}}
+      {{#suites}}
         {{> _suite}}
-      {{/each}}
+      {{/suites}}
     </div>
 
   </body>
