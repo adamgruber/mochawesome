@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <!-- Test Summary -->
+    <!-- Report Summary -->
     <div class="summary">
       <div class="container">
         {{#stats}}

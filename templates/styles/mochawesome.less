@@ -134,17 +134,18 @@
 
 // SUITE
 .suite-wrap {
-  .make-sm-column(6);
+  .make-row();
   margin-bottom: 20px;
 
   > .suite > .suite-wrap {
-    .make-sm-column(12);
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .suite {
     .clearfix();
     border: 1px solid @gray-light;
-    padding: 8px;
+    padding: 8px 0;
     border-radius: 4px;
 
     .suite-title {
@@ -159,7 +160,7 @@
     }
 
     .suite-chart-wrap {
-      .clearfix();
+      .make-sm-column(3);
       position: relative;
       
       .suite-chart,
@@ -169,7 +170,7 @@
       
       .total {
         position: absolute;
-        left: 0;
+        left: 15px;
         width: 100px;
         text-align: center;
         font-size: 3em;
@@ -208,6 +209,10 @@
           }
         }
       }
+    }
+
+    .suite-test-wrap {
+      .make-sm-column(9);
     }
   }
 }
