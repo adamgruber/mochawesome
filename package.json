@@ -6,11 +6,13 @@
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^3.2.0",
+    "chart.js": "^1.0.1-beta.2",
     "handlebars": "^2.0.0-alpha.4",
     "less": "^1.7.3",
     "lodash": "^2.4.1",
     "mocha": "",
-    "moment": "^2.7.0"
+    "moment": "^2.7.0",
+    "node-uuid": "^1.4.1"
   },
   "devDependencies": {
     "fiveby": "git+https://github.dowjones.net/institutional/fiveby.git",
@@ -26,7 +28,7 @@
     "mocha",
     "reporter",
     "json",
-    "mustache"
+    "handlebars"
   ],
   "license": "ISC"
 }
