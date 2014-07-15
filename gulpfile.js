@@ -5,7 +5,7 @@ var options = {reporter: 'mochawesome', timeout: 30000, slow: 1};
 
 
 gulp.task('test', function () {
-  return gulp.src('test/*.js')
+  return gulp.src('test/**/*.js')
     .pipe(mocha(options))
     .on("error", console.warn.bind(console));
 });
