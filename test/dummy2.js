@@ -13,8 +13,8 @@ new fiveby(function (browser) {
       done();
     });
 
-    it('fails 2', function (done) {
-      false.should.be.ok;
+    it('passes', function (done) {
+      true.should.be.ok;
       done();
     });
 
