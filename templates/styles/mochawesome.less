@@ -1,22 +1,213 @@
 // Start with bootstrap
 @import 'bootstrap';
+@icon-font-path: "../node_modules/bootstrap/fonts/";
+
+// Add some fonts
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,500,700|Roboto+Condensed:400,700,300|Roboto+Slab:400,300,700);
 
 // Modify Vars
-@font-family-sans-serif: "Dosis", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+.fontLight(){font-weight: 300;}
+.fontNormal(){font-weight: 400;}
+.fontMedium(){font-weight: 500;}
+.fontBold(){font-weight: 700;}
+
+.fontCondLight(){font-family: 'Roboto Condensed'; .fontLight();}
+.fontCondNormal(){font-family: 'Roboto Condensed'; .fontNormal();}
+.fontCondBold(){font-family: 'Roboto Condensed'; .fontBold();}
+
+.fontSlabLight(){font-family: 'Roboto Slab'; .fontLight();}
+.fontSlabNormal(){font-family: 'Roboto Slab'; .fontNormal();}
+.fontSlabBold(){font-family: 'Roboto Slab'; .fontBold();}
+
+@navbarHeight: 48px;
 
 // Tweak as needed
-.summary-count {
-  @size: 100px;
-  .square(@size);
-  text-align: center;
-  border-radius: @size;
-  border: 1px solid;
-  line-height: @size;
-  margin: 0 auto;
-  background: #fff;
 
-  &.summary-suites {}
-  &.summary-tests {}
-  &.summary-passes {}
-  &.summary-failures{}
+.summaryColor(@color, @color2: @color) {
+  color: @color;
+  border-color: @color2;
+}
+
+// NAVBAR
+.report-title,
+.report-date {
+  .fontSlabNormal();
+  color: #fff;
+  font-size: 1.3em;
+  line-height: @navbarHeight;
+  margin: 0;
+  span {
+    .fontCondNormal();
+    font-size: 14px;
+    text-transform: uppercase;
+    color: @gray-light;
+  }
+}
+
+// TEST SUMMARY
+.summary {
+  padding-top: (@navbarHeight + 10);
+  padding-bottom: 20px;
+  background: @gray-lighter;
+  h1 {
+    font-size: 3.4em;
+  }
+}
+.summary-col {
+  .make-xs-column(6);
+  .make-sm-column(2);
+  text-align: center;
+
+  .summary-label {
+    .fontCondNormal();
+    color: #fff;
+    text-transform: uppercase;
+    display: inline-block;
+    margin: 0;
+    padding: 4px 8px;
+    border-radius: 40px;
+    background: @gray-light;
+
+    .summary-suites& {
+      background: @gray-dark;
+    }
+    .summary-tests& {
+      background: @brand-info;
+    }
+    .summary-passes& {
+      background: @brand-success;
+    }
+    .summary-failures& {
+      background: @brand-danger;
+    }
+    .summary-pass-percent.success& {
+      background: @brand-success;
+    }
+    .summary-pass-percent.warning& {
+      background: @brand-warning;
+    }
+    .summary-pass-percent.danger& {
+      background: @brand-danger;
+    }
+  }
+
+  .summary-count {
+    .fontCondBold();
+    color: @gray-light;
+    text-align: center;
+    margin: 0;
+    .summary-suites& {
+      color: @gray-dark;
+    }
+    .summary-tests& {
+      color: @brand-info;
+    }
+    .summary-passes& {
+      color: @brand-success;
+    }
+    .summary-failures& {
+      color: @brand-danger;
+    }
+    .summary-pass-percent.success& {
+      color: @brand-success;
+    }
+    .summary-pass-percent.warning& {
+      color: @brand-warning;
+    }
+    .summary-pass-percent.danger& {
+      color: @brand-danger;
+    }
+    span {
+      font-size: 32px;
+      vertical-align: top;
+      margin-top: 2px;
+      display: inline-block;
+    }
+  }
+}
+
+.details {
+  margin-top: 20px;
+}
+
+// SUITE
+.suite-wrap {
+  .make-sm-column(6);
+  margin-bottom: 20px;
+
+  > .suite > .suite-wrap {
+    .make-sm-column(12);
+  }
+
+  .suite {
+    .clearfix();
+    border: 1px solid @gray-light;
+    padding: 8px;
+    border-radius: 4px;
+
+    .suite-title {
+      margin: 0;
+      .fontSlabNormal();
+    }
+
+    .suite-filename {
+      .fontLight();
+      color: @gray-light;
+      margin-top: 4px;
+    }
+
+    .suite-chart-wrap {
+      .clearfix();
+      position: relative;
+      
+      .suite-chart,
+      .suite-chart-legend {
+        float: left;
+      }
+      
+      .total {
+        position: absolute;
+        left: 0;
+        width: 100px;
+        text-align: center;
+        font-size: 3em;
+        line-height: 95px;
+        color: @gray-light;
+      }
+      
+      .suite-chart {
+        margin-right: 10px;
+      }
+
+      .suite-chart-legend {
+        font-size: 1.3em;
+        .suite-chart-legend-item {
+          .fontCondNormal();
+          color: @gray-light;
+          text-transform: uppercase;
+          span {
+            .fontBold();
+            color: @gray-dark;
+          }
+          &:before {
+            content: "";
+            display: inline-block;
+            position: relative;
+            margin-right: 4px;
+            top: 1px;
+            .square(15px);
+            border-radius: 20px;
+          }
+          &.passed:before {
+            background-color: @brand-success;
+          }
+          &.failed:before {
+            background-color: @brand-danger;
+          }
+        }
+      }
+    }
+  }
 }

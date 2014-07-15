@@ -1,21 +1,23 @@
-<div class="suite panel panel-default">
-  <div class="panel-body">
-    <h2>{{title}}
-      <div class="pull-right">
-        <span class="label label-default">{{totalTests}}&nbsp;tests</span>
-        <span class="label label-success">{{totalPasses}}&nbsp;passed</span>
-        <span class="label label-danger">{{totalFailures}}&nbsp;failed</span>
-      </div>
-    </h2>
-    <h5>{{file}}</h5>
-    <h5>{{endDateStr}}</h5>
+<div class="suite-wrap">
+  <div class="suite">
+    <h3 class="suite-title">{{title}}</h3>
+    <h5 class="suite-filename">{{file}}</h5>
+    <div class="suite-chart-wrap">
+      <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}"></canvas>
+      <span class="total">{{totalTests}}</span>
+      <ul class="suite-chart-legend list-unstyled">
+        <li class="suite-chart-legend-item passed">Passed: <span>{{totalPasses}}</span></li>
+        <li class="suite-chart-legend-item failed">Failed: <span>{{totalFailures}}</span></li>
+      </ul>
+    </div>
+
+    {{#tests}}
+      {{> _test}}
+    {{/tests}}
 
     {{#suites}}
       {{> _suite}}
     {{/suites}}
 
-    {{#tests}}
-      {{> _test}}
-    {{/tests}}
   </div>
 </div>
