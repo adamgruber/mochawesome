@@ -33,7 +33,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../node_modules/chart.js/Chart.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="js/mochawesome.js"></script>
     <script>
       window.onload = makeSuiteCharts;
       function makeSuiteCharts(){

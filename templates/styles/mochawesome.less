@@ -144,11 +144,12 @@
 
   .suite {
     .clearfix();
-    border: 1px solid @gray-light;
+    border: 1px solid #ccc;
     padding: 8px 0;
     border-radius: 4px;
 
     .suite-title {
+      padding: 0 10px;
       margin: 0;
       .fontSlabNormal();
     }
@@ -157,10 +158,11 @@
       .fontLight();
       color: @gray-light;
       margin-top: 4px;
+      padding: 0 10px;
     }
 
     .suite-chart-wrap {
-      .make-sm-column(3);
+      .make-sm-column(4);
       position: relative;
       
       .suite-chart,
@@ -183,36 +185,32 @@
       }
 
       .suite-chart-legend {
+        .fontCondLight();
         font-size: 1.3em;
+        color: @gray-light;
         .suite-chart-legend-item {
-          .fontCondNormal();
-          color: @gray-light;
-          text-transform: uppercase;
-          span {
-            .fontBold();
+          .data {
+            .fontCondBold();
             color: @gray-dark;
           }
-          &:before {
-            content: "";
-            display: inline-block;
-            position: relative;
+          .glyphicon {
+            .fontLight();
+            font-size: 14px;
             margin-right: 4px;
-            top: 1px;
-            .square(15px);
-            border-radius: 20px;
+            color: @gray-light;
           }
-          &.passed:before {
-            background-color: @brand-success;
+          &.passed .glyphicon {
+            color: @brand-success;
           }
-          &.failed:before {
-            background-color: @brand-danger;
+          &.failed .glyphicon {
+            color: @brand-danger;
           }
         }
       }
     }
 
     .suite-test-wrap {
-      .make-sm-column(9);
+      .make-sm-column(8);
     }
   }
 }
