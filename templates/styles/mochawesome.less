@@ -216,3 +216,35 @@
     }
   }
 }
+
+// TEST
+.test {
+  .test-heading {
+    .clearfix();
+    .test-title {
+      .fontNormal();
+      margin: 0;
+      float: left;
+    }
+    .test-duration {
+      float: right;
+    }
+  }
+
+  .test-error {
+    font-size: 12px;
+    margin-top: 4px;
+    color: @brand-danger;
+    p {
+      margin: 0;
+    }
+  }
+
+  .test-code {
+    margin-top: 10px;
+    pre {
+      padding: 4px;
+      font-size: 11px;
+    }
+  }
+}

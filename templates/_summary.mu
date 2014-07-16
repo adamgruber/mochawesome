@@ -16,8 +16,8 @@
     <h4 class="summary-label">Failed</h4>
   </div>
   <div class="summary-col summary-duration">
-    <h1 class="summary-count">{{toSeconds duration}}</h1>
-    <h4 class="summary-label">Seconds</h4>
+    <h1 class="summary-count">{{formatSummaryDuration duration}}</h1>
+    <h4 class="summary-label">{{getSummaryDurationUnits duration}}</h4>
   </div>
   <div class="summary-col summary-pass-percent {{percentClass}}">
     <h1 class="summary-count">{{passPercent}}<span>%</span></h1>

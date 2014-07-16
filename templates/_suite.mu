@@ -1,5 +1,5 @@
-<div class="suite-wrap">
-  <div class="suite">
+<section class="suite-wrap">
+  <div id="{{uuid}}" class="suite {{#root}}root-suite{{/root}}">
     <h3 class="suite-title">{{title}}</h3>
     <h5 class="suite-filename">{{file}}</h5>
       <!-- Suite Chart -->
@@ -12,10 +12,10 @@
         </ul>
       </div>
       <!-- Test Info -->
-      <div class="suite-test-wrap">
+      <div class="list-group suite-test-wrap">
         {{#tests}}
           {{> _test}}
-        {{/tests}}        
+        {{/tests}}
       </div>
 
     {{#suites}}
@@ -23,4 +23,4 @@
     {{/suites}}
 
   </div>
-</div>
+</section>
