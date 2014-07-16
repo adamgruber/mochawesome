@@ -7,6 +7,7 @@
 
 // Modify Vars
 @font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@list-group-border-radius: 0;
 
 .fontLight(){font-weight: 300;}
 .fontNormal(){font-weight: 400;}
@@ -134,7 +135,6 @@
 
 // SUITE
 .suite-wrap {
-  .make-row();
   margin-bottom: 20px;
 
   > .suite > .suite-wrap {
@@ -142,10 +142,15 @@
     margin-right: 0;
   }
 
+  .suite .suite {
+    margin: 10px;
+  }
+
   .suite {
     .clearfix();
+    .make-row();
     border: 1px solid #ccc;
-    padding: 8px 0;
+    padding: 8px 0 10px 8px;
     border-radius: 4px;
 
     .suite-title {
@@ -161,8 +166,12 @@
       padding: 0 10px;
     }
 
+    .suite-data-wrap {
+      .clearfix();
+    }
+
     .suite-chart-wrap {
-      .make-sm-column(4);
+      .make-sm-column(3);
       position: relative;
       
       .suite-chart,
@@ -210,22 +219,66 @@
     }
 
     .suite-test-wrap {
-      .make-sm-column(8);
+      .make-sm-column(9);
+
+      .suite-test-header {
+        background-color: @gray-lighter;
+        padding: 6px 8px;
+        .suite-test-header-title {
+          .fontSlabNormal();
+          font-size: 16px;
+          color: @brand-primary;
+          cursor: pointer;
+          margin: 0;
+        }
+      }
     }
   }
 }
 
 // TEST
 .test {
+  padding: 6px 8px;
+  border-left: none;
+  border-right: none;
+
   .test-heading {
     .clearfix();
     .test-title {
       .fontNormal();
+      font-size: 14px;
       margin: 0;
       float: left;
+      .glyphicon {
+        font-size: 12px;
+        margin-right: 2px;
+      }
     }
     .test-duration {
-      float: right;
+      .fontCondBold();
+      float: left;
+      &:before {
+        content: "";
+        height: 10px;
+        display: inline-block;
+        border-left: 1px solid @gray-light;
+        margin: 0 6px;
+      }
+    }
+    .toggle-code {
+      float: left;
+      vertical-align: top;
+      line-height: 1.7;
+      padding: 0;
+      border: none;
+      outline: none;
+      .show-code {
+        display: none;
+      }
+      &.collapsed {
+        .show-code {display: inline;}
+        .hide-code {display: none;}
+      }
     }
   }
 
@@ -239,8 +292,8 @@
   }
 
   .test-code {
-    margin-top: 10px;
     pre {
+      margin-top: 10px;
       padding: 4px;
       font-size: 11px;
     }
