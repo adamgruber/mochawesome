@@ -171,8 +171,10 @@
     }
 
     .suite-chart-wrap {
+      .make-xs-column(12);
       .make-sm-column(3);
       position: relative;
+      margin-bottom: 10px;
       
       .suite-chart,
       .suite-chart-legend {
@@ -219,18 +221,22 @@
     }
 
     .suite-test-wrap {
+      .make-xs-column(12);
       .make-sm-column(9);
 
       .suite-test-header {
         background-color: @gray-lighter;
         padding: 6px 8px;
+        cursor: pointer;
         .suite-test-header-title {
           .fontSlabNormal();
           font-size: 16px;
           color: @brand-primary;
-          cursor: pointer;
           margin: 0;
         }
+      }
+      .test-list {
+        margin-bottom: 0;
       }
     }
   }

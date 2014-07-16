@@ -15,7 +15,9 @@
       </div>
       <!-- Test Info -->
       <div class="suite-test-wrap">
-        <div class="suite-test-header"><h4 class="suite-test-header-title" data-toggle="collapse" data-target="#{{uuid}} > .suite-data-wrap > .suite-test-wrap > .test-list">Tests</h4></div>
+        <div class="suite-test-header" data-toggle="collapse" data-target="#{{uuid}} > .suite-data-wrap > .suite-test-wrap > .test-list">
+          <h4 class="suite-test-header-title">Tests</h4>
+        </div>
         <div class="list-group test-list collapse in">
           {{#tests}}
             {{> _test}}
