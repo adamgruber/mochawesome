@@ -13,6 +13,6 @@ results
 
 node_modules
 
-reports
+mochawesome-reports
 
 npm-debug.log
