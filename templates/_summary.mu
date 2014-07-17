@@ -1,11 +1,11 @@
 <div class="row">
   <div class="summary-col summary-suites">
     <h1 class="summary-count">{{suites}}</h1>
-    <h4 class="summary-label">Suites</h4>
+    <h4 class="summary-label">{{formatSummarySuiteCount suites}}</h4>
   </div>
   <div class="summary-col summary-tests">
     <h1 class="summary-count">{{tests}}</h1>
-    <h4 class="summary-label">Tests</h4>
+    <h4 class="summary-label">{{formatSummaryTestCount tests}}</h4>
   </div>
   <div class="summary-col summary-passes">
     <h1 class="summary-count">{{passes}}</h1>
