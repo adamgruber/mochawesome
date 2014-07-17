@@ -2,16 +2,14 @@
 @import 'bootstrap';
 @icon-font-path: "../node_modules/bootstrap/fonts/";
 
-// Code Highlighting
-@import 'obsidian';
-
 // Add some fonts
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,300,500,700|Roboto+Condensed:400,700,300|Roboto+Slab:400,300,700);
 
-// Modify Vars
+// Modify Bootstrap Vars
 @font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 @list-group-border-radius: 0;
 
+// Convenience Mixins
 .fontLight(){font-weight: 300;}
 .fontNormal(){font-weight: 400;}
 .fontMedium(){font-weight: 500;}
@@ -25,307 +23,18 @@
 .fontSlabNormal(){font-family: 'Roboto Slab'; .fontNormal();}
 .fontSlabBold(){font-family: 'Roboto Slab'; .fontBold();}
 
-@navbarHeight: 48px;
-
-// Tweak as needed
-
-.summaryColor(@color, @color2: @color) {
-  color: @color;
-  border-color: @color2;
-}
-
 .linkTransition(){
   .transition(all .2s ease-out);
 }
 
-// NAVBAR
-.report-title,
-.report-date {
-  .fontSlabNormal();
-  color: #fff;
-  font-size: 1.3em;
-  line-height: @navbarHeight;
-  margin: 0;
-  span {
-    .fontCondNormal();
-    font-size: 14px;
-    text-transform: uppercase;
-    color: #bbb;
-  }
-}
+// Local Vars
+@navbarHeight: 48px;
 
-// TEST SUMMARY
-.summary {
-  padding-top: (@navbarHeight + 10);
-  padding-bottom: 20px;
-  background: @gray-lighter;
-  h1 {
-    font-size: 3.4em;
-  }
-}
-.summary-col {
-  .make-xs-column(6);
-  .make-sm-column(2);
-  text-align: center;
+// Import partials
+@import '_navbar';
+@import '_summary';
+@import '_suite';
+@import '_test';
 
-  .summary-label {
-    .fontCondNormal();
-    color: #fff;
-    text-transform: uppercase;
-    display: inline-block;
-    margin: 0;
-    padding: 4px 8px;
-    border-radius: 40px;
-    background: @gray-light;
-
-    .summary-suites& {
-      background: @gray-dark;
-    }
-    .summary-tests& {
-      background: @brand-info;
-    }
-    .summary-passes& {
-      background: @brand-success;
-    }
-    .summary-failures& {
-      background: @brand-danger;
-    }
-    .summary-pass-percent.success& {
-      background: @brand-success;
-    }
-    .summary-pass-percent.warning& {
-      background: @brand-warning;
-    }
-    .summary-pass-percent.danger& {
-      background: @brand-danger;
-    }
-  }
-
-  .summary-count {
-    .fontCondBold();
-    color: @gray-light;
-    text-align: center;
-    margin: 0;
-    .summary-suites& {
-      color: @gray-dark;
-    }
-    .summary-tests& {
-      color: @brand-info;
-    }
-    .summary-passes& {
-      color: @brand-success;
-    }
-    .summary-failures& {
-      color: @brand-danger;
-    }
-    .summary-pass-percent.success& {
-      color: @brand-success;
-    }
-    .summary-pass-percent.warning& {
-      color: @brand-warning;
-    }
-    .summary-pass-percent.danger& {
-      color: @brand-danger;
-    }
-    span {
-      font-size: 32px;
-      vertical-align: top;
-      margin-top: 2px;
-      display: inline-block;
-    }
-  }
-}
-
-.details {
-  margin-top: 20px;
-}
-
-// SUITE
-.suite-wrap {
-  margin-bottom: 20px;
-
-  > .suite > .suite-wrap {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .suite .suite {
-    margin: 10px;
-  }
-
-  .suite {
-    .clearfix();
-    .make-row();
-    border: 1px solid #ccc;
-    padding: 8px 0 10px 8px;
-    border-radius: 4px;
-
-    .suite-title {
-      padding: 0 10px;
-      margin: 0;
-      .fontSlabNormal();
-    }
-
-    .suite-filename {
-      .fontLight();
-      color: @gray-light;
-      margin-top: 4px;
-      padding: 0 10px;
-    }
-
-    .suite-data-wrap {
-      .clearfix();
-    }
-
-    .suite-chart-wrap {
-      .make-xs-column(12);
-      .make-sm-column(3);
-      position: relative;
-      margin-bottom: 10px;
-      
-      .suite-chart,
-      .suite-chart-legend {
-        float: left;
-      }
-      
-      .total {
-        position: absolute;
-        left: 15px;
-        width: 100px;
-        text-align: center;
-        font-size: 3em;
-        line-height: 95px;
-        color: @gray-light;
-      }
-      
-      .suite-chart {
-        margin-right: 10px;
-      }
-
-      .suite-chart-legend {
-        .fontCondLight();
-        font-size: 1.3em;
-        color: @gray-light;
-        .suite-chart-legend-item {
-          .data {
-            .fontCondBold();
-            color: @gray-dark;
-          }
-          .glyphicon {
-            .fontLight();
-            font-size: 14px;
-            margin-right: 4px;
-            color: @gray-light;
-          }
-          &.passed .glyphicon {
-            color: @brand-success;
-          }
-          &.failed .glyphicon {
-            color: @brand-danger;
-          }
-        }
-      }
-    }
-
-    .suite-test-wrap {
-      .make-xs-column(12);
-      .make-sm-column(9);
-
-      .suite-test-header {
-        // background-color: @gray-lighter;
-        padding: 6px 8px;
-        cursor: pointer;
-        border-bottom: 1px solid @list-group-border;
-        .suite-test-header-title {
-          .fontSlabNormal();
-          font-size: 16px;
-          color: #ccc;
-          margin: 0;
-          .linkTransition();
-          .glyphicon {
-            .linkTransition();
-            .rotate(90deg);
-          }
-        }
-        &.collapsed {
-          .suite-test-header-title .glyphicon {
-            .rotate(0);
-          }
-        }
-        &:hover .suite-test-header-title {
-          color: @link-hover-color;
-        }
-      }
-      .test-list {
-        margin-bottom: 0;
-      }
-    }
-  }
-}
-
-// TEST
-.test {
-  padding: 6px 8px;
-  border-left: none;
-  border-right: none;
-
-  .test-heading {
-    .clearfix();
-    .test-title {
-      .fontNormal();
-      font-size: 14px;
-      margin: 0;
-      float: left;
-      .glyphicon {
-        font-size: 12px;
-        margin-right: 2px;
-      }
-    }
-    .test-duration {
-      .fontCondBold();
-      float: left;
-      &:before {
-        content: "";
-        height: 10px;
-        display: inline-block;
-        border-left: 1px solid @gray-light;
-        margin: 0 6px;
-      }
-    }
-    .toggle-code {
-      float: left;
-      vertical-align: top;
-      line-height: 1.7;
-      padding: 0;
-      border: none;
-      outline: none;
-      text-decoration: none;
-      .linkTransition();
-      .show-code {
-        display: none;
-      }
-      &.collapsed {
-        .show-code {display: inline;}
-        .hide-code {display: none;}
-      }
-    }
-  }
-
-  .test-error {
-    font-size: 12px;
-    margin-top: 4px;
-    color: @brand-danger;
-    p {
-      margin: 0;
-    }
-  }
-
-  .test-code {
-    pre {
-      margin-top: 10px;
-      padding: 0;
-      background: none;
-      border: none;
-    }
-  }
-}
+// Code Highlighting
+@import 'obsidian';

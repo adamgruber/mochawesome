@@ -7,22 +7,24 @@
       {{title}}
     </h4>
     <div class="pull-right">
-      <button class="btn btn-link btn-sm toggle-code collapsed" data-toggle="collapse" data-target="#{{uuid}} > .test-code.collapse">
-        <span class="show-code">Show </span>
-        <span class="hide-code">Hide </span>
-        Code</button>
+      <button class="btn btn-link btn-sm toggle-btn toggle-code collapsed" data-toggle="collapse" data-target="#{{uuid}} > .test-code.collapse">Code</button>
       <span class="test-duration">{{formatDuration duration}}</span>
     </div>
   </div>
   <!-- Test Errors -->
   {{#err}}
-  <div class="test-error">
-    <p class="test-error-msg">{{.}}</p>
-    <pre class="bg-danger small hidden">{{stack}}</pre>
-  </div>
+    <p class="test-error-message">{{.}}
+      <button class="btn btn-link btn-sm toggle-btn toggle-stack collapsed" data-toggle="collapse" data-target="#{{../uuid}} > .test-error-stack.collapse">Stack</button>
+    </p>
   {{/err}}
   <!-- Test Code -->
   <div class="test-code collapse">
     <pre><code class="hljs javascript small">{{{code}}}</code></pre>
   </div>
+  <!-- Test Error Stack -->
+  {{#err}}
+  <div class="test-error-stack collapse">
+    <pre><code class="hljs small">{{stack}}</code></pre>
+  </div>
+  {{/err}}
 </div>
