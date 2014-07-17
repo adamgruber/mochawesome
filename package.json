@@ -1,6 +1,6 @@
 {
   "name": "mochawesome",
-  "description": "An awesome mocha json html file reporter",
+  "description": "A Gorgeous HTML/CSS Mocha Reporter",
   "author": "Adam Gruber <adam.gruber@dowjones.com>",
   "version": "0.0.1",
   "main": "index.js",
