@@ -2,7 +2,7 @@
   "name": "mochawesome",
   "description": "A Gorgeous HTML/CSS Mocha Reporter",
   "author": "Adam Gruber <adam.gruber@dowjones.com>",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^3.2.0",
