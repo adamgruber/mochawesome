@@ -1,3 +1,9 @@
+{{#rootEmpty}}
+  {{#suites}}
+    {{> _suite}}
+  {{/suites}}
+{{/rootEmpty}}
+{{^rootEmpty}}
 <section class="suite-wrap">
   <div id="{{uuid}}" class="suite {{#root}}root-suite{{/root}}">
     <h3 class="suite-title">{{title}}</h3>
@@ -32,3 +38,4 @@
 
   </div>
 </section>
+{{/rootEmpty}}

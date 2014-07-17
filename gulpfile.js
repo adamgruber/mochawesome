@@ -10,4 +10,10 @@ gulp.task('test', function () {
     .on("error", console.warn.bind(console));
 });
 
+gulp.task('nofiveby', function () {
+  return gulp.src('test/nofiveby.js')
+    .pipe(mocha(options))
+    .on("error", console.warn.bind(console));
+});
+
 gulp.task('default', ['test']);
