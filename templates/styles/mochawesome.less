@@ -2,6 +2,9 @@
 @import 'bootstrap';
 @icon-font-path: "../node_modules/bootstrap/fonts/";
 
+// Code Highlighting
+@import 'obsidian';
+
 // Add some fonts
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,300,500,700|Roboto+Condensed:400,700,300|Roboto+Slab:400,300,700);
 
@@ -31,6 +34,10 @@
   border-color: @color2;
 }
 
+.linkTransition(){
+  .transition(all .2s ease-out);
+}
+
 // NAVBAR
 .report-title,
 .report-date {
@@ -43,7 +50,7 @@
     .fontCondNormal();
     font-size: 14px;
     text-transform: uppercase;
-    color: @gray-light;
+    color: #bbb;
   }
 }
 
@@ -225,14 +232,28 @@
       .make-sm-column(9);
 
       .suite-test-header {
-        background-color: @gray-lighter;
+        // background-color: @gray-lighter;
         padding: 6px 8px;
         cursor: pointer;
+        border-bottom: 1px solid @list-group-border;
         .suite-test-header-title {
           .fontSlabNormal();
           font-size: 16px;
-          color: @brand-primary;
+          color: #ccc;
           margin: 0;
+          .linkTransition();
+          .glyphicon {
+            .linkTransition();
+            .rotate(90deg);
+          }
+        }
+        &.collapsed {
+          .suite-test-header-title .glyphicon {
+            .rotate(0);
+          }
+        }
+        &:hover .suite-test-header-title {
+          color: @link-hover-color;
         }
       }
       .test-list {
@@ -278,6 +299,8 @@
       padding: 0;
       border: none;
       outline: none;
+      text-decoration: none;
+      .linkTransition();
       .show-code {
         display: none;
       }
@@ -300,8 +323,9 @@
   .test-code {
     pre {
       margin-top: 10px;
-      padding: 4px;
-      font-size: 11px;
+      padding: 0;
+      background: none;
+      border: none;
     }
   }
 }

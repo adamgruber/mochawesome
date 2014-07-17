@@ -16,7 +16,7 @@
       <!-- Test Info -->
       <div class="suite-test-wrap">
         <div class="suite-test-header" data-toggle="collapse" data-target="#{{uuid}} > .suite-data-wrap > .suite-test-wrap > .test-list">
-          <h4 class="suite-test-header-title">Tests</h4>
+          <h4 class="suite-test-header-title">Tests<span class="pull-right glyphicon glyphicon-chevron-right"></span></h4>
         </div>
         <div class="list-group test-list collapse in">
           {{#tests}}

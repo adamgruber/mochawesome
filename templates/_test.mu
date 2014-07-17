@@ -23,6 +23,6 @@
   {{/err}}
   <!-- Test Code -->
   <div class="test-code collapse">
-    <pre><code>{{code}}</code></pre>
+    <pre><code class="hljs javascript small">{{{code}}}</code></pre>
   </div>
 </div>
