@@ -8,6 +8,7 @@
   <div id="{{uuid}}" class="suite {{#root}}root-suite{{/root}}">
     <h3 class="suite-title">{{title}}</h3>
     <h5 class="suite-filename">{{file}}</h5>
+    {{^isEmpty}}
     <div class="suite-data-wrap">
       <!-- Suite Chart -->
       <div class="suite-chart-wrap">
@@ -30,7 +31,8 @@
           {{/tests}}
         </div>
       </div>
-    </div>  
+    </div>
+    {{/isEmpty}}
 
     {{#suites}}
       {{> _suite}}
