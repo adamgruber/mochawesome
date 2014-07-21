@@ -34,6 +34,6 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 
   ```js
   var mocha = new Mocha({
-    reporter: 'mochawesome'
+      reporter: 'mochawesome'
   });
   ```
