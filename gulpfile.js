@@ -4,14 +4,14 @@ var mocha = require('gulp-spawn-mocha');
 var options = {reporter: 'mochawesome', timeout: 30000, slow: 1, "no-exit": true};
 
 
-gulp.task('test', function () {
+gulp.task('fiveby', function () {
   return gulp.src('test/**/*.js')
     .pipe(mocha(options))
     .on("error", console.warn.bind(console));
 });
 
-gulp.task('nofiveby', function () {
-  return gulp.src('test/nofiveby.js')
+gulp.task('test', function () {
+  return gulp.src('test/test.js')
     .pipe(mocha(options))
     .on("error", console.warn.bind(console));
 });

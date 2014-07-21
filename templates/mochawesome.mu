@@ -11,8 +11,8 @@
     <!-- NAVBAR -->
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
-        <h1 class="report-title pull-left"><span>mochawesome report: </span>{{reportTitle}}</h1>
-        <span class="report-date pull-right"><span>Last Run: </span>{{dateFormat stats.end 'dddd, MMMM D YYYY, hh:mma'}}</span>
+        <h1 class="report-title">{{reportTitle}}</h1>
+        <h3 class="report-date">{{dateFormat stats.end 'dddd, MMMM D YYYY, hh:mma'}}</h3>
       </div>
     </div>
 
