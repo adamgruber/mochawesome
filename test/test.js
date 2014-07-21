@@ -2,7 +2,7 @@ var should = require('should');
 
 describe('Master Test Suite', function () {
 
-  describe('Mocha Test', function () {
+  describe('Test Suite 1', function () {
     
     it('passes', function (done) {
       true.should.be.ok;
@@ -16,7 +16,7 @@ describe('Master Test Suite', function () {
 
   });
 
-  describe('Mocha Test 2', function () {
+  describe('Test Suite 2', function () {
     
     it('passes', function (done) {
       true.should.be.ok;
@@ -25,6 +25,11 @@ describe('Master Test Suite', function () {
 
     it('fails', function (done) {
       false.should.be.ok;
+      done();
+    });
+
+    it('passes', function (done) {
+      true.should.be.ok;
       done();
     });
 
