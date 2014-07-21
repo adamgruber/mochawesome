@@ -8,7 +8,7 @@
     </h4>
     <div class="pull-right">
       <button class="btn btn-link btn-sm toggle-btn toggle-code collapsed" data-toggle="collapse" data-target="#{{uuid}} > .test-code.collapse">Code</button>
-      <span class="test-duration">{{formatDuration duration}}</span>
+      <span class="test-duration {{speed}}">{{formatDuration duration}}</span>
     </div>
   </div>
   <!-- Test Errors -->
