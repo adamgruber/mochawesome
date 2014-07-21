@@ -7,6 +7,12 @@ describe('No Fiveby Test', function () {
     done();
   });
 
+  it('times out', function (done) {
+    setTimeout(function(done) {
+      done();
+    }, 2500);
+  });
+
   it('fails', function (done) {
     false.should.be.ok;
     done();
