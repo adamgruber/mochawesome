@@ -10,6 +10,7 @@
     "chart.js": "^1.0.1-beta.2",
     "handlebars": "^2.0.0-alpha.4",
     "highlight.js": "^8.1.0",
+    "json-stringify-safe": "^5.0.0",
     "less": "^1.7.3",
     "lodash": "^2.4.1",
     "mocha": "",
