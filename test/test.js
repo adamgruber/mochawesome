@@ -28,6 +28,10 @@ describe('Master Test Suite', function () {
       done();
     });
 
+    xit('is pending', function (done) {
+      done();
+    });
+
     it('passes', function (done) {
       true.should.be.ok;
       done();

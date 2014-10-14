@@ -2,7 +2,7 @@ var fiveby = require('fiveby');
 
 new fiveby(function (browser) {
 
-  return describe('Dummy Test 3', function () {
+  return describe('Fiveby Test 3', function () {
 
     describe("i'm nested!", function() {
 
