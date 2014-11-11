@@ -12,7 +12,7 @@
     <div class="suite-data-wrap">
       <!-- Suite Chart -->
       <div class="suite-chart-wrap">
-        <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}"></canvas>
+        <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}" data-total-pending="{{totalPending}}"></canvas>
         <span class="total">{{totalTests}}</span>
         <ul class="suite-chart-legend list-unstyled">
           <li class="suite-chart-legend-item duration"><span class="glyphicon glyphicon-time"></span><span class="data">{{formatDuration duration}}</span></li>
