@@ -68,7 +68,7 @@
   .test-error-message {
     .clearfix();
     font-size: 12px;
-    margin: 4px 0 0 0;
+    margin: 4px 0 0 17px;
     color: @brand-danger;
   }
 
@@ -77,5 +77,29 @@
     padding: 0;
     background: none;
     border: none;
+  }
+}
+
+// Test States
+
+.test.passed {
+  .test-title .glyphicon:before {
+    content: "\e013";
+    color: @brand-success;
+  }
+}
+
+.test.failed {
+  .test-title .glyphicon:before {
+    content: "\e014";
+    color: @brand-danger;
+  }
+}
+
+.test.pending {
+  color: @gray-light;
+  .test-title .glyphicon:before {
+    content: "\e073";
+    color: @gray-light;
   }
 }

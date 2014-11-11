@@ -18,6 +18,7 @@
           <li class="suite-chart-legend-item duration"><span class="glyphicon glyphicon-time"></span><span class="data">{{formatDuration duration}}</span></li>
           <li class="suite-chart-legend-item passed"><span class="glyphicon glyphicon-ok"></span><span class="data">{{totalPasses}}</span> passed</li>
           <li class="suite-chart-legend-item failed"><span class="glyphicon glyphicon-remove"></span><span class="data">{{totalFailures}}</span> failed</li>
+          <li class="suite-chart-legend-item pending"><span class="glyphicon glyphicon-pause"></span><span class="data">{{totalPending}}</span> pending</li>
         </ul>
       </div>
       <!-- Test Info -->

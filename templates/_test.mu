@@ -1,15 +1,17 @@
-<div id="{{uuid}}" class="list-group-item test">
+<div id="{{uuid}}" class="list-group-item test{{#pass}} passed{{/pass}}{{#fail}} failed{{/fail}}{{#pending}} pending{{/pending}}">
   <!-- Test Heading -->
   <div class="test-heading">
     <h4 class="test-title">
-      <span class="glyphicon glyphicon-{{#pass}}ok text-success{{/pass}}{{#fail}}remove text-danger{{/fail}}"></span>
+      <span class="glyphicon"></span>
       <span class="text-muted hidden"> it </span>
       {{title}}
     </h4>
+    {{^pending}}
     <div class="pull-right">
       <button class="btn btn-link btn-sm toggle-btn toggle-code collapsed" data-toggle="collapse" data-target="#{{uuid}} > .test-code.collapse">Code</button>
       <span class="test-duration {{speed}}">{{formatDuration duration}}</span>
     </div>
+    {{/pending}}
   </div>
   <!-- Test Errors -->
   {{#err}}
