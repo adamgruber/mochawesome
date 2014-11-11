@@ -10,7 +10,7 @@
   }
 }
 
-// Styles
+// Base Summary Styles / Layou
 .summary {
   padding-top: (@navbarHeight + 10);
   padding-bottom: 20px;
@@ -19,10 +19,15 @@
   h1 {
     font-size: 3.4em;
   }
-
   .summary-col {
     .make-xs-column(4);
-    .make-sm-column(2);
+    .make-sm-column(2)
+  }
+}
+
+// Main Row Summary Styles
+.summary {
+  .summary-col {
     text-align: center;
 
     .summary-label {
@@ -48,33 +53,24 @@
         display: inline-block;
       }
     }
-
-    &.summary-suites {
-      .summaryColor(@gray-dark);
-    }
-    &.summary-tests {
-      .summaryColor(@brand-info);
-    }
-    &.summary-passes {
-      .summaryColor(@brand-success);
-    }
-    &.summary-failures {
-      .summaryColor(@brand-danger);
-    }
-    &.summary-pass-percent {
-      &.success {
-        .summaryColor(@brand-success);
-      }
-      &.warning {
-        .summaryColor(@brand-warning);
-      }
-      &.danger {
-        .summaryColor(@brand-danger);
-      }
-    }
   }
 }
 
-.details {
-  margin-top: 20px;
+// Colors
+.summary .summary-col {
+  &.summary-suites {
+    .summaryColor(@gray-dark);
+  }
+  &.summary-tests {
+    .summaryColor(@brand-info);
+  }
+  &.summary-passes {
+    .summaryColor(@brand-success);
+  }
+  &.summary-failures {
+    .summaryColor(@brand-danger);
+  }
+  &.summary-pending {
+    .summaryColor(#999);
+  }
 }
