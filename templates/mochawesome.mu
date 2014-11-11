@@ -24,6 +24,13 @@
         {{/stats}}
       </div>
     </div>
+    <div class="statusbar">
+      <div class="container">
+        {{#stats}}
+          {{> _statusbar}}
+        {{/stats}}
+      </div>
+    </div>
 
     <!-- Suites -->
     <div class="details container">
@@ -66,6 +73,12 @@
             color: "#d9534f",
             highlight: "#FFC870",
             label: "Failed"
+          },
+          {
+            value: suiteCharts[i].getAttribute('data-total-pending')*10,
+            color: "#999999",
+            highlight: "#FFC870",
+            label: "Pending"
           }]
           var chart = new Chart(ctx).Doughnut(data, chartOpts);
         };
