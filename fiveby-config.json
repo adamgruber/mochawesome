@@ -3,5 +3,6 @@
   "hubUrl": null,
   "browsers": {
     "chrome": 1
-  }
+  },
+  "disableBrowsers": true
 }
