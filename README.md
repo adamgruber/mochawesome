@@ -1,4 +1,4 @@
-mochawesome [![npm](http://img.shields.io/badge/npm-0.2.0-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome)
+mochawesome [![npm](http://img.shields.io/badge/npm-0.2.1-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome)
 ===========
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
