@@ -15,7 +15,7 @@
   </div>
   <!-- Test Errors -->
   {{#err}}
-    <p class="test-error-message">{{.}}
+    <p class="test-error-message">{{name}}: {{message}}
       <button class="btn btn-link btn-sm toggle-btn toggle-stack collapsed" data-toggle="collapse" data-target="#{{../uuid}} > .test-error-stack.collapse">Stack</button>
     </p>
   {{/err}}
