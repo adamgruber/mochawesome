@@ -48,12 +48,12 @@
     <!-- Scripts -->
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="js/mochawesome.js"></script>
-    <script>
+    <!--<script>
       window.onload = onLoadFunction;
       function onLoadFunction() {
         makeSuiteCharts();
       }
-      function makeSuiteCharts(){
+      function makeSuiteCharts() {
         var chartOpts = {
           percentageInnerCutout : 70,
           animationEasing: 'easeOutQuint',
@@ -80,9 +80,9 @@
             highlight: "#FFC870",
             label: "Pending"
           }]
-          var chart = new Chart(ctx).Doughnut(data, chartOpts);
+          new Chart(ctx).Doughnut(data, chartOpts);
         };
       }
-      </script>
+      </script>-->
   </body>
 </html>

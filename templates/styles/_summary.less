@@ -8,6 +8,31 @@
   .summary-count {
     color: @color2;
   }
+  &.selected {
+    .summary-label {
+      background: #fff;
+      color: @color;
+      .box-shadow(inset 0px 1px 2px #ccc);
+    }
+  }
+}
+
+.summaryHover(@color) {
+  @color-dark: darken(@color, 11%);
+  .summary-label {
+    .linkTransition();
+    .user-select(none);
+    cursor: pointer;
+    &:hover {
+      background: @color-dark;
+    }
+  }
+  &.selected {
+    .summary-label:hover {
+      background: #fff;
+      color: @color-dark;
+    }
+  }
 }
 
 // Base Summary Styles / Layou
@@ -66,11 +91,14 @@
   }
   &.summary-passes {
     .summaryColor(@brand-success);
+    .summaryHover(@brand-success);
   }
   &.summary-failures {
     .summaryColor(@brand-danger);
+    .summaryHover(@brand-danger);
   }
   &.summary-pending {
     .summaryColor(#999);
+    .summaryHover(#999);
   }
 }
