@@ -1,4 +1,11 @@
 // SUITE
+
+.filterActive() {
+  background: @gray-lighter;
+  border-radius: 20px;
+  .box-shadow(inset 0px 1px 2px #ccc);
+}
+
 .suite-wrap {
   margin-bottom: 20px;
 
@@ -57,7 +64,7 @@
       }
       
       .suite-chart {
-        margin-right: 10px;
+        margin-right: 5px;
       }
 
       .suite-chart-legend {
@@ -65,6 +72,12 @@
         font-size: 1.3em;
         color: @gray-light;
         .suite-chart-legend-item {
+          .linkTransition();
+          padding: 0 5px;
+          margin-top: 1px;
+          &:first-child {
+            margin-top: 0;
+          }
           .data {
             .fontCondBold();
             color: @gray-dark;
@@ -84,6 +97,24 @@
           &.pending .glyphicon {
             color: #999;
           }
+
+          // Filter Styles
+          .filter-passed & {
+            &.passed {
+              .filterActive();
+            }
+          }
+          .filter-failed & {
+            &.failed {
+              .filterActive();
+            }
+          }
+          .filter-pending & {
+            &.pending {
+              .filterActive();
+            }
+          }
+
         }
       }
     }

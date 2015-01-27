@@ -62,20 +62,25 @@ $(function() {
   }
 
   function updateFilteredTests() {
+    var $details = $('.details'),
+        filterClasses = 'filter-passed filter-failed filter-pending',
+        classToAdd, i;
+
+    $details.removeClass(filterClasses);
+    $details.toggleClass('filters-active', activeFilters.length > 0);
+
     if (activeFilters.length) {
-      var testsToShow = [];
-      for (var i=0; i < activeFilters.length; i++) {
-        testsToShow.push(filters[activeFilters[i]]);
+      for (i=0; i < activeFilters.length; i++) {
+        classToAdd = 'filter-' + filters[activeFilters[i]].replace('.', '');
+        $details.addClass(classToAdd);
       }
-      $('.test').hide().filter(testsToShow.toString()).show();
-    } else {
-      $('.test').show();
     }
 
     // TODO:
     // if a suite no longer has tests showing, hide it
     // then check any parent suites and if it no longer has suites showing, hide it
     // work up the chain to the main suite
+    // could be done with classes if we add 'has-passed', 'has-failed', or 'has-pending' to the suite in the template
   }
 
 });
