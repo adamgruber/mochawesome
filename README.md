@@ -1,7 +1,11 @@
-mochawesome [![npm](http://img.shields.io/badge/npm-0.2.2-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome)
+mochawesome [![npm](http://img.shields.io/badge/npm-0.3.0-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome)
 ===========
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
+
+##Recent Changes - 0.3.0
+- Added ability to filter tests by type
+- No longer compiles files at runtime
 
 ##Features
 - At-a-glance stats including pass percentage
@@ -15,7 +19,7 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 
 ##Sample Report
 
-<img src="/docs/mochawesome-screen.png" alt="Mochawesome Report" width="60%" />
+<img src="./docs/mochawesome-screen.png" alt="Mochawesome Report" width="60%" />
 
 
 ##Usage
@@ -38,3 +42,31 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
       reporter: 'mochawesome'
   });
   ```
+
+##Development
+If you wish to make changes to the reporter you will need to clone the repo and build locally. Building requires you to have [gulp](https://github.com/gulpjs/gulp) installed.
+
+###Installation
+```sh
+$ git clone https://github.dowjones.net/grubera/mochawesome
+```
+###Modifying
+Reporter files are found in `/lib` directory.
+Templates, styles, and client-side scripts are in the `/src` directory.
+
+###Building
+There are several gulp tasks available but the main ones to be aware of are:
+
+####`gulp build` - Full Build
+Runs jshint, parses LESS, compiles templates, concatenates and minifies scripts.
+*Note: This task will fail if linting fails.*
+
+####`gulp watch` - Watch Files
+Watches for changes to JS, LESS, and MU and builds when a change is detected. If a change is detected in a JS file this will run jshint first before building and will fail on any lint errors.
+
+####`gulp lint` - Lint JS
+This will run jshint only, no building will occur.
+
+####`gulp test` - Run Test
+After building you can run this to test the reporter and see the output.
+*Note: The default gulp task will run this task.*
