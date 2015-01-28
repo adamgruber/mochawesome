@@ -5,7 +5,7 @@
 {{/rootEmpty}}
 {{^rootEmpty}}
 <section class="suite-wrap">
-  <div id="{{uuid}}" class="suite {{#root}}root-suite{{/root}}">
+  <div id="{{uuid}}" class="suite{{#root}} root-suite{{/root}}{{#isEmpty}} empty-suite{{/isEmpty}}">
     <h3 class="suite-title">{{title}}</h3>
     <h5 class="suite-filename">{{file}}</h5>
     {{^isEmpty}}
@@ -23,10 +23,10 @@
       </div>
       <!-- Test Info -->
       <div class="suite-test-wrap">
-        <div class="suite-test-header" data-toggle="collapse" data-target="#{{uuid}} > .suite-data-wrap > .suite-test-wrap > .test-list">
+        <div class="suite-test-header" data-toggle="collapse" data-target="#{{uuid}}-test-list">
           <h4 class="suite-test-header-title">Tests<span class="pull-right glyphicon glyphicon-chevron-right"></span></h4>
         </div>
-        <div class="list-group test-list collapse in">
+        <div id="{{uuid}}-test-list" class="list-group test-list collapse in">
           {{#tests}}
             {{> _test}}
           {{/tests}}

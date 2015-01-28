@@ -103,3 +103,19 @@
     color: #999;
   }
 }
+
+// Filter Styles
+.filters-active {
+  .test {
+    display: none;
+  }
+  &.filter-passed .test.passed {
+    display: block;
+  }
+  &.filter-failed .test.failed {
+    display: block;
+  }
+  &.filter-pending .test.pending {
+    display: block;
+  }  
+}
