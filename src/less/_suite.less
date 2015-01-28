@@ -158,3 +158,25 @@
     }
   }
 }
+
+// Filter Styles
+.filters-active{
+  .suite-wrap > .suite:not(.has-suites) {
+    display: none;
+  }
+  &.filter-passed {
+    .suite.has-passed {
+      display: block;
+    }
+  }
+  &.filter-failed {
+    .suite.has-failed {
+      display: block;
+    }
+  }
+  &.filter-pending {
+    .suite.has-pending {
+      display: block;
+    }
+  }
+}
