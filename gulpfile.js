@@ -12,7 +12,7 @@ var gulp        = require('gulp'),
     declare     = require('gulp-declare'),
     watch       = require('gulp-watch'),
     mocha       = require('gulp-spawn-mocha'),
-    options     = {reporter: 'mochawesome', timeout: 30000, slow: 1, "no-exit": true},
+    options     = {reporter: 'mochawesome', timeout: 30000, slow: 1, 'no-exit': true},
     config      = require('./lib/config');
 
 var watchFiles = [
@@ -38,23 +38,17 @@ function onWatchFileChanged(file) {
   var ext = file.relative.slice(file.relative.indexOf('.') + 1);
   gutil.log('Change detected in ' + file.relative);
   if (ext === 'less') {
-    gulp.start('styles');
+    return processStyles();
   }
   if (ext === 'js') {
-    gulp.start('scripts');
+    return processScripts();
   }
   if (ext === 'mu') {
-    gulp.start('templates');
+    return processTemplates();
   }
 }
 
-// Build Tasks
-gulp.task('fonts', function () {
-  return gulp.src(path.join(config.bsFontsDir, '*'))
-    .pipe(gulp.dest(config.buildFontsDir));
-});
-
-gulp.task('styles', function () {
+function processStyles() {
   return gulp.src(path.join(config.srcLessDir, '[^_]*.less'))
     .pipe(plumber({errorHandler: gutil.log}))
     .pipe(less({
@@ -62,16 +56,16 @@ gulp.task('styles', function () {
       compress: true
     }))
     .pipe(gulp.dest(config.buildCssDir));
-});
+}
 
-gulp.task('scripts', function () {
+function processScripts() {
   return gulp.src(config.clientJsFiles)
     .pipe(concat('mochawesome.js'))
     .pipe(uglify())
     .pipe(gulp.dest(config.buildJsDir));
-});
+}
 
-gulp.task('templates', function () {
+function processTemplates() {
   var partials = gulp.src(path.join(config.srcHbsDir, '_*.mu'))
     .pipe(handlebars())
     .pipe(wrap('Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));', {}, {
@@ -101,19 +95,24 @@ gulp.task('templates', function () {
     .pipe(concat('templates.js'))
     .pipe(wrap('var Handlebars = require("handlebars");\n <%= contents %>'))
     .pipe(gulp.dest(config.libDir));
+}
+
+// Build Tasks
+gulp.task('fonts', function () {
+  return gulp.src(path.join(config.bsFontsDir, '*'))
+    .pipe(gulp.dest(config.buildFontsDir));
 });
 
-// Test Tasks
-gulp.task('fiveby', function () {
-  return gulp.src('test/**/*.js', '!test/test.js')
-    .pipe(mocha(options))
-    .on('error', console.warn.bind(console));
+gulp.task('styles', function () {
+  return processStyles();
 });
 
-gulp.task('test', function () {
-  return gulp.src('test/test.js')
-    .pipe(mocha(options))
-    .on('error', console.warn.bind(console));
+gulp.task('scripts', ['lint'], function () {
+  return processScripts();
+});
+
+gulp.task('templates', function () {
+  return processTemplates();
 });
 
 // Linting
@@ -134,6 +133,19 @@ gulp.task('felint', function () {
 // Watch Tasks
 gulp.task('watch', function () {
   watch(watchFiles, onWatchFileChanged);
+});
+
+// Test Tasks
+gulp.task('fiveby', function () {
+  return gulp.src('test/**/*.js', '!test/test.js')
+    .pipe(mocha(options))
+    .on('error', console.warn.bind(console));
+});
+
+gulp.task('test', function () {
+  return gulp.src('test/test.js')
+    .pipe(mocha(options))
+    .on('error', console.warn.bind(console));
 });
 
 // Default/Combo Tasks
