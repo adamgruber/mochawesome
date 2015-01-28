@@ -35,8 +35,8 @@ var lintPaths =  {
 };
 
 function onWatchFileChanged(file) {
-  var ext = file.relative.slice(file.relative.indexOf('.') + 1);
-  gutil.log('Change detected in ' + file.relative);
+  var ext = file.path.slice(file.path.lastIndexOf('.') + 1);
+  gutil.log(gutil.colors.yellow('Change detected in ' + file.path.replace(file.cwd, '')));
   if (ext === 'less') {
     return gulp.start('styles');
   }
