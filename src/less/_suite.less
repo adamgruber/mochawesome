@@ -172,23 +172,33 @@
 
 
 // Filter Styles
-.filters-active{
-  .suite-wrap > .suite:not(.has-suites) {
+.filters-active {
+  .suite:not(.has-suites),
+  .suite.has-skipped {
     display: none;
   }
   &.filter-passed {
+    .suite.has-tests:not(.has-passed) {
+      display: none;
+    }
     .suite.has-passed {
-      display: block;
+      display: block !important;
     }
   }
   &.filter-failed {
+    .suite.has-tests:not(.has-failed) {
+      display: none;
+    }
     .suite.has-failed {
-      display: block;
+      display: block !important;
     }
   }
   &.filter-pending {
+    .suite.has-tests:not(.has-pending) {
+      display: none;
+    }
     .suite.has-pending {
-      display: block;
+      display: block !important;
     }
   }
 }
