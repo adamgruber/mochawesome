@@ -5,14 +5,14 @@
 {{/rootEmpty}}
 {{^rootEmpty}}
 <section class="suite-wrap">
-  <div id="{{uuid}}" class="suite{{#root}} root-suite{{/root}}{{#hasSuites}} has-suites{{/hasSuites}}{{#hasTests}} has-tests{{/hasTests}}{{#hasPasses}} has-passed{{/hasPasses}}{{#hasFailures}} has-failed{{/hasFailures}}{{#hasPending}} has-pending{{/hasPending}}">
+  <div id="{{uuid}}" class="suite{{#root}} root-suite{{/root}}{{#hasSuites}} has-suites{{/hasSuites}}{{#hasTests}} has-tests{{/hasTests}}{{#hasPasses}} has-passed{{/hasPasses}}{{#hasFailures}} has-failed{{/hasFailures}}{{#hasPending}} has-pending{{/hasPending}}{{#hasSkipped}} has-skipped{{/hasSkipped}}">
     <h3 class="suite-title">{{title}}</h3>
     <h5 class="suite-filename">{{file}}</h5>
     {{#hasTests}} 
     <div class="suite-data-wrap">
       <!-- Suite Chart -->
       <div class="suite-chart-wrap">
-        <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}" data-total-pending="{{totalPending}}"></canvas>
+        <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}" data-total-pending="{{totalPending}}" data-total-skipped="{{totalSkipped}}"></canvas>
         <span class="total">{{totalTests}}</span>
         <ul class="suite-chart-legend list-unstyled">
           <li class="suite-chart-legend-item duration"><span class="glyphicon glyphicon-time"></span><span class="data">{{formatDuration duration}}</span></li>

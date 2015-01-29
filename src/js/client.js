@@ -38,6 +38,12 @@ $(function() {
         color: '#999999',
         highlight: '#FFC870',
         label: 'Pending'
+      },
+      {
+        value: suiteCharts[i].getAttribute('data-total-skipped')*10,
+        color: '#EEEEEE',
+        highlight: '#FFC870',
+        label: 'Skipped'
       }];
       new Chart(ctx).Doughnut(data, chartOpts);
     }
