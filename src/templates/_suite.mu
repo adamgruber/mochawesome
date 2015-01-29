@@ -5,10 +5,10 @@
 {{/rootEmpty}}
 {{^rootEmpty}}
 <section class="suite-wrap">
-  <div id="{{uuid}}" class="suite{{#root}} root-suite{{/root}}{{#isEmpty}} empty-suite{{/isEmpty}}{{#hasSkipped}} has-skipped{{/hasSkipped}}">
+  <div id="{{uuid}}" class="suite{{#root}} root-suite{{/root}}{{#hasSuites}} has-suites{{/hasSuites}}{{#hasTests}} has-tests{{/hasTests}}{{#hasPasses}} has-passed{{/hasPasses}}{{#hasFailures}} has-failed{{/hasFailures}}{{#hasPending}} has-pending{{/hasPending}}{{#hasSkipped}} has-skipped{{/hasSkipped}}">
     <h3 class="suite-title">{{title}}</h3>
     <h5 class="suite-filename">{{file}}</h5>
-    {{^isEmpty}}
+    {{#hasTests}} 
     <div class="suite-data-wrap">
       <!-- Suite Chart -->
       <div class="suite-chart-wrap">
@@ -33,7 +33,7 @@
         </div>
       </div>
     </div>
-    {{/isEmpty}}
+    {{/hasTests}}
 
     {{#suites}}
       {{> _suite}}

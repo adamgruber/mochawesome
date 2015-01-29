@@ -35,20 +35,26 @@ var lintPaths =  {
 };
 
 function onWatchFileChanged(file) {
-  var ext = file.relative.slice(file.relative.indexOf('.') + 1);
-  gutil.log('Change detected in ' + file.relative);
+  var ext = file.path.slice(file.path.lastIndexOf('.') + 1);
+  gutil.log(gutil.colors.yellow('Change detected in ' + file.path.replace(file.cwd, '')));
   if (ext === 'less') {
-    return processStyles();
+    return gulp.start('styles');
   }
   if (ext === 'js') {
-    return processScripts();
+    return gulp.start('scripts');
   }
   if (ext === 'mu') {
-    return processTemplates();
+    return gulp.start('templates');
   }
 }
 
-function processStyles() {
+// Build Tasks
+gulp.task('fonts', function () {
+  return gulp.src(path.join(config.bsFontsDir, '*'))
+    .pipe(gulp.dest(config.buildFontsDir));
+});
+
+gulp.task('styles', function () {
   return gulp.src(path.join(config.srcLessDir, '[^_]*.less'))
     .pipe(plumber({errorHandler: gutil.log}))
     .pipe(less({
@@ -56,16 +62,16 @@ function processStyles() {
       compress: true
     }))
     .pipe(gulp.dest(config.buildCssDir));
-}
+});
 
-function processScripts() {
+gulp.task('scripts', ['lint'], function () {
   return gulp.src(config.clientJsFiles)
     .pipe(concat('mochawesome.js'))
     .pipe(uglify())
     .pipe(gulp.dest(config.buildJsDir));
-}
+});
 
-function processTemplates() {
+gulp.task('templates', function () {
   var partials = gulp.src(path.join(config.srcHbsDir, '_*.mu'))
     .pipe(handlebars())
     .pipe(wrap('Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));', {}, {
@@ -95,24 +101,6 @@ function processTemplates() {
     .pipe(concat('templates.js'))
     .pipe(wrap('var Handlebars = require("handlebars");\n <%= contents %>'))
     .pipe(gulp.dest(config.libDir));
-}
-
-// Build Tasks
-gulp.task('fonts', function () {
-  return gulp.src(path.join(config.bsFontsDir, '*'))
-    .pipe(gulp.dest(config.buildFontsDir));
-});
-
-gulp.task('styles', function () {
-  return processStyles();
-});
-
-gulp.task('scripts', ['lint'], function () {
-  return processScripts();
-});
-
-gulp.task('templates', function () {
-  return processTemplates();
 });
 
 // Linting
