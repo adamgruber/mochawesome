@@ -1,4 +1,4 @@
-<div id="{{uuid}}" class="list-group-item test{{#pass}} passed{{/pass}}{{#fail}} failed{{/fail}}{{#pending}} pending{{/pending}}">
+<div id="{{uuid}}" class="list-group-item test{{#pass}} passed{{/pass}}{{#fail}} failed{{/fail}}{{#pending}} pending{{/pending}}{{#skipped}} skipped{{/skipped}}">
   <!-- Test Heading -->
   <div class="test-heading">
     <h4 class="test-title">

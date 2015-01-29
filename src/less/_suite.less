@@ -1,0 +1,203 @@
+// SUITE
+
+.filterActive() {
+  background: @gray-lighter;
+  border-radius: 20px;
+  .box-shadow(inset 0px 1px 2px #ccc);
+}
+
+// Nesting Styles
+.suite-wrap {
+
+  > .suite > .suite-wrap {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .suite .suite {
+    margin: 10px;
+  }
+}
+
+// Layout
+.suite {
+  .clearfix();
+  .make-row();
+  .suite-chart-wrap {
+    .make-xs-column(12);
+    .make-sm-column(3);
+  }
+  .suite-test-wrap {
+    .make-xs-column(12);
+    .make-sm-column(9);
+  }
+  .suite-data-wrap {
+    .clearfix();
+  }
+}
+
+// Suite Base
+.suite {
+  border: 1px solid #ccc;
+  padding: 8px 0 10px 0;
+  border-radius: 4px;
+
+  .suite-title {
+    padding: 0 10px;
+    margin: 0;
+    .fontSlabNormal();
+  }
+
+  .suite-filename {
+    .fontLight();
+    color: @gray-light;
+    margin-top: 4px;
+    padding: 0 10px;
+  }
+}
+
+// Suite Chart
+.suite-chart-wrap {
+  position: relative;
+  margin-bottom: 10px;
+  
+  .suite-chart,
+  .suite-chart-legend {
+    float: left;
+  }
+  
+  .total {
+    position: absolute;
+    left: 15px;
+    width: 100px;
+    text-align: center;
+    font-size: 3em;
+    line-height: 95px;
+    color: @gray-light;
+  }
+  
+  .suite-chart {
+    margin-right: 5px;
+  }
+}
+
+// Suite Chart Legend
+.suite-chart-legend {
+  .fontCondLight();
+  font-size: 1.3em;
+  color: @gray-light;
+  .suite-chart-legend-item {
+    .linkTransition();
+    padding: 0 5px;
+    margin-top: 1px;
+    &:first-child {
+      margin-top: 0;
+    }
+    .data {
+      .fontCondBold();
+      color: @gray-dark;
+    }
+    .glyphicon {
+      .fontLight();
+      font-size: 14px;
+      margin-right: 4px;
+      color: @gray-light;
+    }
+    &.passed .glyphicon {
+      color: @brand-success;
+    }
+    &.failed .glyphicon {
+      color: @brand-danger;
+    }
+    &.pending .glyphicon {
+      color: #999;
+    }
+
+    // Filter Styles
+    .filter-passed & {
+      &.passed {
+        .filterActive();
+      }
+    }
+    .filter-failed & {
+      &.failed {
+        .filterActive();
+      }
+    }
+    .filter-pending & {
+      &.pending {
+        .filterActive();
+      }
+    }
+
+  }
+}
+
+// Suite Test
+.suite-test-wrap {
+  .suite-test-header {
+    // background-color: @gray-lighter;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-bottom: 1px solid @list-group-border;
+    .suite-test-header-title {
+      .fontSlabNormal();
+      font-size: 16px;
+      color: #ccc;
+      margin: 0;
+      .linkTransition();
+      .glyphicon {
+        .linkTransition();
+        font-size: 14px;
+        position: relative;
+        top: 1px;
+        right: 2px;
+        .rotate(90deg);
+      }
+    }
+    &.collapsed {
+      .suite-test-header-title .glyphicon {
+        .rotate(0);
+      }
+    }
+    &:hover .suite-test-header-title {
+      color: @link-hover-color;
+    }
+  }
+  .test-list {
+    margin-bottom: 0;
+  }
+}
+
+
+// Filter Styles
+.filters-active {
+  .suite:not(.has-suites),
+  .suite.has-skipped {
+    display: none;
+  }
+  &.filter-passed {
+    .suite.has-tests:not(.has-passed) {
+      display: none;
+    }
+    .suite.has-passed {
+      display: block !important;
+    }
+  }
+  &.filter-failed {
+    .suite.has-tests:not(.has-failed) {
+      display: none;
+    }
+    .suite.has-failed {
+      display: block !important;
+    }
+  }
+  &.filter-pending {
+    .suite.has-tests:not(.has-pending) {
+      display: none;
+    }
+    .suite.has-pending {
+      display: block !important;
+    }
+  }
+}
