@@ -22,6 +22,15 @@ var watchFiles = [
   path.join(config.srcHbsDir, '*.mu')
 ];
 
+var testPaths = {
+  basic: ['./test/test.js'],
+  fiveby: [
+    './test/*.js',
+    './test/**/*.js',
+    '!./test/test.js'
+  ]
+}
+
 var lintPaths =  {
   server: './.jshintrc',
   client: './client.jshintrc',
@@ -127,13 +136,13 @@ gulp.task('watch', function () {
 
 // Test Tasks
 gulp.task('fiveby', function () {
-  return gulp.src('test/**/*.js', '!test/test.js')
+  return gulp.src(testPaths.fiveby)
     .pipe(mocha(options))
     .on('error', console.warn.bind(console));
 });
 
 gulp.task('test', function () {
-  return gulp.src('test/test.js')
+  return gulp.src(testPaths.basic)
     .pipe(mocha(options))
     .on('error', console.warn.bind(console));
 });
