@@ -82,11 +82,14 @@ $(function() {
       }
     }
 
-    // TODO:
-    // if a suite no longer has tests showing, hide it
-    // then check any parent suites and if it no longer has suites showing, hide it
-    // work up the chain to the main suite
-    // could be done with classes if we add 'has-passed', 'has-failed', or 'has-pending' to the suite in the template
+    // Hide suites that are empty after filtering
+    $('.suite.has-suites').each(function (i, suite) {
+      var $suite = $(suite);
+      $suite.removeClass('hidden');
+      if ($suite.find('.suite').filter(':visible').length === 0) {
+        $suite.addClass('hidden');
+      }
+    });
   }
 
 });
