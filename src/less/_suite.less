@@ -6,6 +6,20 @@
   .box-shadow(inset 0px 1px 2px #ccc);
 }
 
+.filters-active {
+  .suite-data-wrap {
+    display: none;
+  }
+  &.filter-passed .suite.has-passed,
+  &.filter-failed .suite.has-failed,
+  &.filter-pending .suite.has-pending {
+    .suite-data-wrap {
+      display: table;
+      width: 100%;
+    }
+  }
+}
+
 // Nesting Styles
 .suite-wrap {
 
@@ -23,13 +37,13 @@
 .suite {
   .clearfix();
   .make-row();
-  .suite-chart-wrap,
-  .suite-test-wrap {
-    .make-xs-column(12);
-  }
-  .suite-data-wrap {
-    .clearfix();
-  }
+}
+.suite-chart-wrap,
+.suite-test-wrap {
+  .make-xs-column(12);
+}
+.suite-data-wrap {
+  .clearfix();
 }
 
 // Suite Base
@@ -165,61 +179,23 @@
   }
 }
 
-
-// Filter Styles
-.filters-active {
-  .suite:not(.has-suites),
-  .suite.has-skipped {
-    display: none;
-  }
-  .suite.root-suite {
-    display: block !important;
-  }
-  &.filter-passed {
-    .suite.has-tests:not(.has-passed) {
-      display: none;
-    }
-    .suite.has-passed {
-      display: block !important;
-    }
-  }
-  &.filter-failed {
-    .suite.has-tests:not(.has-failed) {
-      display: none;
-    }
-    .suite.has-failed {
-      display: block !important;
-    }
-  }
-  &.filter-pending {
-    .suite.has-tests:not(.has-pending) {
-      display: none;
-    }
-    .suite.has-pending {
-      display: block !important;
-    }
-  }
-}
-
 // Tablet 768 and up
 @media (min-width: @screen-sm-min) {
-  .suite {
-    .suite-data-wrap {
-      display: table;
-      width: 100%;
-    }
-    .suite-chart-wrap,
-    .suite-test-wrap {
-      display: table-cell;
-      vertical-align: top;
-      float: none;
-    }
-    .suite-chart-wrap {
-      width: 252px;
-      min-width: 252px;
-    }
-    .suite-test-wrap {
-      width: 100%;
-    }
+  .suite-data-wrap {
+    display: table;
+    width: 100%;
+  }
+  .suite-chart-wrap,
+  .suite-test-wrap {
+    display: table-cell;
+    vertical-align: top;
+    float: none;
+  }
+  .suite-chart-wrap {
+    width: 252px;
+    min-width: 252px;
+  }
+  .suite-test-wrap {
+    width: 100%;
   }
 }

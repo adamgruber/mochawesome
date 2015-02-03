@@ -4,9 +4,9 @@
 $(function() {
   'use strict';
   var filters = {
-    'summary-passes': '.passed',
-    'summary-failures': '.failed',
-    'summary-pending': '.pending'
+    'summary-passes': 'passed',
+    'summary-failures': 'failed',
+    'summary-pending': 'pending'
   };
   var activeFilters = [];
   addEventHandlers();
@@ -67,29 +67,41 @@ $(function() {
     });
   }
 
+  function createFilterClasses(prefix) {
+    return activeFilters.map(function (activeFilter) {
+      return prefix + filters[activeFilter];
+    });
+  }
+
   function updateFilteredTests() {
     var $details = $('.details'),
+        $suites = $('.suite'),
+        activeFiltersExist = activeFilters.length > 0,
         filterClasses = 'filter-passed filter-failed filter-pending',
-        classToAdd, i;
+        filterClassesToAdd = createFilterClasses('filter-'),
+        testClassesToFilter = createFilterClasses('.');
 
-    $details.removeClass(filterClasses);
-    $details.toggleClass('filters-active', activeFilters.length > 0);
+    $details
+      .removeClass(filterClasses)
+      .toggleClass('filters-active', activeFiltersExist);
 
-    if (activeFilters.length) {
-      for (i=0; i < activeFilters.length; i++) {
-        classToAdd = 'filter-' + filters[activeFilters[i]].replace('.', '');
-        $details.addClass(classToAdd);
-      }
+    if (filterClassesToAdd.length) {
+      $details.addClass(filterClassesToAdd.join(' '));
     }
 
-    // Hide suites that are empty after filtering
-    $('.suite.has-suites').each(function (i, suite) {
-      var $suite = $(suite);
-      $suite.removeClass('hidden');
-      if ($suite.find('.suite').filter(':visible').length === 0) {
-        $suite.addClass('hidden');
+    // Hide all suites
+    $suites.toggleClass('hidden', activeFiltersExist);
+
+    // Show suites with filtered tests
+    if (activeFiltersExist) {
+      for (var i = $suites.length - 1; i >= 0; i--) {
+        var $suite = $suites.eq(i),
+            hasVisibleTests = $suite.find('.test').filter(testClassesToFilter.join()).length > 0;
+        if (hasVisibleTests) {
+          $suite.removeClass('hidden');
+        }
       }
-    });
+    }
   }
 
 });
