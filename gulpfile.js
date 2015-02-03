@@ -25,9 +25,8 @@ var watchFiles = [
 var testPaths = {
   basic: ['./test/test.js'],
   fiveby: [
-    './test/*.js',
-    './test/**/*.js',
-    '!./test/test.js'
+    './test/fiveby/*.js',
+    './test/fiveby/**/*.js'
   ]
 }
 
