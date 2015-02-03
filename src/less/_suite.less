@@ -23,13 +23,9 @@
 .suite {
   .clearfix();
   .make-row();
-  .suite-chart-wrap {
-    .make-xs-column(12);
-    .make-sm-column(3);
-  }
+  .suite-chart-wrap,
   .suite-test-wrap {
     .make-xs-column(12);
-    .make-sm-column(9);
   }
   .suite-data-wrap {
     .clearfix();
@@ -137,7 +133,6 @@
 // Suite Test
 .suite-test-wrap {
   .suite-test-header {
-    // background-color: @gray-lighter;
     padding: 6px 8px;
     cursor: pointer;
     border-bottom: 1px solid @list-group-border;
@@ -177,6 +172,9 @@
   .suite.has-skipped {
     display: none;
   }
+  .suite.root-suite {
+    display: block !important;
+  }
   &.filter-passed {
     .suite.has-tests:not(.has-passed) {
       display: none;
@@ -199,6 +197,29 @@
     }
     .suite.has-pending {
       display: block !important;
+    }
+  }
+}
+
+// Tablet 768 and up
+@media (min-width: @screen-sm-min) {
+  .suite {
+    .suite-data-wrap {
+      display: table;
+      width: 100%;
+    }
+    .suite-chart-wrap,
+    .suite-test-wrap {
+      display: table-cell;
+      vertical-align: top;
+      float: none;
+    }
+    .suite-chart-wrap {
+      width: 252px;
+      min-width: 252px;
+    }
+    .suite-test-wrap {
+      width: 100%;
     }
   }
 }
