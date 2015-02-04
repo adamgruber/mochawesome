@@ -19,6 +19,12 @@ $(function() {
       showTooltips: false
     };
     var suiteCharts = document.getElementsByClassName('suite-chart');
+
+    // Don't animate if we have a ton of charts because its just slow and ugly
+    if (suiteCharts.length > 50) {
+      chartOpts.animateRotate = false;
+    }
+    
     for (var i=0; i<suiteCharts.length; i++) {
       var ctx = suiteCharts[i].getContext('2d');
       var data = [{
