@@ -24,10 +24,15 @@
     // Cache Elements
     this.$window      = $(window);
     this.$body        = $('body');
+    this.$navbar      = $('.navbar');
+    this.$summary     = $('.summary');
+    this.$quickSum    = $('.quick-summary');
     this.$details     = $('.details');
     this.$suites      = $('.suite');
     this.$filterBtns  = $('[data-filter]');
     this.$suiteCharts = $('.suite-chart');
+
+    this.quickSummaryScrollOffset = this.$summary.outerHeight() - this.$navbar.outerHeight();
 
     self = this;
 
@@ -41,8 +46,12 @@
   };
 
   Mochawesome.prototype._onFilterClick = function (e) {
-    var $el = $(e.currentTarget),
-        filter = $el.data('filter'),
+    var $el = $(e.currentTarget);
+    // No clicks for hidden quick summary
+    if ($el.hasClass('qs-item') && this.$quickSum.css('opacity') === '0') {
+      return;
+    }
+    var filter = $el.data('filter'),
         $btns = $('[data-filter=' + filter + ']'),
         filterIndex = this.activeFilters.indexOf(filter),
         filterIsActive = filterIndex !== -1;
@@ -54,11 +63,12 @@
   };
 
   Mochawesome.prototype._onWindowScroll = function () {
-    var windowScrollTop = this.$window.scrollTop();
-    if (windowScrollTop > 62 && this.$body.hasClass('show-quick-summary')) {
+    var windowScrollTop = this.$window.scrollTop(),
+        pastQuickSummaryOffset = windowScrollTop > this.quickSummaryScrollOffset;
+    if (pastQuickSummaryOffset && this.$body.hasClass('show-quick-summary')) {
       return;
     }
-    this.$body.toggleClass('show-quick-summary', windowScrollTop > 62);
+    this.$body.toggleClass('show-quick-summary', pastQuickSummaryOffset);
   };
 
   Mochawesome.prototype._createFilterClasses = function (prefix) {
