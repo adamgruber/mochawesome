@@ -4,8 +4,8 @@
 .qsColor(@color) {
   color: @color;
   &.active {
-    background: @color;
-    color: #fff;
+    background: #fff;
+    color: @color;
   }
 }
 
@@ -15,12 +15,10 @@
   .linkTransition();
 
   &:hover {
-    color: #fff;//@color-dark;
-    background: @color;
+    color: #fff;
   }
   &.active:hover {
-    color: #fff;
-    background: @color-dark;
+    color: @color-dark;
   }
 }
 
@@ -40,9 +38,8 @@
   .user-select(none);
   cursor: default;
   font-size: 18px;
-  margin-left: 10px;
+  margin-left: 5px;
   border-radius: 40px;
-  background: #fff;
   padding: 0 8px;
   float: left;
 }
@@ -55,7 +52,7 @@
     margin-right: 4px;
   }
   &.summary-suites {
-    .qsColor(@gray-dark);
+    .qsColor(@gray-light);
     .glyphicon-folder-open();
     &:before {
       margin-right: 6px;
@@ -84,7 +81,7 @@
     }
   }
   &.summary-duration {
-    .qsColor(@gray-light);
+    .qsColor(@gray-lighter);
     .glyphicon-time();
   }
 }
