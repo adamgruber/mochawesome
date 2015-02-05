@@ -12,7 +12,6 @@
 .qsHover(@color) {
   @color-dark: darken(@color, 11%);
   @color-light: lighten(@color, 40%);
-  .linkTransition();
 
   &:hover {
     color: #fff;
@@ -38,10 +37,18 @@
   .user-select(none);
   cursor: default;
   font-size: 18px;
+  padding: 0 8px;
   margin-left: 5px;
   border-radius: 40px;
-  padding: 0 8px;
   float: left;
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+// Filter Btns
+.qs-item[data-filter] {
+  .linkTransition();
 }
 
 // Icons / Colors
@@ -81,6 +88,7 @@
     }
   }
   &.summary-duration {
+    padding-right: 0;
     .qsColor(@gray-lighter);
     .glyphicon-time();
   }
