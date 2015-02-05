@@ -1,0 +1,96 @@
+// Quick Summary
+
+// Mixins
+.qsColor(@color) {
+  color: @color;
+  &.active {
+    background: @color;
+    color: #fff;
+  }
+}
+
+.qsHover(@color) {
+  @color-dark: darken(@color, 11%);
+  @color-light: lighten(@color, 40%);
+  &:hover {
+    color: #fff;//@color-dark;
+    background: @color;
+  }
+  &.active:hover {
+    color: #fff;
+    background: @color-dark;
+  }
+}
+
+.quick-summary-cnt {
+  float: right;
+}
+
+.quick-summary {
+  .clearfix();
+  margin-top: 12px;
+  display: none;
+  .show-quick-summary & {
+    display: block;
+  }
+}
+
+.qs-item {
+  .fontCondBold();
+  font-size: 18px;
+  margin-left: 10px;
+  border-radius: 40px;
+  background: #fff;
+  padding: 0 8px;
+  float: left;
+}
+
+// Icons / Colors
+.qs-item {
+  &:before {
+    .glyphicon();
+    font-size: 16px;
+    margin-right: 4px;
+  }
+  &.summary-suites {
+    .qsColor(@gray-dark);
+    .glyphicon-folder-open();
+    &:before {
+      margin-right: 6px;
+    }
+  }
+  &.summary-tests {
+    .qsColor(@brand-info);
+    .glyphicon-file();
+  }
+  &.summary-passes {
+    .filter-button();
+    .qsColor(@brand-success);
+    .qsHover(@brand-success);
+    .glyphicon-ok();
+  }
+  &.summary-failures {
+    .filter-button();
+    .qsColor(@brand-danger);
+    .qsHover(@brand-danger);
+    .glyphicon-remove();
+  }
+  &.summary-pending {
+    .filter-button();
+    .qsColor(#999);
+    .qsHover(#999);
+    .glyphicon-pause();
+    &:before {
+      margin-right: 1px;
+    }
+  }
+  &.summary-duration {
+    .qsColor(@gray-light);
+    .glyphicon-time();
+  }
+}
+
+// Tablet 768 and up
+// @media (min-width: @screen-sm-min) {
+//   .quick-summary-cnt {}
+// }
