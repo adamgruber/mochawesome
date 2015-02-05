@@ -9,7 +9,7 @@
     "handlebars": "^2.0.0",
     "highlight.js": "^8.4.0",
     "json-stringify-safe": "^5.0.0",
-    "lodash": "^3.0.0",
+    "lodash": "^3.1.0",
     "mocha": "^2.1.0",
     "moment": "^2.9.0",
     "ncp": "^1.0.1",
