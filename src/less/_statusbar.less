@@ -3,6 +3,9 @@
 .statusbar {
   padding: 8px 0;
   color: @gray;
+  background: #fff;
+  z-index: 1030;
+  .transition(border .2s ease-out);
 
   .status-list {
     margin: 0;
@@ -32,4 +35,12 @@
       color: @brand-success;
     }
   }
+}
+
+.show-quick-summary .statusbar {
+  position: fixed;
+  top: @navbarHeight;
+  width: 100%;
+  border-bottom: 1px solid @gray-lighter;
+  background: rgba(255, 255, 255, 0.9);
 }

@@ -12,6 +12,8 @@
 .qsHover(@color) {
   @color-dark: darken(@color, 11%);
   @color-light: lighten(@color, 40%);
+  .linkTransition();
+
   &:hover {
     color: #fff;//@color-dark;
     background: @color;
@@ -28,15 +30,15 @@
 
 .quick-summary {
   .clearfix();
-  margin-top: 12px;
-  display: none;
-  .show-quick-summary & {
-    display: block;
-  }
+  .opacity(0);
+  .transition(opacity .2s ease-out);
+  margin: 11px 0 0 0;
 }
 
 .qs-item {
   .fontCondBold();
+  .user-select(none);
+  cursor: default;
   font-size: 18px;
   margin-left: 10px;
   border-radius: 40px;
@@ -64,19 +66,16 @@
     .glyphicon-file();
   }
   &.summary-passes {
-    .filter-button();
     .qsColor(@brand-success);
     .qsHover(@brand-success);
     .glyphicon-ok();
   }
   &.summary-failures {
-    .filter-button();
     .qsColor(@brand-danger);
     .qsHover(@brand-danger);
     .glyphicon-remove();
   }
   &.summary-pending {
-    .filter-button();
     .qsColor(#999);
     .qsHover(#999);
     .glyphicon-pause();
@@ -87,6 +86,16 @@
   &.summary-duration {
     .qsColor(@gray-light);
     .glyphicon-time();
+  }
+}
+
+// Showing Quick Summary
+.show-quick-summary {
+  .quick-summary {
+    .opacity(1);
+  }
+  .qs-item[data-filter] {
+    cursor: pointer;
   }
 }
 

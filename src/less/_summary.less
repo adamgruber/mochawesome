@@ -18,6 +18,8 @@
 .summaryHover(@color) {
   @color-dark: darken(@color, 11%);
   .summary-label {
+    .linkTransition();
+    cursor: pointer;
     &:hover {
       background: @color-dark;
     }
@@ -38,8 +40,7 @@
     font-size: 3.4em;
   }
   .summary-col {
-    .make-xs-column(4);
-    .make-sm-column(2)
+    .make-xs-column(2);
   }
 }
 
@@ -50,7 +51,8 @@
 
     .summary-label {
       .fontCondNormal();
-      .filter-button();
+      .user-select(none);
+      cursor: default;
       color: #fff;
       text-transform: uppercase;
       display: inline-block;
