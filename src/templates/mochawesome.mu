@@ -53,6 +53,7 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="js/vendor.js"></script>
     <script src="js/mochawesome.js"></script>
   </body>
 </html>
