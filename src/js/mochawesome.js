@@ -8,12 +8,6 @@
     this.filterClasses = 'filter-passed filter-failed filter-pending';
     this.activeFilters = [];
 
-    this.filters = {
-      'summary-passes': 'passed',
-      'summary-failures': 'failed',
-      'summary-pending': 'pending'
-    };
-
     this.chartOpts = {
       percentageInnerCutout : 70,
       animationEasing: 'easeOutQuint',
@@ -32,7 +26,7 @@
     this.$body        = $('body');
     this.$details     = $('.details');
     this.$suites      = $('.suite');
-    this.$filterBtns  = $('.summary-filter');
+    this.$filterBtns  = $('[data-filter]');
     this.$suiteCharts = $('.suite-chart');
 
     self = this;
@@ -48,23 +42,20 @@
 
   Mochawesome.prototype._onFilterClick = function (e) {
     var $el = $(e.currentTarget),
-      $parent = $el.parent('.summary-col'),
-      filter = $parent[0].className.split(' ')[1];
+        filter = $el.data('filter'),
+        $btns = $('[data-filter=' + filter + ']'),
+        filterIndex = this.activeFilters.indexOf(filter),
+        filterIsActive = filterIndex !== -1;
 
-    if ($parent.hasClass('selected')) {
-      $parent.removeClass('selected');
-      this.activeFilters.splice(this.activeFilters.indexOf(filter), 1);
-    } else {
-      $parent.addClass('selected');
-      this.activeFilters.push(filter);
-    }
+    filterIsActive ? this.activeFilters.splice(filterIndex, 1) : this.activeFilters.push(filter);
+    $btns.toggleClass('active', !filterIsActive);
 
     this.updateFilteredTests();
   };
 
   Mochawesome.prototype._onWindowScroll = function () {
     var windowScrollTop = this.$window.scrollTop();
-    if (windowScrollTop > 62 && this.$navbar.hasClass('show-quick-summary')) {
+    if (windowScrollTop > 62 && this.$body.hasClass('show-quick-summary')) {
       return;
     }
     this.$body.toggleClass('show-quick-summary', windowScrollTop > 62);
@@ -72,7 +63,7 @@
 
   Mochawesome.prototype._createFilterClasses = function (prefix) {
     return this.activeFilters.map(function (activeFilter) {
-      return prefix + self.filters[activeFilter];
+      return prefix + activeFilter;
     });
   };
 
