@@ -15,10 +15,15 @@
         <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}" data-total-pending="{{totalPending}}" data-total-skipped="{{totalSkipped}}"></canvas>
         <span class="total">{{totalTests}}</span>
         <ul class="suite-chart-legend list-unstyled">
-          <li class="suite-chart-legend-item duration"><span class="glyphicon glyphicon-time"></span><span class="data">{{formatDuration duration}}</span></li>
-          <li class="suite-chart-legend-item passed"><span class="glyphicon glyphicon-ok"></span><span class="data">{{totalPasses}}</span> passed</li>
-          <li class="suite-chart-legend-item failed"><span class="glyphicon glyphicon-remove"></span><span class="data">{{totalFailures}}</span> failed</li>
-          <li class="suite-chart-legend-item pending"><span class="glyphicon glyphicon-pause"></span><span class="data">{{totalPending}}</span> pending</li>
+          <li class="suite-chart-legend-item duration">
+            <span class="data">{{formatDuration duration}}</span>
+          </li>
+          <li class="suite-chart-legend-item passed">
+            <span class="data">{{totalPasses}}</span> passed</li>
+          <li class="suite-chart-legend-item failed">
+            <span class="data">{{totalFailures}}</span> failed</li>
+          <li class="suite-chart-legend-item pending">
+            <span class="data">{{totalPending}}</span> pending</li>
         </ul>
       </div>
       <!-- Test Info -->
