@@ -19,6 +19,7 @@
     "bootstrap": "^3.3.2",
     "chart.js": "^1.0.1",
     "fiveby": "^1.0.0",
+    "font-awesome": "^4.3.0",
     "gulp": "^3.8.1",
     "gulp-concat": "^2.4.3",
     "gulp-declare": "^0.3.0",
