@@ -97,50 +97,63 @@
   .fontCondLight();
   font-size: 1.3em;
   color: @gray-light;
-  .suite-chart-legend-item {
-    .linkTransition();
-    padding: 0 5px;
-    margin-top: 1px;
-    &:first-child {
-      margin-top: 0;
-    }
-    .data {
-      .fontCondBold();
-      color: @gray-dark;
-    }
-    .glyphicon {
-      .fontLight();
-      font-size: 14px;
-      margin-right: 4px;
-      color: @gray-light;
-    }
-    &.passed .glyphicon {
+}
+
+.suite-chart-legend-item {
+  .linkTransition();
+  padding: 0 5px;
+  margin-top: 1px;
+  &:first-child {
+    margin-top: 0;
+  }
+  .data {
+    .fontCondBold();
+    color: @gray-dark;
+  }
+  &:before {
+    .glyphicon();
+    font-size: 14px;
+  }
+  &.passed {
+    .glyphicon-ok();
+    &:before {
       color: @brand-success;
     }
-    &.failed .glyphicon {
+  }
+  &.failed {
+    .glyphicon-remove();
+    &:before {
       color: @brand-danger;
     }
-    &.pending .glyphicon {
+  }
+  &.pending {
+    .glyphicon-pause();
+    &:before {
       color: #999;
     }
+  }
+  &.duration {
+    .glyphicon-time();
+    &:before {
+      color: @gray-light;
+    }
+  }
 
-    // Filter Styles
-    .filter-passed & {
-      &.passed {
-        .filterActive();
-      }
+  // Filter Styles
+  .filter-passed & {
+    &.passed {
+      .filterActive();
     }
-    .filter-failed & {
-      &.failed {
-        .filterActive();
-      }
+  }
+  .filter-failed & {
+    &.failed {
+      .filterActive();
     }
-    .filter-pending & {
-      &.pending {
-        .filterActive();
-      }
+  }
+  .filter-pending & {
+    &.pending {
+      .filterActive();
     }
-
   }
 }
 

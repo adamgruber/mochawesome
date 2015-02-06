@@ -6,35 +6,36 @@
 
   .test-heading {
     .clearfix();
+  }
 
-    .test-title {
-      .fontNormal();
-      font-size: 14px;
-      margin: 0;
-      float: left;
-      .glyphicon {
-        font-size: 12px;
-        margin-right: 2px;
-      }
+  .test-title {
+    .fontNormal();
+    font-size: 14px;
+    margin: 0;
+    float: left;
+    &:before {
+      .glyphicon();
+      font-size: 12px;
+      margin-right: 2px;
     }
+  }
 
-    .test-duration {
-      .fontCondBold();
-      float: left;
-      &:before {
-        content: "";
-        height: 10px;
-        display: inline-block;
-        border-left: 1px solid @gray-light;
-        margin: 0 6px;
-      }
-      //Speeds
-      &.slow {
-        color: @brand-danger;
-      }
-      &.medium {
-        color: @brand-warning;
-      }
+  .test-duration {
+    .fontCondBold();
+    float: left;
+    &:before {
+      content: "";
+      height: 10px;
+      display: inline-block;
+      border-left: 1px solid @gray-light;
+      margin: 0 6px;
+    }
+    //Speeds
+    &.slow {
+      color: @brand-danger;
+    }
+    &.medium {
+      color: @brand-warning;
     }
   }
 
@@ -81,34 +82,32 @@
 }
 
 // Test States
-
-.test.passed {
-  .test-title .glyphicon:before {
-    content: "\e013";
-    color: @brand-success;
+.test-title {
+  .test.passed & {
+    .glyphicon-ok();
+    &:before {
+      color: @brand-success;
+    }
   }
-}
-
-.test.failed {
-  .test-title .glyphicon:before {
-    content: "\e014";
-    color: @brand-danger;
+  .test.failed & {
+    .glyphicon-remove();
+    &:before {
+      color: @brand-danger;
+    }
   }
-}
-
-.test.pending {
-  color: #999;
-  .test-title .glyphicon:before {
-    content: "\e073";
+  .test.pending & {
     color: #999;
+    .glyphicon-pause();
+    &:before {
+      color: #999;
+    }
   }
-}
-
-.test.skipped {
-  color: #999;
-  .test-title .glyphicon:before {
-    content: "\2212";
-    color: lighten(#999, 15%);
+  .test.skipped & {
+    color: #999;
+    .glyphicon-minus();
+    &:before {
+      color: lighten(#999, 15%);
+    }
   }
 }
 

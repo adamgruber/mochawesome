@@ -2,7 +2,6 @@
   <!-- Test Heading -->
   <div class="test-heading">
     <h4 class="test-title">
-      <span class="glyphicon"></span>
       <span class="text-muted hidden"> it </span>
       {{title}}
     </h4>

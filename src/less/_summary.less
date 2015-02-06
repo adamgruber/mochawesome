@@ -4,16 +4,14 @@
 .summaryColor(@color, @color2: @color) {
   .summary-label {
     background: @color;
-  }
-  .summary-count {
-    color: @color2;
-  }
-  &.selected {
-    .summary-label {
+    &.active {
       background: #fff;
       color: @color;
       .box-shadow(inset 0px 1px 2px #ccc);
     }
+  }
+  .summary-count {
+    color: @color2;
   }
 }
 
@@ -21,14 +19,11 @@
   @color-dark: darken(@color, 11%);
   .summary-label {
     .linkTransition();
-    .user-select(none);
     cursor: pointer;
     &:hover {
       background: @color-dark;
     }
-  }
-  &.selected {
-    .summary-label:hover {
+    &.active:hover {
       background: #fff;
       color: @color-dark;
     }
@@ -45,8 +40,7 @@
     font-size: 3.4em;
   }
   .summary-col {
-    .make-xs-column(4);
-    .make-sm-column(2)
+    .make-xs-column(2);
   }
 }
 
@@ -57,6 +51,8 @@
 
     .summary-label {
       .fontCondNormal();
+      .user-select(none);
+      cursor: default;
       color: #fff;
       text-transform: uppercase;
       display: inline-block;

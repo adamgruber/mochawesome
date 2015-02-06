@@ -49,7 +49,7 @@ function onWatchFileChanged(file) {
     return gulp.start('styles');
   }
   if (ext === 'js') {
-    return gulp.start('scripts');
+    return gulp.start('clientScripts');
   }
   if (ext === 'mu') {
     return gulp.start('templates');
@@ -72,7 +72,15 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(config.buildCssDir));
 });
 
-gulp.task('scripts', ['lint'], function () {
+
+gulp.task('vendorScripts', function () {
+  return gulp.src(config.vendorJsFiles)
+    .pipe(concat('vendor.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(config.buildJsDir));
+});
+
+gulp.task('clientScripts', ['lint'], function () {
   return gulp.src(config.clientJsFiles)
     .pipe(concat('mochawesome.js'))
     .pipe(uglify())
@@ -153,6 +161,6 @@ gulp.task('build', ['lint'], function () {
 
 gulp.task('lint', ['svrlint', 'felint']);
 
-gulp.task('assemble', ['fonts', 'styles', 'scripts', 'templates']);
+gulp.task('assemble', ['fonts', 'styles', 'clientScripts', 'vendorScripts', 'templates']);
 
 gulp.task('default', ['test']);
