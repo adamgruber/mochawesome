@@ -58,7 +58,7 @@ function onWatchFileChanged(file) {
 
 // Build Tasks
 gulp.task('fonts', function () {
-  return gulp.src(path.join(config.bsFontsDir, '*'))
+  return gulp.src([path.join(config.bsFontsDir, '*'), path.join(config.faFontsDir, 'fontawesome-webfont.*')])
     .pipe(gulp.dest(config.buildFontsDir));
 });
 
@@ -66,9 +66,10 @@ gulp.task('styles', function () {
   return gulp.src(path.join(config.srcLessDir, '[^_]*.less'))
     .pipe(plumber({errorHandler: gutil.log}))
     .pipe(less({
-      paths: [config.srcLessDir, config.bsLessDir],
+      paths: [config.srcLessDir, config.bsLessDir, config.faLessDir],
       compress: true
     }))
+    .pipe(gulp.dest(config.reportCssDir))
     .pipe(gulp.dest(config.buildCssDir));
 });
 
