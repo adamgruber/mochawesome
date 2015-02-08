@@ -22,12 +22,6 @@
   }
 }
 
-.qsIcon(@icon) {
-  &:before {
-    content: @icon;
-  }
-}
-
 .quick-summary-cnt {
   display: none;
   float: right;
@@ -69,29 +63,29 @@
   }
   &.summary-suites {
     .qsColor(@gray-lighter);
-    .qsIcon(@ma-icon-suites);
+    .fontIcon(@ma-icon-suites);
     &:before {
       margin-right: 6px;
     }
   }
   &.summary-tests {
     .qsColor(@brand-info);
-    .qsIcon(@ma-icon-tests);
+    .fontIcon(@ma-icon-tests);
   }
   &.summary-passes {
     .qsColor(@brand-success);
     .qsHover(@brand-success);
-    .qsIcon(@ma-icon-passed);
+    .fontIcon(@ma-icon-passed);
   }
   &.summary-failures {
     .qsColor(@brand-danger);
     .qsHover(@brand-danger);
-    .qsIcon(@ma-icon-failed);
+    .fontIcon(@ma-icon-failed);
   }
   &.summary-pending {
     .qsColor(#999);
     .qsHover(#999);
-    .qsIcon(@ma-icon-pending);
+    .fontIcon(@ma-icon-pending);
     &:before {
       top: 2px;
       margin-right: 1px;
@@ -99,7 +93,7 @@
   }
   &.summary-duration {
     .qsColor(@gray-light);
-    .qsIcon(@ma-icon-duration);
+    .fontIcon(@ma-icon-duration);
     &:before {
       top: 0;
     }

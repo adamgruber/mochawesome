@@ -18,3 +18,10 @@
 .linkTransition(@prop: color){
   .transition(@prop .2s ease-out);
 }
+
+// Icons
+.fontIcon(@icon) {
+  &:before {
+    content: @icon;
+  }
+}

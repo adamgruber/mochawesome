@@ -115,29 +115,29 @@
     color: @gray-dark;
   }
   &:before {
-    .glyphicon();
+    .ma-icon();
     font-size: 14px;
   }
   &.passed {
-    .glyphicon-ok();
+    .fontIcon(@ma-icon-passed);
     &:before {
       color: @brand-success;
     }
   }
   &.failed {
-    .glyphicon-remove();
+    .fontIcon(@ma-icon-failed);
     &:before {
       color: @brand-danger;
     }
   }
   &.pending {
-    .glyphicon-pause();
+    .fontIcon(@ma-icon-pending);
     &:before {
       color: #999;
     }
   }
   &.duration {
-    .glyphicon-time();
+    .fontIcon(@ma-icon-duration);
     &:before {
       color: @gray-light;
     }
