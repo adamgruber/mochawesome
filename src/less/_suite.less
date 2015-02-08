@@ -67,6 +67,10 @@
   }
 }
 
+.details > .suite-wrap > .suite {
+  border: none;
+}
+
 // Suite Chart
 .suite-chart-wrap {
   position: relative;
@@ -194,6 +198,9 @@
 
 // Tablet 768 and up
 @media (min-width: @screen-sm-min) {
+  .details > .suite-wrap > .suite {
+    border: 1px solid @gray-border;
+  }
   .suite-data-wrap {
     display: table;
     width: 100%;
