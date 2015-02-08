@@ -39,9 +39,12 @@
 
 // Base Summary Styles / Layout
 .summary {
-  padding-top: (@navbarHeight + 8);
-  padding-bottom: 8px;
-  background: @gray-lighter;
+  position: fixed;
+  width: 100%;
+  top: @navbarHeight;
+  padding: 8px 0;
+  background: fade(@gray-lighter, 95%);
+  z-index: 1030;
   .summary-col {
     .make-xs-column(4);
     .make-sm-column(2);
@@ -117,6 +120,7 @@
 // Tablet 768 and up
 @media (min-width: @screen-sm-min) {
   .summary {
+    position: static;
     padding-top: (@navbarHeight + 4);
   }
   .summary .summary-col {

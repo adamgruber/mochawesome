@@ -1,10 +1,10 @@
-<ul class="status-list list-unstyled pull-right">
+<div class="row">
   {{#hasOther}}
-  <li class="status-item danger">{{other}} Failed Hook{{getPlural other}}</li>
+  <div class="status-item status-item-hooks danger">{{other}} Failed Hook{{getPlural other}}</div>
   {{/hasOther}}
   {{#hasSkipped}}
-  <li class="status-item danger">{{skipped}} Skipped Test{{getPlural skipped}}</li>
+  <div class="status-item status-item-skipped danger">{{skipped}} Skipped Test{{getPlural skipped}}</div>
   {{/hasSkipped}}
-  <li class="status-item">{{pendingPercent}}% Pending</li>
-  <li class="status-item {{passPercentClass}}">{{passPercent}}% Passing</li>
-</ul>
+  <div class="status-item status-item-pending-pct">{{pendingPercent}}% Pending</div>
+  <div class="status-item status-item-passing-pct {{passPercentClass}}">{{passPercent}}% Passing</div>
+</div>

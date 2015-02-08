@@ -1,3 +1,4 @@
+/* global window */
 /* global Chart */
 +function ($, Chart) {
   'use strict';
@@ -21,6 +22,12 @@
       ltGray: '#EEEEEE'
     };
 
+    this.breakpoints = {
+      sm: 768,
+      md: 992,
+      lg: 1200
+    };
+
     // Cache Elements
     this.$window      = $(window);
     this.$body        = $('body');
@@ -32,7 +39,9 @@
     this.$filterBtns  = $('[data-filter]');
     this.$suiteCharts = $('.suite-chart');
 
-    this.quickSummaryScrollOffset = this.$summary.outerHeight() - this.$navbar.outerHeight();
+    this._setMeasurements();
+
+    this.listeningToScroll = this.windowWidth >= this.breakpoints.sm;
 
     self = this;
 
@@ -41,8 +50,18 @@
 
   Mochawesome.prototype.initialize = function () {
     this.$filterBtns.on('click', self._onFilterClick.bind(self));
-    this.$window.on('scroll', self._onWindowScroll.bind(self));
+    if (this.windowWidth > this.breakpoints.sm) {
+      this.listenToScroll(true);
+    }
+    this.$window.on('resize', self._onWindowResize.bind(self));
     this.makeSuiteCharts();
+  };
+
+  Mochawesome.prototype._setMeasurements = function () {
+    this.windowWidth = this.$window.outerWidth();
+    this.windowScrollTop = this.$window.scrollTop();
+    this.quickSummaryScrollOffset = this.$summary.outerHeight() - this.$navbar.outerHeight();
+    this.scrolledPastQuickSummaryOffset = this.windowScrollTop > this.quickSummaryScrollOffset;
   };
 
   Mochawesome.prototype._onFilterClick = function (e) {
@@ -63,26 +82,37 @@
   };
 
   Mochawesome.prototype._onWindowScroll = function () {
-    var windowScrollTop = this.$window.scrollTop(),
-        pastQuickSummaryOffset = windowScrollTop > this.quickSummaryScrollOffset;
-    if (pastQuickSummaryOffset && this.$body.hasClass('show-quick-summary')) {
+    this._setMeasurements();
+    if (this.scrolledPastQuickSummaryOffset && this.$body.hasClass('show-quick-summary')) {
       return;
     }
-    this.$body.toggleClass('show-quick-summary', pastQuickSummaryOffset);
+    this.$body.toggleClass('show-quick-summary', this.scrolledPastQuickSummaryOffset);
+  };
+
+  Mochawesome.prototype._onWindowResize = function () {
+    this._setMeasurements();
+    if (this.windowWidth < this.breakpoints.sm && this.listeningToScroll) {
+      this.listenToScroll(false);
+    } else if (this.windowWidth >= this.breakpoints.sm && !this.listeningToScroll) {
+      this.listenToScroll(true);
+      this.$body.toggleClass('show-quick-summary', this.scrolledPastQuickSummaryOffset);
+    }
+  };
+
+  Mochawesome.prototype.listenToScroll = function (start) {
+    if (start) {
+      this.$window.on('scroll', self._onWindowScroll.bind(self));
+    } else {
+      this.$window.off('scroll');
+      this.$body.removeClass('show-quick-summary');
+    }
+    this.listeningToScroll = start;
   };
 
   Mochawesome.prototype._createFilterClasses = function (prefix) {
     return this.activeFilters.map(function (activeFilter) {
       return prefix + activeFilter;
     });
-  };
-
-  Mochawesome.prototype.showQuickSummary = function () {
-
-  };
-
-  Mochawesome.prototype.hideQuickSummary = function () {
-
   };
 
   Mochawesome.prototype.updateFilteredTests = function () {

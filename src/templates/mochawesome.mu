@@ -31,7 +31,7 @@
         {{/stats}}
       </div>
     </div>
-    <div class="statusbar">
+    <div class="statusbar{{#stats}}{{#hasOther}} has-failed-hooks{{/hasOther}}{{#hasSkipped}} has-skipped-tests{{/hasSkipped}}{{/stats}}">
       <div class="container">
         {{#stats}}
           {{> _statusbar}}

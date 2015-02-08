@@ -4,8 +4,7 @@
 .qsColor(@color) {
   color: @color;
   &.active {
-    background: #fff;
-    color: @color;
+    border-color: @color;
   }
 }
 
@@ -14,14 +13,23 @@
   @color-light: lighten(@color, 40%);
 
   &:hover {
-    color: #fff;
+    color: @color-dark;
+    border-color: @gray-light;
   }
   &.active:hover {
     color: @color-dark;
+    border-color: @color-dark;
+  }
+}
+
+.qsIcon(@icon) {
+  &:before {
+    content: @icon;
   }
 }
 
 .quick-summary-cnt {
+  display: none;
   float: right;
 }
 
@@ -33,13 +41,13 @@
 }
 
 .qs-item {
-  .fontCondBold();
+  .fontCondNormal();
   .user-select(none);
   cursor: default;
   font-size: 18px;
   padding: 0 8px;
   margin-left: 5px;
-  border-radius: 40px;
+  border-bottom: 1px solid transparent;
   float: left;
   &:first-child {
     margin-left: 0;
@@ -48,49 +56,53 @@
 
 // Filter Btns
 .qs-item[data-filter] {
-  .linkTransition();
+  .transition(border .2s ease-out);
 }
 
 // Icons / Colors
 .qs-item {
   &:before {
-    .glyphicon();
-    font-size: 16px;
+    .ma-icon();
+    top: 1px;
+    font-size: 15px;
     margin-right: 4px;
   }
   &.summary-suites {
-    .qsColor(@gray-light);
-    .glyphicon-folder-open();
+    .qsColor(@gray-lighter);
+    .qsIcon(@ma-icon-suites);
     &:before {
       margin-right: 6px;
     }
   }
   &.summary-tests {
     .qsColor(@brand-info);
-    .glyphicon-file();
+    .qsIcon(@ma-icon-tests);
   }
   &.summary-passes {
     .qsColor(@brand-success);
     .qsHover(@brand-success);
-    .glyphicon-ok();
+    .qsIcon(@ma-icon-passed);
   }
   &.summary-failures {
     .qsColor(@brand-danger);
     .qsHover(@brand-danger);
-    .glyphicon-remove();
+    .qsIcon(@ma-icon-failed);
   }
   &.summary-pending {
     .qsColor(#999);
     .qsHover(#999);
-    .glyphicon-pause();
+    .qsIcon(@ma-icon-pending);
     &:before {
+      top: 2px;
       margin-right: 1px;
     }
   }
   &.summary-duration {
-    padding-right: 0;
-    .qsColor(@gray-lighter);
-    .glyphicon-time();
+    .qsColor(@gray-light);
+    .qsIcon(@ma-icon-duration);
+    &:before {
+      top: 0;
+    }
   }
 }
 
@@ -106,5 +118,7 @@
 
 // Tablet 768 and up
 @media (min-width: @screen-sm-min) {
-  .quick-summary-cnt {}
+  .quick-summary-cnt {
+    display: block;
+  }
 }
