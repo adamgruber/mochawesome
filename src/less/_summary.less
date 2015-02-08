@@ -75,8 +75,8 @@
     font-size: 24px;
   }
   &:before {
-    .fa-icon();
-    font-size: 18px;
+    .ma-icon();
+    font-size: 20px;
     margin-right: 4px;
   }
 }
@@ -88,28 +88,28 @@
 
 // Colors / Icons
 .summary-duration {
-  .summaryIcon(@fa-var-clock-o);
+  .summaryIcon(@ma-icon-duration);
 }
 .summary-suites {
-  .summaryIcon(@fa-var-folder-open-o);
+  .summaryIcon(@ma-icon-suites);
   .summaryColor(@gray-dark);
 }
 .summary-tests {
-  .summaryIcon(@fa-var-file-code-o);
+  .summaryIcon(@ma-icon-tests);
   .summaryColor(@brand-info);
 }
 .summary-passes {
-  .summaryIcon(@fa-var-check);
+  .summaryIcon(@ma-icon-passed);
   .summaryColor(@brand-success);
   .summaryLink(@brand-success);
 }
 .summary-failures {
-  .summaryIcon(@fa-var-times);
+  .summaryIcon(@ma-icon-failed);
   .summaryColor(@brand-danger);
   .summaryLink(@brand-danger);
 }
 .summary-pending {
-  .summaryIcon(@fa-var-pause);
+  .summaryIcon(@ma-icon-pending);
   .summaryColor(#999);
   .summaryLink(#999);
 }

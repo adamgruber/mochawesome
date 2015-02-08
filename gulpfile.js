@@ -22,13 +22,19 @@ var watchFiles = [
   path.join(config.srcHbsDir, '*.mu')
 ];
 
+var fontPaths = [
+  path.join(config.bsFontsDir, '*'),
+  path.join(config.faFontsDir, 'fontawesome-webfont.*'),
+  path.join(config.srcFontsDir, '*')
+];
+
 var testPaths = {
   basic: ['./test/test.js'],
   fiveby: [
     './test/fiveby/*.js',
     './test/fiveby/**/*.js'
   ]
-}
+};
 
 var lintPaths =  {
   server: './.jshintrc',
@@ -58,7 +64,7 @@ function onWatchFileChanged(file) {
 
 // Build Tasks
 gulp.task('fonts', function () {
-  return gulp.src([path.join(config.bsFontsDir, '*'), path.join(config.faFontsDir, 'fontawesome-webfont.*')])
+  return gulp.src(fontPaths)
     .pipe(gulp.dest(config.buildFontsDir));
 });
 
