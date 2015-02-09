@@ -5,15 +5,16 @@
 }
 
 .filters-active {
-  .suite-data-wrap {
+  .suite-data-wrap,
+  .suite-chart-wrap {
     display: none;
   }
   &.filter-passed .suite.has-passed,
   &.filter-failed .suite.has-failed,
   &.filter-pending .suite.has-pending {
-    .suite-data-wrap {
-      display: table;
-      width: 100%;
+    .suite-data-wrap,
+    .suite-chart-wrap {
+      display: block;
     }
   }
 }
