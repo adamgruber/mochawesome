@@ -1,6 +1,6 @@
 mochawesome
 ===========
-[![npm](http://img.shields.io/badge/npm-1.0.0-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome) [![Build Status](https://travis-ci.org/adamgruber/mochawesome.svg?branch=master)](https://travis-ci.org/adamgruber/mochawesome)
+[![npm](http://img.shields.io/badge/npm-1.0.0-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome) [![Build Status](https://travis-ci.org/adamgruber/mochawesome.svg?branch=master)](https://travis-ci.org/adamgruber/mochawesome) [![Code Climate](https://codeclimate.com/github/adamgruber/mochawesome/badges/gpa.svg)](https://codeclimate.com/github/adamgruber/mochawesome)
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
