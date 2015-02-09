@@ -22,11 +22,11 @@
     }
   }
   // 4 Items
-  .status-item {
-    .make-xs-column(6);
-    .make-sm-column(3);
-    &:first-child {
-      .make-sm-column-offset(0);
+  &.has-failed-hooks.has-skipped-tests {
+    .status-item {
+      &:first-child {
+        .make-sm-column-offset(0);
+      }
     }
   }
 }
