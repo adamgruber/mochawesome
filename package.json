@@ -39,7 +39,7 @@
   "scripts": {
     "test": "gulp"
   },
-  "engine": "node >= 0.8.0",
+  "engine": "node >= 0.10.0",
   "keywords": [
     "mocha",
     "reporter",
