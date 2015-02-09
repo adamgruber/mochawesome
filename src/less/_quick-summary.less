@@ -4,8 +4,7 @@
 .qsColor(@color) {
   color: @color;
   &.active {
-    background: #fff;
-    color: @color;
+    border-color: @color;
   }
 }
 
@@ -14,14 +13,16 @@
   @color-light: lighten(@color, 40%);
 
   &:hover {
-    color: #fff;
+    border-color: @color;
   }
   &.active:hover {
     color: @color-dark;
+    border-color: @color-dark;
   }
 }
 
 .quick-summary-cnt {
+  display: none;
   float: right;
 }
 
@@ -29,68 +30,71 @@
   .clearfix();
   .opacity(0);
   .transition(opacity .2s ease-out);
-  margin: 11px 0 0 0;
+  margin: 11px -8px 0 0;
 }
 
 .qs-item {
-  .fontCondBold();
+  .fontCondNormal();
   .user-select(none);
   cursor: default;
   font-size: 18px;
-  padding: 0 8px;
-  margin-left: 5px;
-  border-radius: 40px;
+  margin: 0 8px;
+  border-bottom: 1px solid transparent;
   float: left;
-  &:first-child {
-    margin-left: 0;
-  }
 }
 
 // Filter Btns
 .qs-item[data-filter] {
-  .linkTransition();
+  .transition(border .2s ease-out);
 }
 
 // Icons / Colors
 .qs-item {
   &:before {
-    .glyphicon();
-    font-size: 16px;
+    .ma-icon();
+    top: 1px;
+    font-size: 15px;
     margin-right: 4px;
   }
   &.summary-suites {
-    .qsColor(@gray-light);
-    .glyphicon-folder-open();
+    .qsColor(@gray-lighter);
+    .fontIcon(@ma-icon-suites);
     &:before {
       margin-right: 6px;
     }
   }
   &.summary-tests {
-    .qsColor(@brand-info);
-    .glyphicon-file();
+    .qsColor(@gray-lighter);
+    .fontIcon(@ma-icon-tests);
   }
   &.summary-passes {
     .qsColor(@brand-success);
     .qsHover(@brand-success);
-    .glyphicon-ok();
+    .fontIcon(@ma-icon-passed);
   }
   &.summary-failures {
     .qsColor(@brand-danger);
     .qsHover(@brand-danger);
-    .glyphicon-remove();
+    .fontIcon(@ma-icon-failed);
   }
   &.summary-pending {
-    .qsColor(#999);
-    .qsHover(#999);
-    .glyphicon-pause();
+    .qsColor(@brand-info);
+    .qsHover(@brand-info);
+    .fontIcon(@ma-icon-pending);
     &:before {
+      top: 2px;
       margin-right: 1px;
     }
   }
   &.summary-duration {
-    padding-right: 0;
     .qsColor(@gray-lighter);
-    .glyphicon-time();
+    .fontIcon(@ma-icon-duration);
+    &:before {
+      top: 0;
+    }
+    span {
+      font-size: 14px;
+    }
   }
 }
 
@@ -105,6 +109,8 @@
 }
 
 // Tablet 768 and up
-// @media (min-width: @screen-sm-min) {
-//   .quick-summary-cnt {}
-// }
+@media (min-width: @screen-sm-min) {
+  .quick-summary-cnt {
+    display: block;
+  }
+}

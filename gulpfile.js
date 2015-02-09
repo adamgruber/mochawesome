@@ -12,8 +12,14 @@ var gulp        = require('gulp'),
     declare     = require('gulp-declare'),
     watch       = require('gulp-watch'),
     mocha       = require('gulp-spawn-mocha'),
-    options     = {reporter: 'mochawesome', timeout: 30000, slow: 1, 'no-exit': true},
     config      = require('./lib/config');
+
+var mochaOpts = {
+  reporter: 'mochawesome',
+  timeout: 30000,
+  slow: 1,
+  'no-exit': true
+};
 
 var watchFiles = [
   path.join(config.srcLessDir, '*.less'),
@@ -28,7 +34,7 @@ var testPaths = {
     './test/fiveby/*.js',
     './test/fiveby/**/*.js'
   ]
-}
+};
 
 var lintPaths =  {
   server: './.jshintrc',
@@ -38,7 +44,8 @@ var lintPaths =  {
     '!./lib/templates.js'
   ],
   felint: [
-    path.join(config.srcJsDir, '*.js')
+    path.join(config.srcJsDir, '*.js'),
+    path.join('!', config.srcJsDir, 'lodash.custom.js')
   ]
 };
 
@@ -58,7 +65,7 @@ function onWatchFileChanged(file) {
 
 // Build Tasks
 gulp.task('fonts', function () {
-  return gulp.src(path.join(config.bsFontsDir, '*'))
+  return gulp.src(path.join(config.srcFontsDir, '*'))
     .pipe(gulp.dest(config.buildFontsDir));
 });
 
@@ -66,9 +73,11 @@ gulp.task('styles', function () {
   return gulp.src(path.join(config.srcLessDir, '[^_]*.less'))
     .pipe(plumber({errorHandler: gutil.log}))
     .pipe(less({
-      paths: [config.srcLessDir, config.bsLessDir],
+      paths: [config.srcLessDir, config.bsLessDir, config.faLessDir],
       compress: true
     }))
+    .pipe(plumber({errorHandler: gutil.log}))
+    .pipe(gulp.dest(config.reportCssDir))
     .pipe(gulp.dest(config.buildCssDir));
 });
 
@@ -144,13 +153,13 @@ gulp.task('watch', function () {
 // Test Tasks
 gulp.task('fiveby', function () {
   return gulp.src(testPaths.fiveby)
-    .pipe(mocha(options))
+    .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
 
 gulp.task('test', function () {
   return gulp.src(testPaths.basic)
-    .pipe(mocha(options))
+    .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
 

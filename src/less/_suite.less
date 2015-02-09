@@ -1,9 +1,7 @@
 // SUITE
 
-.filterActive() {
-  background: @gray-lighter;
-  border-radius: 20px;
-  .box-shadow(inset 0px 1px 2px #ccc);
+.filterActive(@color) {
+  border-color: @color;
 }
 
 .filters-active {
@@ -38,7 +36,6 @@
   .clearfix();
   .make-row();
 }
-.suite-chart-wrap,
 .suite-test-wrap {
   .make-xs-column(12);
 }
@@ -48,13 +45,14 @@
 
 // Suite Base
 .suite {
-  border: 1px solid #ccc;
+  position: relative;
+  border: 1px solid @gray-border;
   padding: 8px 0 10px 0;
   border-radius: 4px;
   margin-bottom: 10px;
 
   .suite-title {
-    padding: 0 10px;
+    padding: 0 70px 0 10px;
     margin: 0;
     .fontSlabNormal();
   }
@@ -67,73 +65,68 @@
   }
 }
 
+.details > .suite-wrap > .suite {
+  border: none;
+}
+
 // Suite Chart
 .suite-chart-wrap {
-  position: relative;
-  margin-bottom: 10px;
-  
-  .suite-chart,
-  .suite-chart-legend {
-    float: left;
-  }
-  
-  .total {
-    position: absolute;
-    left: 15px;
-    width: 100px;
-    text-align: center;
-    font-size: 3em;
-    line-height: 95px;
-    color: @gray-light;
-  }
-  
-  .suite-chart {
-    margin-right: 5px;
-  }
+  .square(50px);
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 // Suite Chart Legend
-.suite-chart-legend {
-  .fontCondLight();
-  font-size: 1.3em;
-  color: @gray-light;
+.suite-summary {
+  .fontCondNormal();
+  .clearfix();
+  font-size: 18px;
+  padding: 0 15px;
 }
 
-.suite-chart-legend-item {
-  .linkTransition();
-  padding: 0 5px;
-  margin-top: 1px;
+.suite-summary-item {
+  .transition(border .2s ease-out);
+  float: left;
+  margin: 0 10px;
+  color: @gray-dark;
+  border-bottom: 1px solid transparent;
   &:first-child {
-    margin-top: 0;
-  }
-  .data {
-    .fontCondBold();
-    color: @gray-dark;
+    margin-left: 0;
   }
   &:before {
-    .glyphicon();
-    font-size: 14px;
+    .ma-icon();
+    font-size: 15px;
+    top: 1px;
+    margin-right: 2px;
+  }
+  &.tests {
+    .fontIcon(@ma-icon-tests);
   }
   &.passed {
-    .glyphicon-ok();
+    .fontIcon(@ma-icon-passed);
+    color: @brand-success;
     &:before {
       color: @brand-success;
     }
   }
   &.failed {
-    .glyphicon-remove();
+    .fontIcon(@ma-icon-failed);
+    color: @brand-danger;
     &:before {
       color: @brand-danger;
     }
   }
   &.pending {
-    .glyphicon-pause();
+    .fontIcon(@ma-icon-pending);
+    color: @brand-info;
     &:before {
-      color: #999;
+      color: @brand-info;
+      top: 2px;
     }
   }
   &.duration {
-    .glyphicon-time();
+    .fontIcon(@ma-icon-duration);
     &:before {
       color: @gray-light;
     }
@@ -142,17 +135,17 @@
   // Filter Styles
   .filter-passed & {
     &.passed {
-      .filterActive();
+      .filterActive(@brand-success);
     }
   }
   .filter-failed & {
     &.failed {
-      .filterActive();
+      .filterActive(@brand-danger);
     }
   }
   .filter-pending & {
     &.pending {
-      .filterActive();
+      .filterActive(@brand-info);
     }
   }
 }
@@ -160,8 +153,9 @@
 // Suite Test
 .suite-test-wrap {
   .suite-test-header {
-    padding: 6px 8px;
+    padding: 4px 8px 6px 8px;
     cursor: pointer;
+    border-top: 1px solid @list-group-border;
     border-bottom: 1px solid @list-group-border;
     .suite-test-header-title {
       .fontSlabNormal();
@@ -169,22 +163,24 @@
       color: #ccc;
       margin: 0;
       .linkTransition();
-      .glyphicon {
-        .linkTransition();
-        font-size: 14px;
-        position: relative;
-        top: 1px;
-        right: 2px;
+
+      &:after {
+        .transition(transform .2s ease-out);
+        .ma-icon();
+        content: @ma-icon-right-chevron;
+        position: absolute;
+        font-size: 20px;
+        right: 15px;
         .rotate(90deg);
       }
     }
     &.collapsed {
-      .suite-test-header-title .glyphicon {
+      .suite-test-header-title:after {
         .rotate(0);
       }
     }
     &:hover .suite-test-header-title {
-      color: @link-hover-color;
+      color: @gray-dark;
     }
   }
   .test-list {
@@ -194,21 +190,10 @@
 
 // Tablet 768 and up
 @media (min-width: @screen-sm-min) {
-  .suite-data-wrap {
-    display: table;
-    width: 100%;
-  }
-  .suite-chart-wrap,
-  .suite-test-wrap {
-    display: table-cell;
-    vertical-align: top;
-    float: none;
+  .details > .suite-wrap > .suite {
+    border: 1px solid @gray-border;
   }
   .suite-chart-wrap {
-    width: 252px;
-    min-width: 252px;
-  }
-  .suite-test-wrap {
-    width: 100%;
+    .square(65px);
   }
 }
