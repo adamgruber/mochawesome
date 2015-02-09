@@ -1,0 +1,127 @@
+// TEST
+.test {
+  padding: 6px 8px 8px 6px;
+  border-left: none;
+  border-right: none;
+
+  .test-heading {
+    .clearfix();
+  }
+
+  .test-title {
+    .fontNormal();
+    font-size: 14px;
+    margin: 0;
+    float: left;
+    &:before {
+      .ma-icon();
+      font-size: 12px;
+      top: 2px;
+    }
+  }
+
+  .test-duration {
+    .fontCondBold();
+    float: left;
+    &:before {
+      content: "";
+      height: 10px;
+      display: inline-block;
+      border-left: 1px solid @gray-light;
+      margin: 0 6px;
+    }
+    //Speeds
+    &.slow {
+      color: @brand-danger;
+    }
+    &.medium {
+      color: @brand-warning;
+    }
+  }
+
+  .toggle-btn {
+    .linkTransition();
+    border: none;
+    padding: 0;
+    outline: none;
+    text-decoration: none;
+    &:before {
+      content: "Hide ";
+    }
+    &.collapsed:before {
+      content: "Show ";
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .toggle-code {
+    float: left;
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  .toggle-stack {
+    float: right;
+  }
+
+  .test-error-message {
+    .clearfix();
+    font-size: 12px;
+    margin: 4px 0 0 17px;
+    color: @brand-danger;
+  }
+
+  pre {
+    margin: 10px 0 0 0;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+}
+
+// Test States
+.test-title {
+  .test.passed & {
+    .fontIcon(@ma-icon-passed);
+    &:before {
+      color: @brand-success;
+    }
+  }
+  .test.failed & {
+    .fontIcon(@ma-icon-failed);
+    &:before {
+      color: @brand-danger;
+    }
+  }
+  .test.pending & {
+    .fontIcon(@ma-icon-pending);
+    &:before {
+      color: @brand-info;
+    }
+  }
+  .test.skipped & {
+    color: #999;
+    .fontIcon(@ma-icon-skipped);
+    &:before {
+      color: lighten(#999, 15%);
+    }
+  }
+}
+
+// Filter Styles
+.filters-active {
+  .test {
+    display: none;
+  }
+  &.filter-passed .test.passed {
+    display: block;
+  }
+  &.filter-failed .test.failed {
+    display: block;
+  }
+  &.filter-pending .test.pending {
+    display: block;
+  }  
+}

@@ -1,0 +1,37 @@
+// Footer
+
+// Sticky footer styles
+@footerHeight: 60px;
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: @footerHeight;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: @footerHeight;
+  background-color: @gray-dark;
+  color: @gray-light;
+  text-align: center;
+
+  p {
+    margin: 10px 0;
+  }
+
+  a {
+    .linkTransition();
+    color: @gray-lighter;
+    &:hover {
+      color: #fff;
+    }
+  }
+}

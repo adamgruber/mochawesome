@@ -1,0 +1,16 @@
+// MAIN CONTAINER
+.details {
+  padding-top: (@navbarHeight + @summaryHeightStacked + @statusbarHeightStacked);
+  padding-bottom: 20px;
+}
+
+.show-quick-summary .details {
+  padding-top: 43px; // height of full statusbar plus base padding (33 + 10)
+}
+
+// Tablet 768 and up
+@media (min-width: @screen-sm-min) {
+  .details {
+    padding-top: 10px;
+  }
+}

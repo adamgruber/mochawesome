@@ -1,0 +1,40 @@
+// NAVBAR
+.navbar {
+  min-height: @navbarHeight;
+  height: @navbarHeight;
+  margin-bottom: 0;
+  border: none;
+  &.navbar-inverse {
+    background: fade(@navbar-inverse-bg, 95%);
+  }
+}
+.report-info-cnt {
+  float: left;
+}
+.report-title {
+  .fontSlabNormal();
+  color: #fff;
+  font-size: 16px;
+  margin: 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.report-date {
+  .fontCondNormal();
+  font-size: 13px;
+  text-transform: uppercase;
+  color: lighten(@gray-base, 73.5%); //#bbb;
+  margin: 5px 0 0 0;
+}
+
+// Tablet 768 and up
+@media (min-width: @screen-sm-min) {
+  .report-title {
+    font-size: 1.3em;
+  }
+  .report-date {
+    font-size: 14px;
+    margin: 0;
+  }
+}
