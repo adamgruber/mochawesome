@@ -1,21 +1,27 @@
-mochawesome [![npm](http://img.shields.io/badge/npm-0.3.3-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome)
+mochawesome [![npm](http://img.shields.io/badge/npm-1.0.0-green.svg?style=flat-square)](http://registry.npm.wsjfdev.dowjones.net/mochawesome)
 ===========
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##Changes as of 0.3.0
-- Added ability to filter tests by type
-- No longer compiles files at runtime
+##Changes as of 1.0.0
+- Redesigned report
+- Mobile friendly
+- Complete refactor of client-side script
+- Custom builds of vendor scripts
+- Custom font-icon set
+- All fonts are now local to the report
 
 ##Features
 - At-a-glance stats including pass percentage
 - Beautiful charts
 - Support for nested `describe`s
 - Supports pending tests
+- Filter view by test type
 - Review test code inline
 - Stack trace for failed tests
 - Responsive
 - Saves JSON output for further processing
+- Offline viewing
 
 ##Browser Support
 Tested to work in Chrome. *Should* work in any modern web browser including IE9+.

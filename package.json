@@ -1,8 +1,8 @@
 {
   "name": "mochawesome",
   "description": "A Gorgeous HTML/CSS Mocha Reporter",
-  "author": "Adam Gruber <adam.gruber@dowjones.com>",
-  "version": "0.3.4",
+  "author": "Adam Gruber <talknmime@gmail.com>",
+  "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
     "async": "^0.9.0",
@@ -37,7 +37,7 @@
     "should": "^3.3.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "gulp"
   },
   "engine": "node >= 0.8.0",
   "keywords": [
@@ -47,7 +47,7 @@
     "handlebars"
   ],
   "repository": {
-    "git": "https://github.dowjones.net/grubera/mochawesome"
+    "git": "https://github.com/adamgruber/mochawesome"
   },
   "license": "ISC"
 }
