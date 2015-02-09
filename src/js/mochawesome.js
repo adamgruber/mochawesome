@@ -10,16 +10,20 @@
     this.activeFilters = [];
 
     this.chartOpts = {
-      percentageInnerCutout : 70,
+      percentageInnerCutout : 60,
+      segmentShowStroke: true,
+      segmentStrokeWidth: 2,
       animationEasing: 'easeOutQuint',
-      showTooltips: false
+      showTooltips: false,
+      responsive: true
     };
 
     this.chartColors = {
       green:  '#5cb85c',
       red:    '#d9534f',
       gray:   '#999999',
-      ltGray: '#EEEEEE'
+      ltGray: '#CCCCCC',
+      ltBlue: '#5bc0de'
     };
 
     this.breakpoints = {
@@ -167,7 +171,7 @@
           },
           {
             value: data.totalPending*10,
-            color: this.chartColors.gray,
+            color: this.chartColors.ltBlue,
             highlight: this.chartColors.gray,
             label: 'Pending'
           },

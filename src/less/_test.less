@@ -14,9 +14,9 @@
     margin: 0;
     float: left;
     &:before {
-      .glyphicon();
+      .ma-icon();
       font-size: 12px;
-      margin-right: 2px;
+      top: 2px;
     }
   }
 
@@ -84,27 +84,26 @@
 // Test States
 .test-title {
   .test.passed & {
-    .glyphicon-ok();
+    .fontIcon(@ma-icon-passed);
     &:before {
       color: @brand-success;
     }
   }
   .test.failed & {
-    .glyphicon-remove();
+    .fontIcon(@ma-icon-failed);
     &:before {
       color: @brand-danger;
     }
   }
   .test.pending & {
-    color: #999;
-    .glyphicon-pause();
+    .fontIcon(@ma-icon-pending);
     &:before {
-      color: #999;
+      color: @brand-info;
     }
   }
   .test.skipped & {
     color: #999;
-    .glyphicon-minus();
+    .fontIcon(@ma-icon-skipped);
     &:before {
       color: lighten(#999, 15%);
     }

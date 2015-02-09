@@ -61,7 +61,7 @@
 
 .summary-label {
   .fontCondLight();
-  color: @gray-dark;
+  color: @gray;
   text-transform: uppercase;
   display: none;
   margin: 0;
@@ -99,7 +99,7 @@
 }
 .summary-tests {
   .summaryIcon(@ma-icon-tests);
-  .summaryColor(@brand-info);
+  .summaryColor(@gray-dark);
 }
 .summary-passes {
   .summaryIcon(@ma-icon-passed);
@@ -113,8 +113,11 @@
 }
 .summary-pending {
   .summaryIcon(@ma-icon-pending);
-  .summaryColor(#999);
-  .summaryLink(#999);
+  .summaryColor(@brand-info);
+  .summaryLink(@brand-info);
+  &:before {
+    top: 1px;
+  }
 }
 
 // Tablet 768 and up
