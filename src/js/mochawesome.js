@@ -1,6 +1,7 @@
 /* global window */
 /* global Chart */
-+function ($, Chart) {
+/* global _ */
++function ($, Chart, _) {
   'use strict';
 
   var self;
@@ -57,7 +58,7 @@
     if (this.windowWidth > this.breakpoints.sm) {
       this.listenToScroll(true);
     }
-    this.$window.on('resize', self._onWindowResize.bind(self));
+    this.$window.on('resize', _.debounce(self._onWindowResize.bind(self), 200));
     this.makeSuiteCharts();
   };
 
@@ -105,7 +106,7 @@
 
   Mochawesome.prototype.listenToScroll = function (start) {
     if (start) {
-      this.$window.on('scroll', self._onWindowScroll.bind(self));
+      this.$window.on('scroll', _.throttle(self._onWindowScroll.bind(self), 200));
     } else {
       this.$window.off('scroll');
       this.$body.removeClass('show-quick-summary');
@@ -188,4 +189,4 @@
   
   new Mochawesome();
   
-}(jQuery, Chart);
+}(jQuery, Chart, _);
