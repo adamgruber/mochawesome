@@ -13,6 +13,11 @@ function getDurationObj(durationInMilliseconds) {
   };
 }
 
+Handlebars.registerHelper('isBlank', function (context, options) {
+  'use strict';
+  return context === '' ? options.fn(this) : options.inverse(this);
+});
+
 Handlebars.registerHelper('getPlural', function (context) {
   'use strict';
   return context === 1 ? '' : 's';

@@ -6,8 +6,8 @@
 {{^rootEmpty}}
 <section class="suite-wrap">
   <div id="{{uuid}}" class="suite{{#root}} root-suite{{/root}}{{#hasSuites}} has-suites{{/hasSuites}}{{#hasTests}} has-tests{{/hasTests}}{{#hasPasses}} has-passed{{/hasPasses}}{{#hasFailures}} has-failed{{/hasFailures}}{{#hasPending}} has-pending{{/hasPending}}{{#hasSkipped}} has-skipped{{/hasSkipped}}">
-    <h3 class="suite-title">{{title}}</h3>
-    <h5 class="suite-filename">{{file}}</h5>
+    <h3 class="suite-title">{{#isBlank title}}&nbsp;{{else}}{{title}}{{/isBlank}}</h3>
+    <h5 class="suite-filename">{{#isBlank file}}&nbsp;{{else}}{{file}}{{/isBlank}}</h5>
     {{#hasTests}} 
     <!-- Suite Chart -->
     <div class="suite-chart-wrap">
