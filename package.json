@@ -1,8 +1,23 @@
 {
   "name": "mochawesome",
-  "description": "A Gorgeous HTML/CSS Mocha Reporter",
-  "author": "Adam Gruber <talknmime@gmail.com>",
   "version": "1.0.0",
+  "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "author": "Adam Gruber",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adamgruber/mochawesome"
+  },
+  "keywords": [
+    "mocha",
+    "reporter",
+    "json",
+    "handlebars"
+  ],
+  "engine": "node >= 0.10.0",
   "main": "index.js",
   "dependencies": {
     "async": "^0.9.0",
@@ -35,19 +50,5 @@
     "jshint-stylish": "^1.0.0",
     "merge-stream": "^0.1.7",
     "should": "^3.3.2"
-  },
-  "scripts": {
-    "test": "gulp"
-  },
-  "engine": "node >= 0.10.0",
-  "keywords": [
-    "mocha",
-    "reporter",
-    "json",
-    "handlebars"
-  ],
-  "repository": {
-    "git": "https://github.com/adamgruber/mochawesome"
-  },
-  "license": "ISC"
+  }
 }
