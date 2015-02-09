@@ -9,27 +9,23 @@
     <h3 class="suite-title">{{title}}</h3>
     <h5 class="suite-filename">{{file}}</h5>
     {{#hasTests}} 
+    <!-- Suite Chart -->
+    <div class="suite-chart-wrap">
+      <canvas id="{{uuid}}" class="suite-chart" width="50" height="50" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}" data-total-pending="{{totalPending}}" data-total-skipped="{{totalSkipped}}"></canvas>
+    </div>
     <div class="suite-data-wrap">
-      <!-- Suite Chart -->
-      <div class="suite-chart-wrap">
-        <canvas id="{{uuid}}" class="suite-chart" width="100" height="100" data-total-passes="{{totalPasses}}" data-total-failures="{{totalFailures}}" data-total-pending="{{totalPending}}" data-total-skipped="{{totalSkipped}}"></canvas>
-        <span class="total">{{totalTests}}</span>
-        <ul class="suite-chart-legend list-unstyled">
-          <li class="suite-chart-legend-item duration">
-            <span class="data">{{formatDuration duration}}</span>
-          </li>
-          <li class="suite-chart-legend-item passed">
-            <span class="data">{{totalPasses}}</span> passed</li>
-          <li class="suite-chart-legend-item failed">
-            <span class="data">{{totalFailures}}</span> failed</li>
-          <li class="suite-chart-legend-item pending">
-            <span class="data">{{totalPending}}</span> pending</li>
-        </ul>
-      </div>
+      <!-- Suite Summary -->
+      <ul class="suite-summary list-unstyled">
+        <li class="suite-summary-item duration">{{formatDuration duration}}</li>
+        <li class="suite-summary-item tests">{{totalTests}}</li>
+        <li class="suite-summary-item passed">{{totalPasses}}</li>
+        <li class="suite-summary-item failed">{{totalFailures}}</li>
+        <li class="suite-summary-item pending">{{totalPending}}</li>
+      </ul>
       <!-- Test Info -->
       <div class="suite-test-wrap">
         <div class="suite-test-header" data-toggle="collapse" data-target="#{{uuid}}-test-list">
-          <h4 class="suite-test-header-title">Tests<span class="pull-right glyphicon glyphicon-chevron-right"></span></h4>
+          <h4 class="suite-test-header-title">Tests</h4>
         </div>
         <div id="{{uuid}}-test-list" class="list-group test-list collapse in">
           {{#tests}}
