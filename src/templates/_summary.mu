@@ -1,6 +1,6 @@
 <div class="row">
   <div class="summary-col summary-duration">
-    <h1 class="summary-count">{{formatSummaryDuration duration}} <span>{{getSummaryDurationUnits duration}}</span></h1>
+    <h1 class="summary-count">{{formatSummaryDuration duration}}<span>{{getSummaryDurationUnits duration}}</span></h1>
     <h4 class="summary-label">{{getSummaryDurationUnits duration}}</h4>
   </div>
   <div class="summary-col summary-suites" title="Suites">

@@ -41,11 +41,11 @@ Handlebars.registerHelper('getSummaryDurationUnits', function (context) {
       if (dur.sec < 1) {
         return 'MS';
       }
-      return 'SEC';
+      return 'S';
     }
-    return 'MIN';
+    return 'M';
   }
-  return 'HRS';
+  return 'H';
 });
 
 Handlebars.registerHelper('formatDuration', function (context) {
