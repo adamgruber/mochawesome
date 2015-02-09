@@ -13,8 +13,7 @@
   @color-light: lighten(@color, 40%);
 
   &:hover {
-    color: @color-dark;
-    border-color: @gray-light;
+    border-color: @color;
   }
   &.active:hover {
     color: @color-dark;
@@ -31,7 +30,7 @@
   .clearfix();
   .opacity(0);
   .transition(opacity .2s ease-out);
-  margin: 11px 0 0 0;
+  margin: 11px -8px 0 0;
 }
 
 .qs-item {
@@ -39,13 +38,9 @@
   .user-select(none);
   cursor: default;
   font-size: 18px;
-  padding: 0 8px;
-  margin-left: 5px;
+  margin: 0 8px;
   border-bottom: 1px solid transparent;
   float: left;
-  &:first-child {
-    margin-left: 0;
-  }
 }
 
 // Filter Btns
@@ -69,7 +64,7 @@
     }
   }
   &.summary-tests {
-    .qsColor(@brand-info);
+    .qsColor(@gray-lighter);
     .fontIcon(@ma-icon-tests);
   }
   &.summary-passes {
@@ -83,8 +78,8 @@
     .fontIcon(@ma-icon-failed);
   }
   &.summary-pending {
-    .qsColor(#999);
-    .qsHover(#999);
+    .qsColor(@brand-info);
+    .qsHover(@brand-info);
     .fontIcon(@ma-icon-pending);
     &:before {
       top: 2px;
@@ -92,7 +87,7 @@
     }
   }
   &.summary-duration {
-    .qsColor(@gray-light);
+    .qsColor(@gray-lighter);
     .fontIcon(@ma-icon-duration);
     &:before {
       top: 0;
