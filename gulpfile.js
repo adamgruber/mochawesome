@@ -15,7 +15,7 @@ var gulp        = require('gulp'),
     config      = require('./lib/config');
 
 var mochaOpts = {
-  reporter: 'mochawesome',
+  reporter: path.join(__dirname, 'lib', 'mochawesome'),
   timeout: 30000,
   slow: 1,
   'no-exit': true
