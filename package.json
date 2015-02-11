@@ -1,6 +1,6 @@
 {
   "name": "mochawesome",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
     "test": "gulp build"
