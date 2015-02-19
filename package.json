@@ -1,6 +1,6 @@
 {
   "name": "mochawesome",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
     "test": "gulp build"
@@ -18,7 +18,7 @@
     "handlebars"
   ],
   "engine": "node >= 0.10.0",
-  "main": "index.js",
+  "main": "mochawesome.js",
   "dependencies": {
     "async": "^0.9.0",
     "handlebars": "^2.0.0",
