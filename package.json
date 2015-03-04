@@ -21,6 +21,7 @@
   "main": "mochawesome.js",
   "dependencies": {
     "async": "^0.9.0",
+    "chalk": "^1.0.0",
     "handlebars": "^2.0.0",
     "highlight.js": "^8.4.0",
     "json-stringify-safe": "^5.0.0",
