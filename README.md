@@ -87,7 +87,7 @@ The two main files to be aware of are:
 ##Options
 Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`. You can change both the location where reports are saved and the filename of the report. *Setting a custom filename will change both the report html and json files.*
 
-**Environment variables will take precedence over passed in options.**
+**Options passed in will take precedence over environment variables.**
 
 
 ####Environment variables
