@@ -12,7 +12,7 @@ var gulp        = require('gulp'),
     declare     = require('gulp-declare'),
     watch       = require('gulp-watch'),
     mocha       = require('gulp-spawn-mocha'),
-    config      = require('./lib/config');
+    config      = require('./lib/config')();
 
 var mochaOpts = {
   reporter: path.join(__dirname, 'lib', 'mochawesome'),
@@ -77,7 +77,6 @@ gulp.task('styles', function () {
       compress: true
     }))
     .pipe(plumber({errorHandler: gutil.log}))
-    .pipe(gulp.dest(config.reportCssDir))
     .pipe(gulp.dest(config.buildCssDir));
 });
 

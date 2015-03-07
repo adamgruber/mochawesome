@@ -4,13 +4,8 @@ mochawesome
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##Changes as of 1.0.0
-- Redesigned report
-- Mobile friendly
-- Complete refactor of client-side script
-- Custom builds of vendor scripts
-- Custom font-icon set
-- All fonts are now local to the report
+##New in 1.1.0
+- [Options](#options) support: change the location and/or filename for saved reports
 
 ##Features
 - At-a-glance stats including pass percentage
@@ -20,7 +15,7 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 - Filter view by test type
 - Review test code inline
 - Stack trace for failed tests
-- Responsive
+- Responsive and mobile-friendly
 - Saves JSON output for further processing
 - Offline viewing
 
@@ -53,6 +48,69 @@ Mochawesome generates a self-contained report that can be viewed offline.
       reporter: 'mochawesome'
   });
   ```
+
+##Output
+Mochawesome generates the following inside your project directory:
+```
+mochawesome-reports/
+├── css
+│   └── mochawesome.css
+├── fonts
+│   ├── Roboto+Condensed_300_normal.ttf
+│   ├── Roboto+Condensed_300_normal.woff
+│   ├── Roboto+Condensed_400_normal.svg
+│   ├── Roboto+Condensed_400_normal.ttf
+│   ├── Roboto+Condensed_400_normal.woff
+│   ├── Roboto+Condensed_700_normal.ttf
+│   ├── Roboto+Condensed_700_normal.woff
+│   ├── Roboto+Slab_400_normal.svg
+│   ├── Roboto+Slab_400_normal.ttf
+│   ├── Roboto+Slab_400_normal.woff
+│   ├── mochawesome.eot
+│   ├── mochawesome.svg
+│   ├── mochawesome.ttf
+│   └── mochawesome.woff
+├── js
+│   ├── mochawesome.js
+│   └── vendor.js
+├── mochawesome.html
+└── mochawesome.json
+```
+
+The two main files to be aware of are:
+
+**mochawesome.html** - The rendered report file
+
+**mochawesome.json** - The raw json output used to render the report
+
+
+##Options
+Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`. You can change both the location where reports are saved and the filename of the report. *Setting a custom filename will change both the report html and json files.*
+
+**Options passed in will take precedence over environment variables.**
+
+
+####Environment variables
+```bash
+$ export MOCHAWESOME_REPORTDIR=customReportDir
+$ export MOCHAWESOME_REPORTNAME=customReportName
+```
+
+####Mocha options
+```bash
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName
+```
+
+```js
+var mocha = new Mocha({
+    reporter: 'mochawesome',
+    reporterOptions: {
+      reportDir: 'customReportDir',
+      reportName: 'customReportName'
+    }
+});
+  ```
+
 
 ##Development
 If you wish to make changes to the reporter you will need to clone the repo and build locally. Building requires you to have [gulp](https://github.com/gulpjs/gulp) installed.
