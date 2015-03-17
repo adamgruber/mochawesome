@@ -10,6 +10,7 @@
 .summaryLink(@color) {
   @color-dark: darken(@color, 11%);
   .summary-label,
+  .summary-label:after,
   .summary-count {
     .linkTransition();
 
@@ -141,5 +142,13 @@
   }
   .summary-label {
     display: inline-block;
+    [data-filter] & {
+      .fontIcon(@ma-icon-filter; after);
+      &:after {
+        .ma-icon();
+        color: #ccc;
+        top: 2px;
+      }
+    }
   }
 }
