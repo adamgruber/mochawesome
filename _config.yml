@@ -1,7 +1,8 @@
 # Site settings
 title: Mochawesome
 email: your-email@domain.com
-url: https://example.github.io
+url: https://adamgruber.github.io/mochawesome
+baseurl: /mochawesome
 description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
 
 # Color settings (hex-codes without the leading hash-tag)
