@@ -36,10 +36,7 @@ Mochawesome generates a self-contained report that can be viewed offline.
 
 2. Tell mocha to use the Mochawesome reporter:
 
-  `mocha testfile.js --reporter mochawesome --no-exit`
-
-  *Note the `--no-exit` option. This must be set or mocha could exit the process before the report has been fully generated*
-
+  `mocha testfile.js --reporter mochawesome`
 
 3. If using mocha programatically:
 
