@@ -1,0 +1,13 @@
+{
+  "implicitWait": 5000,
+  "hubUrl": null,
+  "browsers": {
+    "chrome": {
+      "version": "40.0.2214.94",
+      "chromeOptions": {
+          "args": ["--disable-extensions"]
+        }
+    }
+  },
+  "disableBrowsers": false
+}
