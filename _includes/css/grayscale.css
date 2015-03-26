@@ -36,12 +36,12 @@ p {
     line-height: 1.5;
 }
 
-ul {
+ul.features-list {
   font-size: 18px;
   margin-top: -20px;
 }
 
-li {
+ul.features-list li {
   margin-bottom: 8px;
 }
 
