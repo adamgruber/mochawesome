@@ -1,12 +1,50 @@
-    <!-- Download Section -->
-    <section id="usage" class="content-section text-center">
-        <div class="usage-section">
-            <div class="container">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <h2>Using Mochawesome</h2>
-                    <p>You can download Grayscale for free on the preview page at Start Bootstrap.</p>
-                    <a href="http://startbootstrap.com/template-overviews/grayscale/" class="btn btn-default btn-lg">Visit Download Page</a>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Download Section -->
+<section id="usage" class="container content-section stext-center">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1 text-center">
+      <h2>Awesome! How do I use it?</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <p>Using Mochawesome is easy and it only takes a few steps to get up and running.</p>
+      
+      <h4 class="">1. Add Mochawesome to your project</h4>
+      <pre class="code"><span>$</span> npm install --save-dev mochawesome</pre>
+      
+      <h4>2. Tell mocha to use the Mochawesome reporter</h4>
+      <pre class="code"><span>$</span> mocha testfile.js --reporter mochawesome</pre>
+
+      <h4>3. If using mocha programatically:</h4>
+      <pre class="code">var mocha = new Mocha({reporter: 'mochawesome'})</pre>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <h3>Options</h3>
+      <p>Mochawesome supports options via environment variables or passed in to mocha via mocha's <code>--reporter-options</code> flag. You can change both the location where reports are saved and the filename of the report. <em>Setting a custom filename will change both the report html and json files.</em></p>
+      <p><strong>Options passed in will take precedence over environment variables.</strong></p>
+      <h4>Environment Variables</h4>
+      <pre class="code"><span>$</span> export MOCHAWESOME_REPORTDIR=customReportDir
+<span>$</span> export MOCHAWESOME_REPORTNAME=customReportName</pre>
+      <h4>Mocha Options</h4>
+      <pre class="code nowrap"><span>$</span> mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName</pre>
+      <pre class="code">var mocha = new Mocha({
+    reporter: 'mochawesome',
+    reporterOptions: {
+      reportDir: 'customReportDir',
+      reportName: 'customReportName'
+    }
+});</pre>
+    </div>
+  </div>
+
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 text-center">
+        <br><br>
+        <h2>Want to know more?</h2>
+        <p><a href="https://github.com/adamgruber/mochawesome" class="btn btn-default btn-lg"><i class="fa fa-github-alt"></i> View Project on Github</a></p>
+      </div>
+    </div>
+</section>

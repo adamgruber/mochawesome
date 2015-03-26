@@ -36,6 +36,37 @@ p {
     line-height: 1.5;
 }
 
+ul {
+  font-size: 18px;
+  margin-top: -20px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+pre.code {
+  border:none;
+  background: #232323;
+  color: #fff;
+  margin: -20px 0 35px 0;
+}
+pre.code.nowrap {
+  white-space: nowrap;
+}
+pre.code span {
+  color: {{ site.color.links }};
+}
+
+code {
+  background: #232323;
+  color: #fff;
+}
+
+hr {
+  border-color: #ce8b2d;
+}
+
 @media(min-width:767px) {
     p {
         margin: 0 0 35px;
@@ -168,7 +199,7 @@ a:focus {
     }
 
     .intro .intro-body .brand-heading {
-        font-size: 100px;
+        font-size: 80px;
     }
 
     .intro .intro-body .intro-text {
@@ -254,37 +285,9 @@ a:focus {
     padding-top: 100px;
 }
 
-.usage-section {
-    width: 100%;
-    padding: 50px 0;
-    color: #fff;
-    background-color: #65372A;
-}
-
-.features-section {
-  width: 100%;
-  padding: 50px 0;
-  background-color: #70452E;
-}
-
-#map {
-    width: 100%;
-    height: 200px;
-    margin-top: 100px;
-}
-
 @media(min-width:767px) {
     .content-section {
         padding-top: 200px;
-    }
-
-    .download-section {
-        padding: 100px 0;
-    }
-
-    #map {
-        height: 400px;
-        margin-top: 250px;
     }
 }
 
