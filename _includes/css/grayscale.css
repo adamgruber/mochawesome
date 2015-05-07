@@ -30,6 +30,10 @@ h6 {
     letter-spacing: 1px;
 }
 
+h2 {
+  font-size: 27px;
+}
+
 p {
     margin: 0 0 25px;
     font-size: 18px;
@@ -183,13 +187,19 @@ a:focus {
 }
 
 .intro .intro-body .brand-heading {
-    font-size: 40px;
+    font-size: 30px;
     text-shadow: 0 0 40px #26140F;
 }
 
 .intro .intro-body .intro-text {
     font-size: 18px;
     text-shadow: 0 0 20px #26140F;
+}
+
+@media(min-width:479px) {
+  .intro .intro-body .brand-heading {
+    font-size: 40px;
+  }
 }
 
 @media(min-width:767px) {
@@ -204,6 +214,10 @@ a:focus {
 
     .intro .intro-body .intro-text {
         font-size: 25px;
+    }
+
+    h2 {
+      font-size: 30px;
     }
 }
 
