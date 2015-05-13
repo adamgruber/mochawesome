@@ -1,5 +1,8 @@
 #Changelog
 
+###1.1.2
+- Fixes [#10](https://github.com/adamgruber/mochawesome/issues/10)
+
 ###1.1.1
 - Add filter icon in summary for better visibility (Completely new idea and not at all in response to [this](https://github.com/adamgruber/mochawesome/issues/5))
 - Change util.print to console.log due to [deprecation](https://github.com/joyent/node/blob/master/doc/api/util.markdown#user-content-utilprint)
