@@ -98,7 +98,10 @@ gulp.task('clientScripts', ['lint'], function () {
 gulp.task('templates', function () {
   var partials = gulp.src(path.join(config.srcHbsDir, '_*.mu'))
     .pipe(handlebars({
-      handlebars: require('handlebars')
+      handlebars: require('handlebars'),
+      compilerOptions: {
+        preventIndent: true
+      }
     }))
     .pipe(wrap('Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));', {}, {
       imports: {

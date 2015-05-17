@@ -25,7 +25,7 @@
   <!-- Test Error Stack -->
   {{#err}}
   <div class="test-error-stack collapse">
-    <pre><code class="hljs small">{{stack}}</code></pre>
+    <pre><code class="hljs small">{{{stack}}}</code></pre>
   </div>
   {{/err}}
 </div>
