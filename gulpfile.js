@@ -165,6 +165,14 @@ gulp.task('test', function () {
     .on('error', console.warn.bind(console));
 });
 
+gulp.task('testOpts', function () {
+  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle';
+  return gulp.src(testPaths.basic)
+    .pipe(mocha(mochaOpts))
+    .on('error', console.warn.bind(console));
+});
+
+
 // Default/Combo Tasks
 gulp.task('build', ['lint'], function () {
   return gulp.start('assemble');
