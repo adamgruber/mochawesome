@@ -4,8 +4,8 @@ mochawesome
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##New in 1.1.0
-- [Options](#options) support: change the location and/or filename for saved reports
+##New in 1.2.0
+- New [Option](#options): change the report title in the output
 
 ##Features
 - At-a-glance stats including pass percentage
@@ -17,6 +17,7 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 - Stack trace for failed tests
 - Responsive and mobile-friendly
 - Saves JSON output for further processing
+- Custom report [options](#options)
 - Offline viewing
 
 ##Browser Support
@@ -82,7 +83,9 @@ The two main files to be aware of are:
 
 
 ##Options
-Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`. You can change both the location where reports are saved and the filename of the report. *Setting a custom filename will change both the report html and json files.*
+Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`.
+
+With options you can specify the location where reports are saved, the filename of the report and the title of the report in the html output. *Setting a custom filename will change both the report html and json files.*
 
 **Options passed in will take precedence over environment variables.**
 
@@ -91,11 +94,12 @@ Mochawesome supports options via environment variables or passed in to mocha via
 ```bash
 $ export MOCHAWESOME_REPORTDIR=customReportDir
 $ export MOCHAWESOME_REPORTNAME=customReportName
+$ export MOCHAWESOME_REPORTTITLE=customReportTitle
 ```
 
 ####Mocha options
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName,reportTitle=customReportTitle
 ```
 
 ```js
@@ -103,7 +107,8 @@ var mocha = new Mocha({
     reporter: 'mochawesome',
     reporterOptions: {
       reportDir: 'customReportDir',
-      reportName: 'customReportName'
+      reportName: 'customReportName',
+      reportTitle: 'customReportTitle'
     }
 });
   ```
@@ -136,3 +141,6 @@ This will run jshint only, no building will occur.
 ####`gulp test` - Run Test
 After building you can run this to test the reporter and see the output.
 *Note: The default gulp task will run this task.*
+
+####`gulp testOpts` - Run Test with Options
+After building you can run this to test the reporter and see the output.

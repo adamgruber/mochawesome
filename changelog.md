@@ -1,5 +1,9 @@
 #Changelog
 
+###1.2.0
+- Enhancement: custom report title option. Closes [#11](https://github.com/adamgruber/mochawesome/issues/11)
+- Fixed indentation in code block and stack traces
+
 ###1.1.2
 - Fixes [#10](https://github.com/adamgruber/mochawesome/issues/10)
 
