@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mochawesome Report Card</title>
-    <link rel="stylesheet" href="css/mochawesome.css">
+    {{#inlineAssets}}<style>{{{inlineAsset 'styles'}}}</style>{{/inlineAssets}}
+    {{^inlineAssets}}<link rel="stylesheet" href="css/mochawesome.css">{{/inlineAssets}}
   </head>
   <body>
     <!-- NAVBAR -->
@@ -53,7 +54,12 @@
     </footer>
 
     <!-- Scripts -->
+    {{#inlineAssets}}
+    <script type="text/javascript">{{{inlineAsset 'scripts'}}}</script>
+    {{/inlineAssets}}
+    {{^inlineAssets}}
     <script src="js/vendor.js"></script>
     <script src="js/mochawesome.js"></script>
+    {{/inlineAssets}}
   </body>
 </html>

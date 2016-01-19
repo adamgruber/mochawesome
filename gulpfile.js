@@ -166,12 +166,11 @@ gulp.task('test', function () {
 });
 
 gulp.task('testOpts', function () {
-  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle';
+  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle,inlineAssets=true';
   return gulp.src(testPaths.basic)
     .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
-
 
 // Default/Combo Tasks
 gulp.task('build', ['lint'], function () {

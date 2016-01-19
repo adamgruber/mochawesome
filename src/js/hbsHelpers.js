@@ -1,5 +1,7 @@
-/*global Handlebars*/
+/*global Handlebars, __dirname*/
 var moment = require('moment');
+var path = require('path');
+var fs = require('fs');
 
 function getDurationObj(durationInMilliseconds) {
   'use strict';
@@ -74,5 +76,19 @@ Handlebars.registerHelper('dateFormat', function(context, format) {
     return moment(context).fromNow();
   } else {
     return moment(context).format(format);
+  }
+});
+
+Handlebars.registerHelper('inlineAsset', function(context) {
+  'use strict';
+  var distDir = path.join(__dirname, '..', 'dist');
+  switch (context) {
+    case 'styles':
+      return fs.readFileSync(path.join(distDir, 'css', 'mochawesome-64.css'));
+
+    case 'scripts':
+      var vendorScripts = fs.readFileSync(path.join(distDir, 'js', 'vendor.js'));
+      var mochawesomeScript = fs.readFileSync(path.join(distDir, 'js', 'mochawesome.js'));
+      return vendorScripts + '\n' + mochawesomeScript;
   }
 });
