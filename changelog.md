@@ -1,5 +1,8 @@
 #Changelog
 
+###1.2.1
+- Added option to generate report with all assets inlined. See [#26](https://github.com/adamgruber/mochawesome/issues/26)
+
 ###1.2.0
 - Enhancement: custom report title option. Closes [#11](https://github.com/adamgruber/mochawesome/issues/11)
 - Fixed indentation in code block and stack traces
