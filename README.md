@@ -4,8 +4,10 @@ mochawesome
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##New in 1.2.0
-- New [Option](#options): change the report title in the output
+##New in 1.2.2
+- New [Options](#options):
+  - change the report title in the output
+  - generate report with assets inlined
 
 ##Features
 - At-a-glance stats including pass percentage
@@ -95,11 +97,12 @@ With options you can specify the location where reports are saved, the filename 
 $ export MOCHAWESOME_REPORTDIR=customReportDir
 $ export MOCHAWESOME_REPORTNAME=customReportName
 $ export MOCHAWESOME_REPORTTITLE=customReportTitle
+$ export MOCHAWESOME_INLINEASSETS=true
 ```
 
 ####Mocha options
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName,reportTitle=customReportTitle
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName,reportTitle=customReportTitle,inlineAssets=true
 ```
 
 ```js
@@ -108,7 +111,8 @@ var mocha = new Mocha({
     reporterOptions: {
       reportDir: 'customReportDir',
       reportName: 'customReportName',
-      reportTitle: 'customReportTitle'
+      reportTitle: 'customReportTitle',
+      inlineAssets: true
     }
 });
   ```

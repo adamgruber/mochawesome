@@ -1,5 +1,8 @@
 #Changelog
 
+###1.2.2
+- Added option to generate report with all assets inlined. See [#26](https://github.com/adamgruber/mochawesome/issues/26)
+
 ###1.2.1
 - Reset `totalTestsRegistered` when reporter is run. [PR #21](https://github.com/adamgruber/mochawesome/pull/21)
 
