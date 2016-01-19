@@ -4,7 +4,7 @@ mochawesome
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##New in 1.2.1
+##New in 1.2.2
 - New [Options](#options):
   - change the report title in the output
   - generate report with assets inlined
