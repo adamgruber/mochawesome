@@ -2,12 +2,10 @@ mochawesome
 ===========
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha](http://visionmedia.github.io/mocha/). It generates a full fledged HTML/CSS report that helps visualize your test suites.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##New in 1.2.2
-- New [Options](#options):
-  - change the report title in the output
-  - generate report with assets inlined
+##New in 1.3.0
+- Changes to support [mocha][1] v2.4.0 and later
 
 ##Features
 - At-a-glance stats including pass percentage
@@ -87,7 +85,12 @@ The two main files to be aware of are:
 ##Options
 Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`.
 
-With options you can specify the location where reports are saved, the filename of the report and the title of the report in the html output. *Setting a custom filename will change both the report html and json files.*
+- `reportDir: {String}` - changes the name of the report directory
+- `reportName: {String}` - changes the name of the report file
+- `reportTitle: {Sring}` - changes the title of the report
+- `inlineAssets: {Boolean}` - when `true` inlines all report assets into a self-contained report file
+
+*Setting a custom filename will change both the report html and json files.*
 
 **Options passed in will take precedence over environment variables.**
 
@@ -148,3 +151,5 @@ After building you can run this to test the reporter and see the output.
 
 ####`gulp testOpts` - Run Test with Options
 After building you can run this to test the reporter and see the output.
+
+[1]: http://visionmedia.github.io/mocha/
