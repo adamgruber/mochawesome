@@ -26,7 +26,7 @@ Mochawesome generates a self-contained report that can be viewed offline.
 
 ##Sample Report
 
-<img src="./docs/mochawesome-screen.png" alt="Mochawesome Report" width="60%" />
+<img src="./docs/mochawesome-screen.png" alt="Mochawesome Report" width="75%" />
 
 
 ##Usage

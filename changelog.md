@@ -1,5 +1,8 @@
 #Changelog
 
+###1.3.1
+- Update copyright in template
+
 ###1.3.0
 - Changes to support mocha 2.4.0 and later (fixes empty code blocks). See [#29](https://github.com/adamgruber/mochawesome/issues/29)
 
