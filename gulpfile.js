@@ -30,6 +30,7 @@ var watchFiles = [
 
 var testPaths = {
   basic: ['./test/test.js'],
+  mem: ['./test/mem-test.js'],
   fiveby: [
     './test/fiveby/*.js',
     './test/fiveby/**/*.js'
@@ -161,6 +162,12 @@ gulp.task('fiveby', function () {
 
 gulp.task('test', function () {
   return gulp.src(testPaths.basic)
+    .pipe(mocha(mochaOpts))
+    .on('error', console.warn.bind(console));
+});
+
+gulp.task('mem-test', function () {
+  return gulp.src(testPaths.mem)
     .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
