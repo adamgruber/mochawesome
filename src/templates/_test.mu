@@ -7,6 +7,9 @@
     </h4>
     {{^pending}}
     <div class="pull-right">
+      {{#if details}}
+        <button class="btn btn-link btn-sm toggle-btn toggle-details collapsed" data-toggle="collapse" data-target="#{{uuid}} > .test-details.collapse">Details</button>
+      {{/if}}
       <button class="btn btn-link btn-sm toggle-btn toggle-code collapsed" data-toggle="collapse" data-target="#{{uuid}} > .test-code.collapse">Code</button>
       <span class="test-duration {{speed}}">{{formatDuration duration}}</span>
     </div>
@@ -28,4 +31,8 @@
     <pre><code class="hljs small">{{{stack}}}</code></pre>
   </div>
   {{/err}}
+  <!-- Test Details -->
+  {{#if details}}
+    <div class="test-details collapse">{{{details}}}</div>
+  {{/if}}
 </div>
