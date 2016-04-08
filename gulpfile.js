@@ -29,8 +29,9 @@ var watchFiles = [
 ];
 
 var testPaths = {
-  basic: ['./test/test.js'],
-  mem: ['./test/mem-test.js'],
+  basic: ['./test/basic/test.js'],
+  mem: ['./test/basic/mem-test.js'],
+  recursive: ['./test/basic'],
   fiveby: [
     './test/fiveby/*.js',
     './test/fiveby/**/*.js'
@@ -168,6 +169,13 @@ gulp.task('test', function () {
 
 gulp.task('mem-test', function () {
   return gulp.src(testPaths.mem)
+    .pipe(mocha(mochaOpts))
+    .on('error', console.warn.bind(console));
+});
+
+gulp.task('test-recursive', function () {
+  mochaOpts.recursive = true;
+  return gulp.src(testPaths.recursive)
     .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
