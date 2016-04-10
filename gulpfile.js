@@ -11,7 +11,8 @@ var gulp        = require('gulp'),
     wrap        = require('gulp-wrap'),
     declare     = require('gulp-declare'),
     watch       = require('gulp-watch'),
-    mocha       = require('gulp-spawn-mocha'),
+    mocha       = require('gulp-mocha'),
+    spawnmocha  = require('gulp-spawn-mocha'),
     config      = require('./lib/config')();
 
 var mochaOpts = {
@@ -157,7 +158,7 @@ gulp.task('watch', function () {
 // Test Tasks
 gulp.task('fiveby', function () {
   return gulp.src(testPaths.fiveby)
-    .pipe(mocha(mochaOpts))
+    .pipe(spawnmocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
 
@@ -181,7 +182,12 @@ gulp.task('test-recursive', function () {
 });
 
 gulp.task('testOpts', function () {
-  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle,inlineAssets=true';
+  mochaOpts.reporterOptions = {
+    reportDir: 'customDir',
+    reportName: 'customName',
+    reportTitle: 'customTitle',
+    inlineAssets: true
+  };
   return gulp.src(testPaths.basic)
     .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
