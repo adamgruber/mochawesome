@@ -56,10 +56,28 @@
     }
   }
 
-  .toggle-code {
+  .toggle-code, .toggle-details {
     float: left;
     vertical-align: top;
     line-height: 1.7;
+  }
+
+  .toggle-details {
+    &:after {
+      content: "";
+      height: 10px;
+      display: inline-block;
+      border-left: 1px solid #777;
+      margin: 0 6px;
+    }
+  }
+
+  .test-details {
+    background: #eee;
+    padding: 0.5em;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px #ccc;
+    margin: 5px 0;
   }
 
   .toggle-stack {
@@ -123,5 +141,5 @@
   }
   &.filter-pending .test.pending {
     display: block;
-  }  
+  }
 }
