@@ -11,7 +11,8 @@ var gulp        = require('gulp'),
     wrap        = require('gulp-wrap'),
     declare     = require('gulp-declare'),
     watch       = require('gulp-watch'),
-    mocha       = require('gulp-spawn-mocha'),
+    mocha       = require('gulp-mocha'),
+    spawnmocha  = require('gulp-spawn-mocha'),
     config      = require('./lib/config')();
 
 var mochaOpts = {
@@ -29,8 +30,9 @@ var watchFiles = [
 ];
 
 var testPaths = {
-  basic: ['./test/test.js'],
-  mem: ['./test/mem-test.js'],
+  basic: ['./test/basic/test.js'],
+  mem: ['./test/basic/mem-test.js'],
+  recursive: ['./test/basic'],
   fiveby: [
     './test/fiveby/*.js',
     './test/fiveby/**/*.js'
@@ -156,7 +158,7 @@ gulp.task('watch', function () {
 // Test Tasks
 gulp.task('fiveby', function () {
   return gulp.src(testPaths.fiveby)
-    .pipe(mocha(mochaOpts))
+    .pipe(spawnmocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
 
@@ -172,8 +174,20 @@ gulp.task('mem-test', function () {
     .on('error', console.warn.bind(console));
 });
 
+gulp.task('test-recursive', function () {
+  mochaOpts.recursive = true;
+  return gulp.src(testPaths.recursive)
+    .pipe(mocha(mochaOpts))
+    .on('error', console.warn.bind(console));
+});
+
 gulp.task('testOpts', function () {
-  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle,inlineAssets=true';
+  mochaOpts.reporterOptions = {
+    reportDir: 'customDir',
+    reportName: 'customName',
+    reportTitle: 'customTitle',
+    inlineAssets: true
+  };
   return gulp.src(testPaths.basic)
     .pipe(mocha(mochaOpts))
     .on('error', console.warn.bind(console));
