@@ -1,5 +1,8 @@
 #Changelog
 
+###1.3.4
+- Added option to auto open report. Also fixed an issue with boolean options. See [#44](https://github.com/adamgruber/mochawesome/issues/44)
+
 ###1.3.3
 - Added support for creating custom dir where the parent dir(s) may not exist yet. See [#40](https://github.com/adamgruber/mochawesome/issues/40)
 
