@@ -186,10 +186,18 @@ gulp.task('testOpts', function () {
     reportDir: 'customDir',
     reportName: 'customName',
     reportTitle: 'customTitle',
-    inlineAssets: true
+    inlineAssets: true,
+    autoOpen: true
   };
   return gulp.src(testPaths.basic)
     .pipe(mocha(mochaOpts))
+    .on('error', console.warn.bind(console));
+});
+
+gulp.task('testOpts2', function () {
+  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle,inlineAssets=true,autoOpen=true';
+  return gulp.src(testPaths.basic)
+    .pipe(spawnmocha(mochaOpts))
     .on('error', console.warn.bind(console));
 });
 
