@@ -1,5 +1,8 @@
 #Changelog
 
+###1.3.5
+- Removed extra slash in `@font-path` LESS variable. See [#53](https://github.com/adamgruber/mochawesome/issues/53)
+
 ###1.3.4
 - Added option to auto open report. Also fixed an issue with boolean options. See [#44](https://github.com/adamgruber/mochawesome/issues/44)
 
