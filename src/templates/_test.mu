@@ -16,6 +16,7 @@
   {{#err}}
     <p class="test-error-message">{{name}}: {{message}}
       <button class="btn btn-link btn-sm toggle-btn toggle-stack collapsed" data-toggle="collapse" data-target="#{{../uuid}} > .test-error-stack.collapse">Stack</button>
+      <button class="btn btn-link btn-sm toggle-btn toggle-screenshot collapsed" data-toggle="collapse" data-target="#{{../uuid}} > .test-error-screenshot.collapse">Screenshot</button>
     </p>
   {{/err}}
   <!-- Test Code -->
@@ -26,6 +27,12 @@
   {{#err}}
   <div class="test-error-stack collapse">
     <pre><code class="hljs small">{{{stack}}}</code></pre>
+  </div>
+  {{/err}}
+  <!-- Test Error screenshot -->
+  {{#err}}
+  <div class="test-error-screenshot collapse">
+    <pre><code class="hljs small">{{{screenshot}}}</code></pre>
   </div>
   {{/err}}
 </div>
