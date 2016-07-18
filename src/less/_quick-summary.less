@@ -23,14 +23,16 @@
 
 .quick-summary-cnt {
   display: none;
-  float: right;
+  float: left;
 }
 
 .quick-summary {
   .clearfix();
   .opacity(0);
   .transition(opacity .2s ease-out);
-  margin: 11px -8px 0 0;
+  margin: 11px 10px 0 0;
+  padding-right: 4px;
+  border-right: 1px solid lighten(@gray-base, 40%);
 }
 
 .qs-item {

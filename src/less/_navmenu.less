@@ -1,0 +1,152 @@
+.nav-menu-wrap {
+  position: fixed;
+  z-index: 2010;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  visibility: hidden;
+
+  .menu-overlay {
+    display: none;
+    background: #000;
+  }
+
+  .menu {
+    .transition(all .2s ease-out);
+    .translate(100%, 0);
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    padding: 48px 0;
+    background: @gray-lighter;
+  }
+
+  .nav-menu-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    color: @gray;
+    &:hover {
+      color: @gray-dark;
+    }
+  }
+}
+
+.nav-menu-wrap.open {
+  visibility: visible;
+  .menu-overlay {
+    opacity: .4;
+  }
+  .menu {
+    .translate(0, 0);
+  }
+}
+
+.main-menu {
+  padding: 0 28px;
+}
+
+.sub-menu {
+  padding-left: 14px;
+}
+
+.nav-menu-item {
+  .clearfix();
+}
+
+.nav-menu-item-link {
+  .linkTransition();
+  display: block;
+  padding: 4px 0;
+  color: @gray;
+
+  &:before {
+    .ma-icon();
+    font-size: 12px;
+    top: 1px;
+    margin-right: 4px;
+  }
+
+  &.has-failures {
+    .fontIcon(@ma-icon-failed);
+    &:before {
+      color: @brand-danger;
+    }
+  }
+
+  &.has-passes {
+    .fontIcon(@ma-icon-passed);
+    &:before {
+      color: @brand-success;
+    }
+  }
+
+  &.has-pending {
+    .fontIcon(@ma-icon-pending);
+    &:before {
+      color: @brand-info;
+    }
+  }
+
+  &.has-skipped {
+    .fontIcon(@ma-icon-skipped);
+    &:before {
+      color: lighten(#999, 15%);
+      visibility: visible;
+    }
+  }
+
+  &:hover {
+    color: @link-hover-color;
+    text-decoration: none;
+  }
+  &:active,
+  &:focus {
+    outline: none;
+    text-decoration: none;
+  }
+}
+
+// Nav Open/Close Button Common
+.nav-menu-btn {
+  .linkTransition();
+  border: none;
+  background: transparent;
+  font-size: 21px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  &:focus {
+    outline: none;
+  }
+  i {
+    .ma-icon();
+  }
+}
+
+// Tablet 768 and up
+@media (min-width: @screen-sm-min) {
+  .nav-menu-wrap {
+    .menu {
+      width: 320px;
+      left: auto;
+    }
+    .menu-overlay {
+      .transition(all .2s ease-out);
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      cursor: pointer;
+      opacity: 0;
+    }
+  }
+}
