@@ -7,10 +7,26 @@
   &.navbar-inverse {
     background: fade(@navbar-inverse-bg, 95%);
   }
+
+  .nav-menu-btn {
+    .linkTransition();
+    float: left;
+    color: #fff;
+    margin-top: 11px;
+    i {
+      top: 1px;
+    }
+  }
 }
+
+.nav-right {
+  float: right;
+}
+
 .report-info-cnt {
   float: left;
 }
+
 .report-title {
   .fontSlabNormal();
   color: #fff;
@@ -20,6 +36,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .report-date {
   .fontCondNormal();
   font-size: 13px;
