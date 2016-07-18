@@ -4,8 +4,8 @@ mochawesome
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##New in 1.3.0
-- Changes to support [mocha][1] v2.4.0 and later
+##New in 1.4.0
+- Added a slide-over navigation menu. Save time by quickly jumping to a specific test suite. The menu also gives you a quick way to see which suites are passing or have failing, skipped, or pending tests.
 
 ##Features
 - At-a-glance stats including pass percentage
@@ -13,6 +13,7 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 - Support for nested `describe`s
 - Supports pending tests
 - Filter view by test type
+- Quick navigation menu
 - Review test code inline
 - Stack trace for failed tests
 - Responsive and mobile-friendly
@@ -26,7 +27,8 @@ Mochawesome generates a self-contained report that can be viewed offline.
 
 ##Sample Report
 
-<img src="./docs/mochawesome-screen.png" alt="Mochawesome Report" width="75%" />
+<img src="./docs/mochawesome-1_4.png" alt="Mochawesome Report" width="75%" />
+<img src="./docs/mochawesome-menu-1_4.png" alt="Mochawesome Report Menu" width="75%" />
 
 
 ##Usage
