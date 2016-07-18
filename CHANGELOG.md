@@ -1,5 +1,8 @@
 #Changelog
 
+###1.4.0
+- Added slide-over navigation menu for quickly jumping to a test suite. See [#49](https://github.com/adamgruber/mochawesome/issues/49)
+
 ###1.3.5
 - Removed extra slash in `@font-path` LESS variable. See [#53](https://github.com/adamgruber/mochawesome/issues/53)
 

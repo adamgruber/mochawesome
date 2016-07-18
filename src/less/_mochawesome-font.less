@@ -30,13 +30,14 @@
 @ma-icon-failed:        'b';
 @ma-icon-pending:       'c';
 @ma-icon-pending-alt:   'd';
-@ma-icon-skipped:       'e';
+@ma-icon-skipped:       '\65';
 @ma-icon-suites:        'f';
 @ma-icon-tests:         'g';
 @ma-icon-tests-alt:     'j';
 @ma-icon-duration:      'h';
 @ma-icon-right-chevron: 'i';
 @ma-icon-filter:        'k';
+@ma-icon-menu:          '\6c';
 
 [data-icon],
 [class^="icon-"],
@@ -87,4 +88,8 @@
 .icon-filter,
 [data-icon="filter"] {
   &:before { content: @ma-icon-filter; }
+}
+.icon-menu,
+[data-icon="menu"] {
+  &:before { content: @ma-icon-menu; }
 }

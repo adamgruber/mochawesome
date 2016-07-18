@@ -37,7 +37,12 @@
     this.$window      = $(window);
     this.$body        = $('body');
     this.$navbar      = $('.navbar');
+    this.$navOpenBtn  = $('.nav-menu-btn.open-menu');
+    this.$navCloseBtn = $('.close-menu');
+    this.$navMenu     = $('.nav-menu-wrap');
+    this.$navMenuLink = $('.nav-menu-item-link');
     this.$summary     = $('.summary');
+    this.$statusBar   = $('.statusbar');
     this.$quickSum    = $('.quick-summary');
     this.$details     = $('.details');
     this.$suites      = $('.suite');
@@ -55,6 +60,9 @@
 
   Mochawesome.prototype.initialize = function () {
     this.$filterBtns.on('click', self._onFilterClick.bind(self));
+    this.$navOpenBtn.on('click', self.openNavMenu.bind(self));
+    this.$navCloseBtn.on('click', self.closeNavMenu.bind(self));
+    this.$navMenuLink.on('click', self.goToSuite.bind(self));
     if (this.windowWidth > this.breakpoints.sm) {
       this.listenToScroll(true);
     }
@@ -102,6 +110,26 @@
       this.listenToScroll(true);
       this.$body.toggleClass('show-quick-summary', this.scrolledPastQuickSummaryOffset);
     }
+  };
+
+  Mochawesome.prototype._getScrollOffset = function () {
+    return this.windowWidth < this.breakpoints.sm ? 199 : 89;
+  };
+
+  Mochawesome.prototype.openNavMenu = function () {
+    this.$navMenu.addClass('open');
+  };
+
+  Mochawesome.prototype.closeNavMenu = function () {
+    this.$navMenu.removeClass('open');
+  };
+
+  Mochawesome.prototype.goToSuite = function (e) {
+    e.preventDefault();
+    var offset = this._getScrollOffset();
+    var scrollY = $(e.currentTarget.getAttribute('href')).offset().top - offset;
+    window.scrollTo(0, scrollY);
+    this.closeNavMenu();
   };
 
   Mochawesome.prototype.listenToScroll = function (start) {
