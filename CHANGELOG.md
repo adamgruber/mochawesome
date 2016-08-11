@@ -1,5 +1,8 @@
 #Changelog
 
+###1.5.0
+- Moved mocha to peerDependencies and devDependencies and fixed it to `~2`. See [#69](https://github.com/adamgruber/mochawesome/issues/69)
+
 ###1.4.0
 - Added slide-over navigation menu for quickly jumping to a test suite. See [#49](https://github.com/adamgruber/mochawesome/issues/49)
 
