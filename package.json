@@ -6,7 +6,7 @@
     "test": "gulp build"
   },
   "author": "Adam Gruber",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/adamgruber/mochawesome"
