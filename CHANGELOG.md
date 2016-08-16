@@ -1,5 +1,8 @@
 #Changelog
 
+###1.5.1
+- Added missing LICENSE.md file
+
 ###1.5.0
 - Moved mocha to peerDependencies and devDependencies and fixed it to `~2`. See [#69](https://github.com/adamgruber/mochawesome/issues/69)
 
