@@ -15,7 +15,12 @@
       <div class="container">
         <div class="report-info-cnt">
           <h1 class="report-title">{{reportTitle}}</h1>
-          <h3 class="report-date">{{dateFormat stats.end 'dddd, MMMM D YYYY, hh:mma'}}</h3>
+          {{#if europeanTime}}
+            <h3 class="report-date">{{dateFormat stats.end 'dddd, MMMM D YYYY, hh:mm'}}</h3>
+          {{else}}
+            <h3 class="report-date">{{dateFormat stats.end 'dddd, MMMM D YYYY, hh:mma'}}</h3>
+          {{/if}}
+          
         </div>
         <div class="nav-right">
           <div class="quick-summary-cnt">
