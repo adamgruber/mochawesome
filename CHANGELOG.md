@@ -1,5 +1,8 @@
 #Changelog
 
+###1.5.2
+- Updated mocha peerDependency to allow any version
+
 ###1.5.1
 - Added missing LICENSE.md file
 
