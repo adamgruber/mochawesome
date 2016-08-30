@@ -33,7 +33,7 @@
     "opener": "^1.4.1"
   },
   "peerDependencies": {
-    "mocha": "~2"
+    "mocha": "*"
   },
   "devDependencies": {
     "bootstrap": "^3.3.2",
