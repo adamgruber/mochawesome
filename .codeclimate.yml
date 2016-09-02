@@ -5,4 +5,3 @@ exclude_paths:
 - "src/js/lodash.custom.js"
 - "dist/js/*.js"
 - "test/*"
-- "lib/templates.js"
