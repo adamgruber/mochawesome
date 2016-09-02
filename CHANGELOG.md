@@ -1,5 +1,14 @@
 #Changelog
 
+###2.0.0
+- Moved report generation to mochawesome-report package
+- Updated dependencies
+- Switched from jshint to eslint
+- Rewritten using ES6
+- Fixed an issue where test uuid was not generated properly
+- Added `done` function that will get called before mocha exits (eliminates need for `--no-exit` option)
+
+
 ###1.5.2
 - Updated mocha peerDependency to allow any version
 
