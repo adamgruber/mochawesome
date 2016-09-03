@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
-    "lint": "eslint lib src test",
-    "test": "cross-env NODE_ENV=test nyc mocha",
+    "lint": "eslint lib test",
+    "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
     "build": "babel lib --out-dir dist"
   },
   "author": "Adam Gruber",
@@ -58,6 +58,7 @@
     "babel-core": "^6.14.0",
     "babel-plugin-istanbul": "^2.0.1",
     "babel-preset-es2015": "^6.14.0",
+    "babel-register": "^6.14.0",
     "cross-env": "^2.0.1",
     "eslint": "^3.4.0",
     "eslint-config-airbnb-base": "^5.0.3",
