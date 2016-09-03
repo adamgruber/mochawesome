@@ -4,7 +4,7 @@
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
     "lint": "eslint lib src test",
-    "test": "nyc mocha",
+    "test": "cross-env NODE_ENV=test nyc mocha",
     "build": "webpack ./mochawesome.js dist/"
   },
   "author": "Adam Gruber",
@@ -21,6 +21,16 @@
   ],
   "engine": "node >= 0.10.0",
   "main": "mochawesome.js",
+  "nyc": {
+    "include": [
+      "lib/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "html",
+      "text-summary"
+    ]
+  },
   "dependencies": {
     "chalk": "^1.1.3",
     "highlight.js": "^9.6.0",
@@ -33,12 +43,15 @@
     "mocha": "*"
   },
   "devDependencies": {
+    "cross-env": "^2.0.1",
     "eslint": "^3.4.0",
     "eslint-config-airbnb-base": "^5.0.3",
     "eslint-plugin-import": "^1.14.0",
     "mocha": "*",
     "nyc": "^8.1.0",
+    "proxyquire": "^1.7.10",
     "should": "^3.3.2",
+    "sinon": "^1.17.5",
     "webpack": "^1.13.2"
   }
 }
