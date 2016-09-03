@@ -1,14 +1,14 @@
 ---
 engines:
   csslint:
-    enabled: true
+    enabled: false
   duplication:
     enabled: true
     config:
       languages:
       - javascript
   eslint:
-    enabled: true
+    enabled: false
   fixme:
     enabled: true
 ratings:
