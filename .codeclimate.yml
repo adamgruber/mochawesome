@@ -1,7 +1,8 @@
 languages:
   JavaScript: true
 exclude_paths:
-- "gulpfile.js"
-- "src/js/lodash.custom.js"
-- "dist/js/*.js"
-- "test/*"
+- test/*
+- test-functional/*
+- coverage/*
+- _site
+- .nyc_output

@@ -4,8 +4,7 @@
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
     "lint": "eslint lib src test",
-    "test": "cross-env NODE_ENV=test nyc mocha",
-    "build": "webpack ./mochawesome.js dist/"
+    "test": "cross-env NODE_ENV=test nyc mocha"
   },
   "author": "Adam Gruber",
   "license": "MIT",
@@ -57,7 +56,6 @@
     "nyc": "^8.1.0",
     "proxyquire": "^1.7.10",
     "should": "^3.3.2",
-    "sinon": "^1.17.5",
-    "webpack": "^1.13.2"
+    "sinon": "^1.17.5"
   }
 }
