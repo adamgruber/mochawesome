@@ -1,8 +1,24 @@
-languages:
-  JavaScript: true
+---
+engines:
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "**.css"
+  - "**.js"
+  - "**.jsx"
 exclude_paths:
-- "gulpfile.js"
-- "src/js/lodash.custom.js"
-- "dist/js/*.js"
-- "test/*"
-- "lib/templates.js"
+- gulpfile.js
+- src/js/lodash.custom.js
+- dist/js/*.js
+- test/*
+- lib/templates.js
