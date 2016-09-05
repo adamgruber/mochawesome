@@ -8,6 +8,7 @@
 - Fixed an issue where test uuid was not generated properly
 - Added `done` function that will get called before mocha exits (eliminates need for `--no-exit` option)
 - Unit tests!
+- Added diff for test error
 
 
 ###1.5.2

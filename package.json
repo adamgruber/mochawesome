@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "eslint lib test",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
+    "test:fn": "mocha test-functional/test.js --require should --reporter mochawesome",
     "build": "babel lib --out-dir dist"
   },
   "author": "Adam Gruber",
@@ -44,6 +45,7 @@
   },
   "dependencies": {
     "chalk": "^1.1.3",
+    "diff": "^3.0.0",
     "highlight.js": "^9.6.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.15.0",

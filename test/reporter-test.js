@@ -1,6 +1,7 @@
 const Mocha = require('mocha');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
+const Assert = require('assert').AssertionError;
 
 const { Runner, Suite, Test } = Mocha;
 const makeTest = (title, doneFn) => new Test(title, doneFn);
@@ -44,8 +45,8 @@ describe('mochawesome reporter', () => {
     });
 
     it('should have 1 test failure', done => {
-      const error = { message: 'oh shit', stack: {} };
-      const test = makeTest('failing test', tDone => tDone(new Error(error)));
+      const error = { expected: { a: 1 }, actual: { a: 2 } };
+      const test = makeTest('failing test', tDone => tDone(new Assert(error)));
       subSuite.addTest(test);
 
       runner.run(failureCount => {
@@ -71,11 +72,11 @@ describe('mochawesome reporter', () => {
     });
 
     it('should have a mix of tests', done => {
-      const error = { message: 'oh shit', stack: {} };
+      const error = { expected: 'foo', actual: 'bar' };
       const passTest1 = makeTest('pass1', () => {});
       const passTest2 = makeTest('pass2', () => {});
       const passTest3 = makeTest('pass3', () => {});
-      const failTest = makeTest('failing test', tDone => tDone(new Error(error)));
+      const failTest = makeTest('failing test', tDone => tDone(new Assert(error)));
       [ passTest1, passTest2, passTest3, failTest ].forEach(test => subSuite.addTest(test));
 
       runner.run(failureCount => {

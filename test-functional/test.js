@@ -1,3 +1,7 @@
+function retObj() {
+  return { adam: 'adam' };
+}
+
 describe('Master Test Suite', () => {
   describe('Test Suite - Basic', () => {
     it('passing test', done => {
@@ -5,7 +9,8 @@ describe('Master Test Suite', () => {
       done();
     });
     it('failing test', done => {
-      false.should.be.ok;
+      const o = retObj();
+      o.should.eql({});
       done();
     });
   });
