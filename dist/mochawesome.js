@@ -1,9 +1,88 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+/**
+ * Done function gets called before mocha exits
+ *
+ * @param {Object} output
+ * @param {Object} config
+ * @param {Function} exit
+ */
+
+var done = function () {
+  var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(output, config, exit) {
+    var reportDir, reportJsonFile;
+    return _regenerator2.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            reportDir = config.reportDir;
+            reportJsonFile = config.reportJsonFile;
+            _context.prev = 2;
+            _context.next = 5;
+            return makeDir(reportDir);
+
+          case 5:
+            _context.next = 7;
+            return saveFile(reportJsonFile, output);
+
+          case 7:
+
+            mar.createReport(output, config);
+
+            // Log success and exit
+            log('Report JSON saved to ' + this.config.reportJsonFile);
+            exit();
+            _context.next = 16;
+            break;
+
+          case 12:
+            _context.prev = 12;
+            _context.t0 = _context['catch'](2);
+
+            log(_context.t0, 'error');
+            exit();
+
+          case 16:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this, [[2, 12]]);
+  }));
+
+  return function done(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+/**
+ * Initialize a new reporter.
+ *
+ * @param {Runner} runner
+ * @api public
+ */
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var fs = require('fs');
 var mocha = require('mocha');
+var mochaUtils = require('mocha/lib/utils');
 var _ = require('lodash');
 var uuid = require('node-uuid');
 var chalk = require('chalk');
@@ -11,6 +90,8 @@ var hljs = require('highlight.js');
 var stringify = require('json-stringify-safe');
 var conf = require('./config');
 var mkdirp = require('mkdirp');
+var diff = require('diff');
+var mar = require('mochawesome-report');
 
 // Configure options for highlight.js
 hljs.configure({
@@ -28,7 +109,7 @@ var totalTestsRegistered = void 0;
 function log(msg, level) {
   var logMethod = console[level] || console.log;
   var out = msg;
-  if ((typeof msg === 'undefined' ? 'undefined' : _typeof(msg)) === 'object') {
+  if ((typeof msg === 'undefined' ? 'undefined' : (0, _typeof3.default)(msg)) === 'object') {
     out = stringify(msg, null, 2);
   }
   logMethod('[' + chalk.gray('mochawesome') + '] ' + out + '\n');
@@ -69,6 +150,18 @@ function removeAllPropsFromObjExcept(obj, propsToKeep) {
 }
 
 /**
+ * Check that a / b have the same type.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {boolean}
+ */
+function sameType(a, b) {
+  var objToString = Object.prototype.toString;
+  return objToString.call(a) === objToString.call(b);
+}
+
+/**
  * Strip the function definition from `str`,
  * and re-indent for pre whitespace.
  */
@@ -96,15 +189,39 @@ function cleanCode(str) {
 
 function cleanTest(test) {
   var code = test.fn ? test.fn.toString() : test.body;
-  var err = test.err ? _.pick(test.err, ['name', 'message', 'stack']) : test.err;
+  var err = test.err || {};
+  var actual = err.actual;
+  var expected = err.expected;
+  var showDiff = err.showDiff;
+
 
   if (code) {
     code = cleanCode(code);
-    code = hljs.fixMarkup(hljs.highlightAuto(code).value);
+    // code = hljs.fixMarkup(hljs.highlightAuto(code).value);
   }
 
-  if (err && err.stack) {
-    err.stack = hljs.fixMarkup(hljs.highlightAuto(err.stack).value);
+  // if (stack) {
+  //   err.stack = hljs.fixMarkup(hljs.highlightAuto(err.stack).value);
+  // }
+
+  // Create diff for the error
+  if (showDiff !== false && sameType(actual, expected) && expected !== undefined) {
+    /* istanbul ignore if */
+    if (!(_.isString(actual) && _.isString(expected))) {
+      err.actual = mochaUtils.stringify(actual);
+      err.expected = mochaUtils.stringify(expected);
+    }
+    err.diff = diff.createPatch('string', err.actual, err.expected).split('\n').splice(4).map(function (line) {
+      if (line.match(/@@/)) {
+        return null;
+      }
+      if (line.match(/\\ No newline/)) {
+        return null;
+      }
+      return line;
+    }).filter(function (line) {
+      return typeof line !== 'undefined' && line !== null;
+    }).join('\n');
   }
 
   var cleaned = {
@@ -206,36 +323,61 @@ function traverseSuites(suite) {
 }
 
 /**
- * Initialize a new reporter.
+ * Creates a new directory
  *
- * @param {Runner} runner
- * @api public
+ * @param {String} dir
+ * @returns {Promise}
  */
 
-function Mochawesome(runner, options) {
+function makeDir(dir) {
+  return new _promise2.default(function (resolve, reject) {
+    mkdirp(dir, function (err, made) {
+      return err === null ? resolve(made) : reject(err);
+    });
+  });
+}
+
+/**
+ * Saves a file
+ *
+ * @param {String} filename
+ * @param {String} data
+ * @returns {Promise}
+ */
+
+function saveFile(filename, data) {
+  return new _promise2.default(function (resolve, reject) {
+    fs.writeFile(filename, data, function (err) {
+      return err === null ? resolve(true) : reject(err);
+    });
+  });
+}function Mochawesome(runner, options) {
   var _this = this;
 
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the report
   this.done = function (failures, exit) {
-    log(options);
-    mkdirp(_this.config.reportDir, function (err) {
-      if (err) {
-        log(err, 'error');
-        exit();
-      } else {
-        fs.writeFile(_this.config.reportJsonFile, _this.output, function (writeErr) {
-          if (writeErr) {
-            log(writeErr, 'error');
-            exit();
-          } else {
-            log('Report JSON saved to ' + _this.config.reportJsonFile);
-            exit();
-          }
-        });
-      }
-    });
+    return done(_this.output, _this.config, exit);
   };
+  // this.done = (failures, exit) => {
+  //   log(options);
+  //   mkdirp(this.config.reportDir, err => {
+  //     if (err) {
+  //       log(err, 'error');
+  //       exit();
+  //     } else {
+  //       fs.writeFile(this.config.reportJsonFile, this.output, writeErr => {
+  //         if (writeErr) {
+  //           log(writeErr, 'error');
+  //           exit();
+  //         } else {
+  //           log(`Report JSON saved to ${this.config.reportJsonFile}`);
+  //           exit();
+  //         }
+  //       });
+  //     }
+  //   });
+  // };
 
   // Reset total tests counter
   totalTestsRegistered = 0;
