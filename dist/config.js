@@ -1,11 +1,19 @@
 'use strict';
 
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var path = require('path');
 
-var config = {
-  splitChar: process.platform === 'win32' ? '\\' : '/',
+var splitChar = process.platform === 'win32' ? '\\' : '/';
+var baseConfig = {
   reportDir: path.join('.', 'mochawesome-reports'),
-  reportName: 'mochawesome'
+  reportFilename: 'mochawesome',
+  reportTitle: process.cwd().split(splitChar).pop(),
+  reportPageTitle: 'Mochawesome Report Card'
 };
 
 function _getOption(optToGet, options, isBool) {
@@ -20,43 +28,47 @@ function _getOption(optToGet, options, isBool) {
   if (typeof process.env[envVar] !== 'undefined') {
     return isBool ? process.env[envVar] === 'true' : process.env[envVar];
   }
-  return isBool ? config[optToGet] === 'true' : config[optToGet];
+  return isBool ? baseConfig[optToGet] === 'true' : baseConfig[optToGet];
 }
 
-module.exports = function (options) {
-  // Base Directories
-  config.libDir = __dirname;
-  config.reportDir = _getOption('reportDir', options);
-  config.reportTitle = _getOption('reportTitle', options);
-  config.inlineAssets = _getOption('inlineAssets', options, true);
-  config.autoOpen = _getOption('autoOpen', options, true);
-  config.nodeModulesDir = path.join(__dirname, '..', 'node_modules');
+module.exports = function (opts) {
+  var options = {};
+  var reportFilename = _getOption('reportFilename', opts);
+
+  options.reportDir = _getOption('reportDir', opts);
+  options.reportTitle = _getOption('reportTitle', opts);
+  options.reportPageTitle = _getOption('reportPageTitle', opts);
+  options.inlineAssets = _getOption('inlineAssets', opts, true);
+  options.autoOpen = _getOption('autoOpen', opts, true);
+  // options.nodeModulesDir = path.join(__dirname, '..', 'node_modules');
 
   // Build Directories
-  config.buildDir = path.join(__dirname, '..', 'dist');
-  config.buildFontsDir = path.join(config.buildDir, 'fonts');
-  config.buildCssDir = path.join(config.buildDir, 'css');
-  config.buildJsDir = path.join(config.buildDir, 'js');
+  // config.buildDir = path.join(__dirname, '..', 'dist');
+  // config.buildFontsDir = path.join(config.buildDir, 'fonts');
+  // config.buildCssDir = path.join(config.buildDir, 'css');
+  // config.buildJsDir = path.join(config.buildDir, 'js');
 
   // Source Directories
-  config.srcDir = path.join(__dirname, '..', 'src');
-  config.srcFontsDir = path.join(config.srcDir, 'fonts');
-  config.srcJsDir = path.join(config.srcDir, 'js');
+  // config.srcDir = path.join(__dirname, '..', 'src');
+  // config.srcFontsDir = path.join(config.srcDir, 'fonts');
+  // config.srcJsDir = path.join(config.srcDir, 'js');
 
   // Report Directories
-  config.reportJsDir = path.join(config.reportDir, 'js');
-  config.reportFontsDir = path.join(config.reportDir, 'fonts');
-  config.reportCssDir = path.join(config.reportDir, 'css');
+  // config.reportJsDir = path.join(config.reportDir, 'js');
+  // config.reportFontsDir = path.join(config.reportDir, 'fonts');
+  // config.reportCssDir = path.join(config.reportDir, 'css');
 
   // Report Files
-  config.reportJsonFile = path.join(config.reportDir, _getOption('reportName', options) + '.json');
-  config.reportHtmlFile = path.join(config.reportDir, _getOption('reportName', options) + '.html');
+  options.reportJsonFile = path.join(options.reportDir, reportFilename + '.json');
+  options.reportHtmlFile = path.join(options.reportDir, reportFilename + '.html');
 
   // Client-Side JS Files
-  config.clientJsFiles = [path.join(config.srcJsDir, 'mochawesome.js')];
+  // config.clientJsFiles = [ path.join(config.srcJsDir, 'mochawesome.js') ];
 
   // Vendor JS Files
-  config.vendorJsFiles = [path.join(config.nodeModulesDir, 'jquery', 'dist', 'jquery.js'), path.join(config.srcJsDir, 'lodash.custom.js'), path.join(config.nodeModulesDir, 'chart.js', 'Chart.js')];
+  // config.vendorJsFiles = [
+  //   path.join(config.nodeModulesDir, 'chart.js', 'Chart.js')
+  // ];
 
-  return config;
+  return (0, _assign2.default)(baseConfig, options);
 };

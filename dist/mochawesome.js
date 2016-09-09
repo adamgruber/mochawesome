@@ -43,27 +43,29 @@ var done = function () {
 
           case 7:
 
-            mar.createReport(output, config);
+            // Create and save the HTML to disk
+            report.createSync(output, config);
 
             // Log success and exit
-            log('Report JSON saved to ' + this.config.reportJsonFile);
+            log('Report JSON saved to ' + config.reportJsonFile);
+            log('Report HTML saved to ' + config.reportHtmlFile);
             exit();
-            _context.next = 16;
+            _context.next = 17;
             break;
 
-          case 12:
-            _context.prev = 12;
+          case 13:
+            _context.prev = 13;
             _context.t0 = _context['catch'](2);
 
             log(_context.t0, 'error');
             exit();
 
-          case 16:
+          case 17:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 12]]);
+    }, _callee, this, [[2, 13]]);
   }));
 
   return function done(_x, _x2, _x3) {
@@ -91,7 +93,7 @@ var stringify = require('json-stringify-safe');
 var conf = require('./config');
 var mkdirp = require('mkdirp');
 var diff = require('diff');
-var mar = require('mochawesome-report');
+var report = require('mochawesome-report');
 
 // Configure options for highlight.js
 hljs.configure({
@@ -226,7 +228,7 @@ function cleanTest(test) {
 
   var cleaned = {
     title: test.title,
-    fullTitle: test.fullTitle(),
+    fullTitle: test.fullTitle ? test.fullTitle() : test.title,
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,
@@ -359,25 +361,6 @@ function saveFile(filename, data) {
   this.done = function (failures, exit) {
     return done(_this.output, _this.config, exit);
   };
-  // this.done = (failures, exit) => {
-  //   log(options);
-  //   mkdirp(this.config.reportDir, err => {
-  //     if (err) {
-  //       log(err, 'error');
-  //       exit();
-  //     } else {
-  //       fs.writeFile(this.config.reportJsonFile, this.output, writeErr => {
-  //         if (writeErr) {
-  //           log(writeErr, 'error');
-  //           exit();
-  //         } else {
-  //           log(`Report JSON saved to ${this.config.reportJsonFile}`);
-  //           exit();
-  //         }
-  //       });
-  //     }
-  //   });
-  // };
 
   // Reset total tests counter
   totalTestsRegistered = 0;
@@ -437,8 +420,6 @@ function saveFile(filename, data) {
         traverseSuites(allSuites);
 
         var obj = {
-          reportTitle: _this.config.reportTitle || process.cwd().split(_this.config.splitChar).pop(),
-          inlineAssets: _this.config.inlineAssets,
           stats: _this.stats,
           suites: allSuites,
           allTests: allTests.map(cleanTest),
