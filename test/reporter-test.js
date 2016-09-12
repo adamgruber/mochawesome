@@ -7,11 +7,13 @@ const { Runner, Suite, Test } = Mocha;
 const makeTest = (title, doneFn) => new Test(title, doneFn);
 
 const writeFileStub = sinon.stub();
-const mkdirpStub = sinon.stub();
+const reportStub = sinon.stub();
 
 const mochawesome = proxyquire('../lib/mochawesome', {
-  fs: { writeFile: writeFileStub },
-  mkdirp: mkdirpStub
+  'fs-extra': { outputFile: writeFileStub },
+  'mochawesome-report': {
+    create: reportStub
+  }
 });
 
 describe('mochawesome reporter', () => {
@@ -161,8 +163,8 @@ describe('mochawesome reporter', () => {
     });
 
     it('should call the reporter done function successfully', done => {
+      reportStub.returns(Promise.resolve({}));
       writeFileStub.yields(null, {});
-      mkdirpStub.yields(null, {});
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
@@ -171,9 +173,8 @@ describe('mochawesome reporter', () => {
       });
     });
 
-    it('should log an error when mkdirp fails', done => {
-      writeFileStub.yields(null, {});
-      mkdirpStub.yields({ message: 'mkdirp failed' });
+    it('should log an error when fs.outputFile fails', done => {
+      writeFileStub.yields({ message: 'outputFile failed' });
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
@@ -182,9 +183,9 @@ describe('mochawesome reporter', () => {
       });
     });
 
-    it('should log an error when fs.writeFile fails', done => {
-      writeFileStub.yields({ message: 'writeFile failed' });
-      mkdirpStub.yields(null, {});
+    it('should log an error when report creation fails', done => {
+      writeFileStub.yields(null, {});
+      reportStub.returns(Promise.reject({ message: 'report creation failed' }));
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
