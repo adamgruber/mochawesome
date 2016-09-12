@@ -90,6 +90,25 @@ describe('mochawesome reporter', () => {
         done();
       });
     });
+
+    it('should handle empty suite', done => {
+      runner.run(failureCount => {
+        // console.log(mochaReporter.stats);
+        failureCount.should.equal(0);
+        done();
+      });
+    });
+
+    it('should handle suite with file', done => {
+      const test = makeTest('test', () => {});
+      subSuite.addTest(test);
+      subSuite.file = 'testfile.js';
+      runner.run(failureCount => {
+        const output = JSON.parse(mochaReporter.output);
+        output.suites.suites[0].fullFile.should.equal('testfile.js');
+        done();
+      });
+    });
   });
 
   describe('options handling', () => {
