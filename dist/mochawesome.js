@@ -26,46 +26,44 @@ var _typeof3 = _interopRequireDefault(_typeof2);
 
 var done = function () {
   var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(output, config, exit) {
-    var reportDir, reportJsonFile;
+    var reportJsonFile, reportHtmlFile;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            reportDir = config.reportDir;
             reportJsonFile = config.reportJsonFile;
+            reportHtmlFile = config.reportHtmlFile;
             _context.prev = 2;
             _context.next = 5;
-            return makeDir(reportDir);
-
-          case 5:
-            _context.next = 7;
             return saveFile(reportJsonFile, output);
 
-          case 7:
+          case 5:
+            log('Report JSON saved to ' + reportJsonFile);
 
             // Create and save the HTML to disk
-            report.createSync(output, config);
+            _context.next = 8;
+            return report.create(output, config);
 
-            // Log success and exit
-            log('Report JSON saved to ' + config.reportJsonFile);
-            log('Report HTML saved to ' + config.reportHtmlFile);
+          case 8:
+            log('Report HTML saved to ' + reportHtmlFile);
+
             exit();
-            _context.next = 17;
+            _context.next = 16;
             break;
 
-          case 13:
-            _context.prev = 13;
+          case 12:
+            _context.prev = 12;
             _context.t0 = _context['catch'](2);
 
             log(_context.t0, 'error');
             exit();
 
-          case 17:
+          case 16:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 13]]);
+    }, _callee, this, [[2, 12]]);
   }));
 
   return function done(_x, _x2, _x3) {
@@ -82,24 +80,16 @@ var done = function () {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var fs = require('fs');
+var fs = require('fs-extra');
 var mocha = require('mocha');
 var mochaUtils = require('mocha/lib/utils');
 var _ = require('lodash');
 var uuid = require('node-uuid');
 var chalk = require('chalk');
-var hljs = require('highlight.js');
 var stringify = require('json-stringify-safe');
 var conf = require('./config');
-var mkdirp = require('mkdirp');
 var diff = require('diff');
 var report = require('mochawesome-report');
-
-// Configure options for highlight.js
-hljs.configure({
-  useBR: true,
-  languages: ['javascript']
-});
 
 // Track the total number of tests registered
 var totalTestsRegistered = void 0;
@@ -173,6 +163,7 @@ function cleanCode(str) {
 
   var spaces = str.match(/^\n?( *)/)[1].length;
   var tabs = str.match(/^\n?(\t*)/)[1].length;
+  /* istanbul ignore next */
   var re = new RegExp('^\n?' + (tabs ? '\t' : ' ') + '{' + (tabs || spaces) + '}', 'gm');
 
   str = str.replace(re, '');
@@ -190,21 +181,22 @@ function cleanCode(str) {
  */
 
 function cleanTest(test) {
+  /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
   var code = test.fn ? test.fn.toString() : test.body;
   var err = test.err || {};
   var actual = err.actual;
   var expected = err.expected;
   var showDiff = err.showDiff;
+  var stack = err.stack;
 
 
   if (code) {
     code = cleanCode(code);
-    // code = hljs.fixMarkup(hljs.highlightAuto(code).value);
   }
 
-  // if (stack) {
-  //   err.stack = hljs.fixMarkup(hljs.highlightAuto(err.stack).value);
-  // }
+  if (stack) {
+    err.estack = err.stack;
+  }
 
   // Create diff for the error
   if (showDiff !== false && sameType(actual, expected) && expected !== undefined) {
@@ -220,7 +212,7 @@ function cleanTest(test) {
       if (line.match(/\\ No newline/)) {
         return null;
       }
-      return line;
+      return line.replace(/^(-|\+)/, '$1 ');
     }).filter(function (line) {
       return typeof line !== 'undefined' && line !== null;
     }).join('\n');
@@ -270,7 +262,7 @@ function cleanSuite(suite) {
     duration += test.duration;
   });
 
-  totalTestsRegistered += suite.tests ? suite.tests.length : 0;
+  totalTestsRegistered += suite.tests.length;
 
   suite.tests = cleanTests;
   suite.fullFile = suite.file || '';
@@ -325,21 +317,6 @@ function traverseSuites(suite) {
 }
 
 /**
- * Creates a new directory
- *
- * @param {String} dir
- * @returns {Promise}
- */
-
-function makeDir(dir) {
-  return new _promise2.default(function (resolve, reject) {
-    mkdirp(dir, function (err, made) {
-      return err === null ? resolve(made) : reject(err);
-    });
-  });
-}
-
-/**
  * Saves a file
  *
  * @param {String} filename
@@ -349,7 +326,7 @@ function makeDir(dir) {
 
 function saveFile(filename, data) {
   return new _promise2.default(function (resolve, reject) {
-    fs.writeFile(filename, data, function (err) {
+    fs.outputFile(filename, data, function (err) {
       return err === null ? resolve(true) : reject(err);
     });
   });
@@ -431,14 +408,21 @@ function saveFile(filename, data) {
 
         obj.stats.testsRegistered = totalTestsRegistered;
 
-        var passPercentage = Math.round(obj.stats.passes / (obj.stats.testsRegistered - obj.stats.pending) * 1000) / 10;
-        var pendingPercentage = Math.round(obj.stats.pending / obj.stats.testsRegistered * 1000) / 10;
+        var _obj$stats = obj.stats;
+        var passes = _obj$stats.passes;
+        var failures = _obj$stats.failures;
+        var pending = _obj$stats.pending;
+        var tests = _obj$stats.tests;
+        var testsRegistered = _obj$stats.testsRegistered;
+
+        var passPercentage = Math.round(passes / (testsRegistered - pending) * 1000) / 10;
+        var pendingPercentage = Math.round(pending / testsRegistered * 1000) / 10;
 
         obj.stats.passPercent = passPercentage;
         obj.stats.pendingPercent = pendingPercentage;
-        obj.stats.other = obj.stats.passes + obj.stats.failures + obj.stats.pending - obj.stats.tests;
+        obj.stats.other = passes + failures + pending - tests;
         obj.stats.hasOther = obj.stats.other > 0;
-        obj.stats.skipped = obj.stats.testsRegistered - obj.stats.tests;
+        obj.stats.skipped = testsRegistered - tests;
         obj.stats.hasSkipped = obj.stats.skipped > 0;
         obj.stats.failures -= obj.stats.other;
         obj.stats.passPercentClass = _getPercentClass(passPercentage);
@@ -448,7 +432,8 @@ function saveFile(filename, data) {
         _this.output = stringify(obj, null, 2);
       }
     } catch (e) {
-      // required because thrown errors are not handled directly in the event emitter pattern and mocha does not have an "on error"
+      // required because thrown errors are not handled directly in the
+      // event emitter pattern and mocha does not have an "on error"
       console.error('Problem with mochawesome: ' + e.stack);
     }
   });
