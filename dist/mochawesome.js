@@ -370,7 +370,8 @@ function saveFile(filename, data) {
 
   // Add pending test to array of pending tests
   runner.on('pending', function (test) {
-    return allPending.push(test);
+    test.uuid = uuid.v4();
+    allPending.push(test);
   });
 
   // Add passing test to array of passing tests
