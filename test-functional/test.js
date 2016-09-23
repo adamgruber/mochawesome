@@ -1,14 +1,39 @@
 function retObj() {
-  return { adam: 'adam' };
+  return {
+    employees: {
+      employee: [
+        {
+          id: '1',
+          firstName: 'Tom',
+          lastName: 'Cruise'
+        },
+        {
+          id: '2',
+          firstName: 'Maria',
+          lastName: 'Sharapova'
+        },
+        {
+          id: '3',
+          firstName: 'James',
+          lastName: 'Bond'
+        }
+      ]
+    }
+  };
 }
 
 describe('Master Test Suite', () => {
+  // it('passing test', done => {
+  //   true.should.be.ok;
+  //   done();
+  // });
+
   describe('Test Suite - Basic', () => {
-    it('passing test', done => {
+    it('should be passing test if true is not false', done => {
       true.should.be.ok;
       done();
     });
-    it('failing test', done => {
+    it('should fail when returned object does not match expected object', done => {
       const o = retObj();
       o.should.eql({});
       done();
@@ -17,7 +42,7 @@ describe('Master Test Suite', () => {
 
   describe('Test Suite - Nested Suites', () => {
     describe('Nested Test Suite', () => {
-      it('passing test', done => {
+      it('should be a passing test', done => {
         true.should.be.ok;
         done();
       });
@@ -32,7 +57,7 @@ describe('Master Test Suite', () => {
         done();
       });
     });
-    it('failing test', done => {
+    it('should be a failing test', done => {
       false.should.be.ok;
       done();
     });
