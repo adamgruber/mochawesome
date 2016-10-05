@@ -48,7 +48,7 @@ var lintPaths =  {
   ],
   felint: [
     path.join(config.srcJsDir, '*.js'),
-    path.join('!', config.srcJsDir, 'lodash.custom.js')
+    path.join('!'+config.srcJsDir, 'lodash.custom.js')
   ]
 };
 
@@ -123,7 +123,8 @@ gulp.task('templates', function () {
       root: 'exports',
       noRedeclare: true, // Avoid duplicate declarations
       processName: function(filePath) {
-        return declare.processNameByPath(filePath.replace('src/templates/', ''));
+        console.log('Path: '+'src/templates/'.replace(/\//g, path.sep));
+        return declare.processNameByPath(filePath.replace('src/templates/'.replace(/\//g, path.sep), ''));
       }
     }));
 
