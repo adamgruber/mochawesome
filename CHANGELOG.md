@@ -1,5 +1,8 @@
 #Changelog
 
+###1.5.3
+- Fixed build issues on Windows. See [#84](https://github.com/adamgruber/mochawesome/pull/84)
+
 ###1.5.2
 - Updated mocha peerDependency to allow any version
 
