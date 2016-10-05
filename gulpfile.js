@@ -123,7 +123,6 @@ gulp.task('templates', function () {
       root: 'exports',
       noRedeclare: true, // Avoid duplicate declarations
       processName: function(filePath) {
-        console.log('Path: '+'src/templates/'.replace(/\//g, path.sep));
         return declare.processNameByPath(filePath.replace('src/templates/'.replace(/\//g, path.sep), ''));
       }
     }));
