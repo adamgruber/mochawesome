@@ -20,7 +20,7 @@
     "json",
     "html"
   ],
-  "engine": "node >= 0.10.0",
+  "engine": "node >= 4",
   "main": "dist/mochawesome.js",
   "nyc": {
     "include": [
