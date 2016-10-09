@@ -231,7 +231,7 @@ function cleanTest(test) {
     code: code,
     err: err,
     isRoot: test.parent.root,
-    uuid: test.uuid,
+    uuid: test.uuid || uuid.v4(),
     parentUUID: test.parent.uuid
   };
 
