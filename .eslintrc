@@ -1,6 +1,5 @@
 {
   "extends": "airbnb-base",
-  "parser": "babel-eslint",
   "globals": {
     "Promise": true,
     "should": true,
@@ -11,6 +10,7 @@
     "mocha": true
   },
   "rules": {
+    "arrow-parens": [2, "as-needed"],
     "brace-style": [2, "1tbs"],
     "comma-style": [2, "last"],
     "curly": [2, "multi-line"],
