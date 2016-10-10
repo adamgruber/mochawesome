@@ -20,7 +20,7 @@
     "json",
     "html"
   ],
-  "engine": "node >= 0.10.0",
+  "engine": "node >= 4",
   "main": "dist/mochawesome.js",
   "nyc": {
     "include": [
@@ -58,21 +58,20 @@
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-core": "^6.14.0",
-    "babel-eslint": "^6.1.2",
     "babel-plugin-istanbul": "^2.0.1",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-3": "^6.11.0",
     "babel-register": "^6.14.0",
-    "cross-env": "^2.0.1",
-    "eslint": "^3.4.0",
-    "eslint-config-airbnb-base": "^5.0.3",
-    "eslint-plugin-import": "^1.14.0",
+    "cross-env": "^3.1.2",
+    "eslint": "^3.7.1",
+    "eslint-config-airbnb-base": "^8.0.0",
+    "eslint-plugin-import": "^2.0.0",
     "mocha": "*",
     "nyc": "^8.1.0",
     "proxyquire": "^1.7.10",
-    "should": "^3.3.2",
+    "should": "^11.1.0",
     "sinon": "^1.17.5"
   }
 }
