@@ -24,13 +24,13 @@ function retObj() {
 
 describe('Master Test Suite', () => {
   // it('passing test', done => {
-  //   true.should.be.ok;
+  //   (1+1).should.equal(2);;
   //   done();
   // });
 
   describe('Test Suite - Basic', () => {
     it('should be passing test if true is not false', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
     it('should fail when returned object does not match expected object', done => {
@@ -43,22 +43,22 @@ describe('Master Test Suite', () => {
   describe('Test Suite - Nested Suites', () => {
     describe('Nested Test Suite', () => {
       it('should be a passing test', done => {
-        true.should.be.ok;
+        (1+1).should.equal(2);;
         done();
       });
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
     describe('Nested Test Suite', () => {
       it('passing test', done => {
-        true.should.be.ok;
+        (1+1).should.equal(2);;
         done();
       });
     });
     it('should be a failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);
       done();
     });
   });
@@ -69,30 +69,30 @@ describe('Master Test Suite', () => {
     });
     describe('Nested Test Suite', () => {
       it('passing test', done => {
-        true.should.be.ok;
+        (1+1).should.equal(2);;
         done();
       });
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
   });
 
   describe('Test Suite - Failed After', () => {
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
     xit('pending test', done => {
       done();
     });
     it('failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);
       done();
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
     xit('pending test', done => {
@@ -105,21 +105,21 @@ describe('Master Test Suite', () => {
 
   describe('Test Suite - Pass', () => {
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
   });
 
   describe('Test Suite - Fail', () => {
     it('failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);;
       done();
     });
   });
 
   describe('Test Suite - Pend', () => {
     xit('pending test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
   });
@@ -129,12 +129,12 @@ describe('Master Test Suite', () => {
       console.log(a); // eslint-disable-line
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
 
     it('failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);;
       done();
     });
   });
@@ -144,12 +144,12 @@ describe('Master Test Suite', () => {
       console.log(a); // eslint-disable-line
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
 
     it('failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);;
       done();
     });
     after('failing after hook', () => {
@@ -162,30 +162,30 @@ describe('Master Test Suite', () => {
       console.log(a); // eslint-disable-line
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
 
     it('failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);;
       done();
     });
   });
 
   describe('Test Suite - Failed After Each', () => {
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
     xit('pending test', done => {
       done();
     });
     it('failing test', done => {
-      false.should.be.ok;
+      false.should.equal(true);;
       done();
     });
     it('passing test', done => {
-      true.should.be.ok;
+      (1+1).should.equal(2);;
       done();
     });
     xit('pending test', done => {
