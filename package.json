@@ -50,6 +50,7 @@
     "fs-extra": "^0.30.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.15.0",
+    "mochawesome-report": "^1.0.0-alpha",
     "node-uuid": "^1.4.7"
   },
   "peerDependencies": {
