@@ -31,39 +31,38 @@ var done = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            reportJsonFile = config.reportJsonFile;
-            reportHtmlFile = config.reportHtmlFile;
-            _context.prev = 2;
-            _context.next = 5;
+            reportJsonFile = config.reportJsonFile, reportHtmlFile = config.reportHtmlFile;
+            _context.prev = 1;
+            _context.next = 4;
             return saveFile(reportJsonFile, output);
 
-          case 5:
+          case 4:
             log('Report JSON saved to ' + reportJsonFile);
 
             // Create and save the HTML to disk
-            _context.next = 8;
+            _context.next = 7;
             return report.create(output, config);
 
-          case 8:
+          case 7:
             log('Report HTML saved to ' + reportHtmlFile);
 
             exit();
-            _context.next = 16;
+            _context.next = 15;
             break;
 
-          case 12:
-            _context.prev = 12;
-            _context.t0 = _context['catch'](2);
+          case 11:
+            _context.prev = 11;
+            _context.t0 = _context['catch'](1);
 
             log(_context.t0, 'error');
             exit();
 
-          case 16:
+          case 15:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 12]]);
+    }, _callee, this, [[1, 11]]);
   }));
 
   return function done(_x, _x2, _x3) {
@@ -84,7 +83,7 @@ var fs = require('fs-extra');
 var mocha = require('mocha');
 var mochaUtils = require('mocha/lib/utils');
 var _ = require('lodash');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var chalk = require('chalk');
 var stringify = require('json-stringify-safe');
 var conf = require('./config');
@@ -184,10 +183,10 @@ function cleanTest(test) {
   /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
   var code = test.fn ? test.fn.toString() : test.body;
   var err = test.err || {};
-  var actual = err.actual;
-  var expected = err.expected;
-  var showDiff = err.showDiff;
-  var stack = err.stack;
+  var actual = err.actual,
+      expected = err.expected,
+      showDiff = err.showDiff,
+      stack = err.stack;
 
 
   if (code) {
@@ -401,7 +400,7 @@ function saveFile(filename, data) {
           stats: _this.stats,
           suites: allSuites,
           allTests: allTests.map(cleanTest),
-          allPending: allPending,
+          allPending: allPending.map(cleanTest),
           allPasses: allPasses.map(cleanTest),
           allFailures: allFailures.map(cleanTest),
           copyrightYear: new Date().getFullYear()
@@ -409,12 +408,12 @@ function saveFile(filename, data) {
 
         obj.stats.testsRegistered = totalTestsRegistered;
 
-        var _obj$stats = obj.stats;
-        var passes = _obj$stats.passes;
-        var failures = _obj$stats.failures;
-        var pending = _obj$stats.pending;
-        var tests = _obj$stats.tests;
-        var testsRegistered = _obj$stats.testsRegistered;
+        var _obj$stats = obj.stats,
+            passes = _obj$stats.passes,
+            failures = _obj$stats.failures,
+            pending = _obj$stats.pending,
+            tests = _obj$stats.tests,
+            testsRegistered = _obj$stats.testsRegistered;
 
         var passPercentage = Math.round(passes / (testsRegistered - pending) * 1000) / 10;
         var pendingPercentage = Math.round(pending / testsRegistered * 1000) / 10;
