@@ -3,10 +3,11 @@
   "version": "2.0.0",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
-    "lint": "eslint lib test",
+    "lint": "eslint src test",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
     "test:fn": "mocha test-functional/test.js --opts test-functional/mocha.opts",
-    "build": "babel lib --out-dir dist"
+    "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
+    "build": "babel src --out-dir dist"
   },
   "author": "Adam Gruber",
   "license": "MIT",

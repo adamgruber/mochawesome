@@ -1,10 +1,10 @@
 /* Test courtesy of @adaphi */
 describe('mochawesome hook test', () => {
-	// Change this to drastically alter the memory impact
+  // Change this to drastically alter the memory impact
   const numTests = 1000;
 
-  function genTestBody() {
-    return done => {
+  function genTestBody(skip) {
+    return function (done) {
       // This just needs to contain a lot of stuff.
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -38,6 +38,7 @@ describe('mochawesome hook test', () => {
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      if (skip) this.skip();
       done();
     };
   }
@@ -61,5 +62,8 @@ describe('mochawesome hook test', () => {
 
   for (let i=1; i <= numTests; i++) {
     it(`test ${i}`, genTestBody());
+  }
+  for (let i=1; i <= numTests; i++) {
+    it(`skip test ${i}`, genTestBody(true));
   }
 });

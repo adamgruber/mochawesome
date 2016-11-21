@@ -36,6 +36,7 @@
     "no-else-return": 0,
     "no-console": 0,
     "no-throw-literal": 0,
+    "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
     "id-length": 0,
     "no-unused-expressions": 0,
     "no-confusing-arrow": 0,
