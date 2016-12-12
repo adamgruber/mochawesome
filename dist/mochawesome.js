@@ -227,6 +227,7 @@ function cleanTest(test) {
     pass: test.state === 'passed',
     fail: test.state === 'failed',
     pending: test.pending,
+    context: stringify(test.context, null, 2),
     code: code,
     err: err,
     isRoot: test.parent.root,

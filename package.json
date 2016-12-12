@@ -7,6 +7,7 @@
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
     "test:fn": "mocha test-functional/test.js --opts test-functional/mocha.opts",
     "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
+    "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
     "build": "babel src --out-dir dist"
   },
   "author": "Adam Gruber",
@@ -25,7 +26,7 @@
   "main": "dist/mochawesome.js",
   "nyc": {
     "include": [
-      "lib/*.js"
+      "src/*.js"
     ],
     "require": [
       "babel-register"

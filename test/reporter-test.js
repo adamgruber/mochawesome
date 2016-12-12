@@ -9,7 +9,7 @@ const makeTest = (title, doneFn) => new Test(title, doneFn);
 const writeFileStub = sinon.stub();
 const reportStub = sinon.stub();
 
-const mochawesome = proxyquire('../lib/mochawesome', {
+const mochawesome = proxyquire('../src/mochawesome', {
   'fs-extra': { outputFile: writeFileStub },
   'mochawesome-report': {
     create: reportStub
