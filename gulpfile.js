@@ -186,6 +186,7 @@ gulp.task('testOpts', function () {
     reportDir: 'customDir',
     reportName: 'customName',
     reportTitle: 'customTitle',
+    pageTitle: 'customPageTitle',
     inlineAssets: true,
     autoOpen: true
   };
@@ -195,7 +196,7 @@ gulp.task('testOpts', function () {
 });
 
 gulp.task('testOpts2', function () {
-  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle,inlineAssets=true,autoOpen=true';
+  mochaOpts.reporterOptions = 'reportDir=customDir,reportName=customName,reportTitle=customTitle,pageTitle=customPageTitle,inlineAssets=true,autoOpen=true';
   return gulp.src(testPaths.basic)
     .pipe(spawnmocha(mochaOpts))
     .on('error', console.warn.bind(console));
