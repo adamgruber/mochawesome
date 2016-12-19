@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const stringify = require('json-stringify-safe');
 const conf = require('./config');
 const diff = require('diff');
-const report = require('mochawesome-report');
+const marge = require('mochawesome-report-generator');
 
 // Track the total number of tests registered
 let totalTestsRegistered;
@@ -295,7 +295,7 @@ async function done(output, config, exit) {
     log(`Report JSON saved to ${reportJsonFile}`);
 
     // Create and save the HTML to disk
-    await report.create(output, config);
+    await marge.create(output, config);
     log(`Report HTML saved to ${reportHtmlFile}`);
 
     exit();
