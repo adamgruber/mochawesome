@@ -90,7 +90,7 @@ Mochawesome supports options via environment variables or passed in to mocha via
 - `reportDir: {String}` - changes the name of the report directory
 - `reportName: {String}` - changes the name of the report file
 - `reportTitle: {Sring}` - changes the title of the report
-- `pageTitle: {String}` - change the page title of the report in `<title>` element
+- `reportPageTitle: {String}` - change the page title of the report in `<title>` element
 - `inlineAssets: {Boolean}` - when `true` inlines all report assets into a self-contained report file
 
 *Setting a custom filename will change both the report html and json files.*
@@ -109,7 +109,7 @@ $ export MOCHAWESOME_INLINEASSETS=true
 
 ####Mocha options
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName,reportTitle=customReportTitle,pageTitle=customPageTitle,inlineAssets=true
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName,reportTitle=customReportTitle,reportPageTitle=customPageTitle,inlineAssets=true
 ```
 
 ```js
@@ -119,7 +119,7 @@ var mocha = new Mocha({
       reportDir: 'customReportDir',
       reportName: 'customReportName',
       reportTitle: 'customReportTitle',
-      pageTitle: 'customPageTitle',
+      reportPageTitle: 'customPageTitle',
       inlineAssets: true
     }
 });
