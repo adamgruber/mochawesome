@@ -41,7 +41,7 @@ var done = function () {
 
             // Create and save the HTML to disk
             _context.next = 7;
-            return report.create(output, config);
+            return marge.create(output, config);
 
           case 7:
             log('Report HTML saved to ' + reportHtmlFile);
@@ -88,7 +88,7 @@ var chalk = require('chalk');
 var stringify = require('json-stringify-safe');
 var conf = require('./config');
 var diff = require('diff');
-var report = require('mochawesome-report');
+var marge = require('mochawesome-report-generator');
 
 // Track the total number of tests registered
 var totalTestsRegistered = void 0;
