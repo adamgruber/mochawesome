@@ -13,10 +13,11 @@ To start, the actual report generation has been moved out into its own package, 
 ###New Features
 - Every bit of the report has been redesigned for a cleaner, more streamlined look
 - Built using React and mobx
-- Supports displaying additional test context
+- Supports displaying [additional test context](#adding-test-context) including images!
 - Supports displaying inline diffs for failed tests
 - New [options](#options) including hiding test code and/or charts 
 - Enhanced navigation menu with clearer filtering options
+- New option to disable console messages
 - Test coverage!
 
 ###Plus...
@@ -96,6 +97,7 @@ Option Name | Type | Default | Description
 `enableCharts` | boolean | true | Display Suite charts
 `enableTestCode` | boolean | true | Display test code
 `autoOpen` | boolean | false | Open the report after running tests
+`quiet` | boolean | false | Silence console messages
 
 *Setting a custom filename will change both the report html and json files.*
 
@@ -111,11 +113,12 @@ $ export MOCHAWESOME_INLINEASSETS=true
 $ export MOCHAWESOME_AUTOOPEN=true
 $ export MOCHAWESOME_ENABLECHARTS=false
 $ export MOCHAWESOME_ENABLECODE=false
+$ export MOCHAWESOME_QUIET=true
 ```
 
 ####Mocha options
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename,reportTitle=customReportTitle,reportPageTitle=customReportPageTitle,inlineAssets=true,autoOpen=true,enableCharts=false,enableTestCode=false
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename,reportTitle=customReportTitle,reportPageTitle=customReportPageTitle,inlineAssets=true,autoOpen=true,enableCharts=false,enableTestCode=false,quiet=true
 ```
 
 ```js
@@ -129,10 +132,14 @@ var mocha = new Mocha({
     inlineAssets: true,
     autoOpen: false,
     enableCharts: true,
-    enableTestCode: true
+    enableTestCode: true,
+    quiet: true
   }
 });
 ```
+
+##Adding Test Context
+One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible. **TODO: Fill in how to do it**
 
 [1]: http://visionmedia.github.io/mocha/
 [2]: https://github.com/adamgruber/mochawesome-report-generator

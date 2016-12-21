@@ -13,6 +13,7 @@ const ERRORS = {
  * HELPER FUNCTIONS
  */
 
+/* istanbul ignore next */
 function log(msg, level) {
   const logMethod = console[level] || console.log;
   let out = msg;
@@ -23,7 +24,12 @@ function log(msg, level) {
 }
 
 function _isValidContext(ctx) {
-  return (typeof ctx === 'string')
+  /*
+   * Context is valid if any of the following are true:
+   * 1. Type is string and it is not empty
+   * 2. Type is object and it has properties 'title' and 'value'
+   */
+  return ((typeof ctx === 'string') && !isEmpty(ctx))
     || (Object.hasOwnProperty.call(ctx, 'title') && Object.hasOwnProperty.call(ctx, 'value'));
 }
 
@@ -58,7 +64,7 @@ function _isValidContext(ctx) {
 
 const addContext = function (...args) {
   // Check args to see if we should bother continuing
-  if ((args.length !== 2) || !isObject(args[0]) || !args[0].test || isEmpty(args[1])) {
+  if ((args.length !== 2) || !isObject(args[0]) || !args[0].test) {
     log(ERRORS.INVALID_ARGS, 'error');
     return;
   }
@@ -85,9 +91,6 @@ const addContext = function (...args) {
     test.context = [ test.context ];
     test.context.push(ctx);
   }
-
-  // Log the context object
-  log(test.context);
 };
 
 module.exports = addContext;

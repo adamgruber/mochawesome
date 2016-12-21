@@ -1,6 +1,6 @@
 /*
- * Export context function
+ * Export addContext function
  *
  */
 
-module.exports = require('./dist/context');
+module.exports = require('./dist/addContext');
