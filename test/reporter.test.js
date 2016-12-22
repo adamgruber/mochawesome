@@ -148,7 +148,8 @@ describe('mochawesome reporter', () => {
           reportDir: 'testReportDir',
           reportTitle: 'testReportTitle',
           inlineAssets: 'true',
-          autoOpen: true
+          autoOpen: true,
+          quiet: true
         }
       });
 
@@ -157,11 +158,11 @@ describe('mochawesome reporter', () => {
 
 
       runner.run(failureCount => {
-        // console.log(mochaReporter.config);
         mochaReporter.config.reportDir.should.equal('testReportDir');
         mochaReporter.config.reportTitle.should.equal('testReportTitle');
         mochaReporter.config.inlineAssets.should.equal(true);
         mochaReporter.config.autoOpen.should.equal(true);
+        mochaReporter.config.quiet.should.equal(true);
         done();
       });
     });
@@ -175,10 +176,6 @@ describe('mochawesome reporter', () => {
       suite.addSuite(subSuite);
       runner = new Runner(suite);
       mochaReporter = new mocha._reporter(runner);
-    });
-
-    afterEach(() => {
-
     });
 
     it('should call the reporter done function successfully', done => {
@@ -207,6 +204,20 @@ describe('mochawesome reporter', () => {
       reportStub.returns(Promise.reject({ message: 'report creation failed' }));
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
+
+      runner.run(failureCount => {
+        mochaReporter.done(failureCount, done);
+      });
+    });
+
+    it('should not log when quiet option is true', done => {
+      reportStub.returns(Promise.resolve({}));
+      writeFileStub.yields(null, {});
+      const test = makeTest('test', () => {});
+      subSuite.addTest(test);
+      mochaReporter = new mocha._reporter(runner, {
+        reporterOptions: { quiet: true }
+      });
 
       runner.run(failureCount => {
         mochaReporter.done(failureCount, done);

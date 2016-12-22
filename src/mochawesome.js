@@ -17,7 +17,9 @@ let totalTestsRegistered;
  * HELPER FUNCTIONS
  */
 
-function log(msg, level) {
+function log(msg, level, config) {
+  // Don't log messages in quiet mode
+  if (config && config.quiet) return;
   const logMethod = console[level] || console.log;
   let out = msg;
   if (typeof msg === 'object') {
@@ -142,7 +144,7 @@ function cleanTest(test) {
 
   const cleaned = {
     title: test.title,
-    fullTitle: test.fullTitle ? test.fullTitle() : test.title,
+    fullTitle: _.isFunction(test.fullTitle) ? test.fullTitle() : /* istanbul ignore next */test.title,
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,
@@ -153,9 +155,9 @@ function cleanTest(test) {
     context: stringify(test.context, null, 2),
     code,
     err,
-    isRoot: test.parent.root,
-    uuid: test.uuid || uuid.v4(),
-    parentUUID: test.parent.uuid
+    isRoot: test.parent && test.parent.root,
+    uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
+    parentUUID: test.parent && test.parent.uuid
   };
 
   cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending);
@@ -292,15 +294,15 @@ async function done(output, config, exit) {
   try {
     // Save the JSON to disk
     await saveFile(reportJsonFile, output);
-    log(`Report JSON saved to ${reportJsonFile}`);
+    log(`Report JSON saved to ${reportJsonFile}`, null, config);
 
     // Create and save the HTML to disk
     await marge.create(output, config);
-    log(`Report HTML saved to ${reportHtmlFile}`);
+    log(`Report HTML saved to ${reportHtmlFile}`, null, config);
 
     exit();
   } catch (err) {
-    log(err, 'error');
+    log(err, 'error', config);
     exit();
   }
 }
@@ -399,6 +401,7 @@ function Mochawesome(runner, options) {
     } catch (e) {
       // required because thrown errors are not handled directly in the
       // event emitter pattern and mocha does not have an "on error"
+      /* istanbul ignore next */
       console.error(`Problem with mochawesome: ${e.stack}`);
     }
   });
