@@ -37,14 +37,14 @@ var done = function () {
             return saveFile(reportJsonFile, output);
 
           case 4:
-            log('Report JSON saved to ' + reportJsonFile);
+            log('Report JSON saved to ' + reportJsonFile, null, config);
 
             // Create and save the HTML to disk
             _context.next = 7;
             return marge.create(output, config);
 
           case 7:
-            log('Report HTML saved to ' + reportHtmlFile);
+            log('Report HTML saved to ' + reportHtmlFile, null, config);
 
             exit();
             _context.next = 15;
@@ -54,7 +54,7 @@ var done = function () {
             _context.prev = 11;
             _context.t0 = _context['catch'](1);
 
-            log(_context.t0, 'error');
+            log(_context.t0, 'error', config);
             exit();
 
           case 15:
@@ -97,7 +97,9 @@ var totalTestsRegistered = void 0;
  * HELPER FUNCTIONS
  */
 
-function log(msg, level) {
+function log(msg, level, config) {
+  // Don't log messages in quiet mode
+  if (config && config.quiet) return;
   var logMethod = console[level] || console.log;
   var out = msg;
   if ((typeof msg === 'undefined' ? 'undefined' : (0, _typeof3.default)(msg)) === 'object') {
@@ -219,7 +221,7 @@ function cleanTest(test) {
 
   var cleaned = {
     title: test.title,
-    fullTitle: test.fullTitle ? test.fullTitle() : test.title,
+    fullTitle: _.isFunction(test.fullTitle) ? test.fullTitle() : /* istanbul ignore next */test.title,
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,
@@ -230,9 +232,9 @@ function cleanTest(test) {
     context: stringify(test.context, null, 2),
     code: code,
     err: err,
-    isRoot: test.parent.root,
-    uuid: test.uuid || uuid.v4(),
-    parentUUID: test.parent.uuid
+    isRoot: test.parent && test.parent.root,
+    uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
+    parentUUID: test.parent && test.parent.uuid
   };
 
   cleaned.skipped = !cleaned.pass && !cleaned.fail && !cleaned.pending;
@@ -435,6 +437,7 @@ function saveFile(filename, data) {
     } catch (e) {
       // required because thrown errors are not handled directly in the
       // event emitter pattern and mocha does not have an "on error"
+      /* istanbul ignore next */
       console.error('Problem with mochawesome: ' + e.stack);
     }
   });
