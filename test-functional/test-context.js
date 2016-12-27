@@ -31,6 +31,29 @@ describe('Master Test Suite', () => {
       addContext(this, 'this is the test context');
       done();
     });
+    it('should have url context, no protocol', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'www.apple.com');
+      done();
+    });
+    it('should have url context, with protocol', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'http://www.apple.com');
+      done();
+    });
+    it('should have url context, ftp', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'ftp://www.apple.com');
+      done();
+    });
+    it('should have url context, with title', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, {
+        title: 'this is a link',
+        value: 'www.apple.com'
+      });
+      done();
+    });
     it('should have json context', function (done) {
       addContext(this, {
         title: 'sample return object',
