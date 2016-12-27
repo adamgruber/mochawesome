@@ -49,8 +49,9 @@ describe('Master Test Suite', () => {
         done();
       });
     });
-    it('passing test', done => {
+    it('passing test', function (done) {
       (1+1).should.equal(2);
+      addContext(this, 'https://github.com/adamgruber');
       done();
     });
     describe('Nested Test Suite', () => {
