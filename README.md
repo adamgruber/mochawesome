@@ -33,8 +33,8 @@ To start, the actual report generation has been moved out into its own package, 
 
 ###Sample Report
 
-<img src="./docs/marge-report-1.0.0.png" alt="Mochawesome Report" width="75%" />
-<img src="./docs/marge-report-menu-1.0.0.png" alt="Mochawesome Report Menu" width="75%" />
+<img src="./docs/marge-report-1.0.1.png" alt="Mochawesome Report" width="75%" />
+<img src="./docs/marge-report-menu-1.0.1.png" alt="Mochawesome Report Menu" width="75%" />
 
 ###Browser Support
 Tested to work in Chrome. *Should* work in any modern web browser including IE9+.
@@ -85,7 +85,7 @@ The two main files to be aware of are:
 
 
 ##Options
-Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`.
+Mochawesome supports options via environment variables or passed directly to mocha.
 
 Option Name | Type | Default | Description 
 :---------- | :--- | :------ | :----------
@@ -104,22 +104,19 @@ Option Name | Type | Default | Description
 **Options passed in will take precedence over environment variables.**
 
 ####Environment variables
+Options can be set via environment variable. To do this you must prefix the variable with `MOCHAWESOME_` and then uppercase the variable name.
 ```bash
 $ export MOCHAWESOME_REPORTDIR=customReportDir
-$ export MOCHAWESOME_REPORTFILENAME=customReportFilename
-$ export MOCHAWESOME_REPORTTITLE=customReportTitle
-$ export MOCHAWESOME_REPORTPAGETITLE=customReportPageTitle
 $ export MOCHAWESOME_INLINEASSETS=true
 $ export MOCHAWESOME_AUTOOPEN=true
-$ export MOCHAWESOME_ENABLECHARTS=false
-$ export MOCHAWESOME_ENABLECODE=false
-$ export MOCHAWESOME_QUIET=true
 ```
 
 ####Mocha options
+You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag.
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename,reportTitle=customReportTitle,reportPageTitle=customReportPageTitle,inlineAssets=true,autoOpen=true,enableCharts=false,enableTestCode=false,quiet=true
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename
 ```
+Options can be passed in programatically as well:
 
 ```js
 var mocha = new Mocha({
@@ -127,19 +124,63 @@ var mocha = new Mocha({
   reporterOptions: {
     reportDir: 'customReportDir',
     reportFilename: 'customReportFilename',
-    reportTitle: 'customReportTitle',
-    reportPageTitle: 'customReportPageTitle',
-    inlineAssets: true,
-    autoOpen: false,
-    enableCharts: true,
-    enableTestCode: true,
-    quiet: true
+    enableCharts: false
   }
 });
 ```
 
 ##Adding Test Context
-One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible. **TODO: Fill in how to do it**
+One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible with the `addContext` helper method. This method will add extra information to the test object that will then be displayed inside the report.
+
+###addContext(testObj, context)
+
+param | type | description
+:---- | :--- | :----------
+testObj | object | The test object
+context | string\|object | The context to be added to the test
+
+**Context as a string**
+
+Simple strings will be displayed as is. If you pass a URL, the reporter will attempt to turn it into a link. If the URL links to an image, it will be shown inline.
+
+**Context as an object**
+
+Context passed as an object must adhere to the following shape:
+```js
+{
+  title: 'some title' // must be a string
+  value: {} // can be anything
+}
+```
+
+####Example
+*When using the `addContext` helper, you cannot use an arrow function in your `it` statement because your `this` value will not be the test object.*
+```js
+const addContext = require('mochawesome/addContext');
+
+describe('test suite', function () {
+  it('should add context', function () {
+    // context can be a simple string
+    addContext(this, 'simple string');
+
+    // context can be a url and the report will create a link
+    addContext(this, 'http://www.url.com/pathname');
+
+    // context can be an image url and the report will show it inline
+    addContext(this, 'http://www.url.com/screenshot-maybe.jpg');
+
+    // context can be an object with title and value properties
+    addContext(this, {
+      title: 'expected output',
+      value: {
+        a: 1,
+        b: '2',
+        c: 'd'
+      }
+    });
+  })
+});
+```
 
 [1]: http://visionmedia.github.io/mocha/
 [2]: https://github.com/adamgruber/mochawesome-report-generator
