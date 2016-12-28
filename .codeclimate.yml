@@ -4,9 +4,14 @@ engines:
     enabled: true
     config:
       languages:
-      - javascript
+        javascript:
+          mass_threshold: 90
   eslint:
     enabled: true
+    channel: "eslint-3"
+    config:
+      extensions:
+        - ".js"
   fixme:
     enabled: true
 ratings:
