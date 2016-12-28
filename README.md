@@ -182,5 +182,8 @@ describe('test suite', function () {
 });
 ```
 
+##v1.x
+Documentation for version 1.x can be found [here](https://github.com/adamgruber/mochawesome/tree/v1.X).
+
 [1]: http://visionmedia.github.io/mocha/
 [2]: https://github.com/adamgruber/mochawesome-report-generator

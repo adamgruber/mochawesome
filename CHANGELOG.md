@@ -10,7 +10,6 @@
 - Unit tests!
 - Added diff for test error
 
-
 ###1.5.2
 - Updated mocha peerDependency to allow any version
 
