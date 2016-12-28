@@ -1,24 +1,21 @@
 ---
 engines:
-  csslint:
-    enabled: false
   duplication:
     enabled: true
     config:
       languages:
       - javascript
   eslint:
-    enabled: false
+    enabled: true
   fixme:
     enabled: true
 ratings:
   paths:
-  - "**.css"
   - "**.js"
-  - "**.jsx"
 exclude_paths:
-- gulpfile.js
-- src/js/lodash.custom.js
-- dist/js/*.js
-- test/*
-- lib/templates.js
+- dist/*
+- .nyc_output/*
+- _site/*
+- coverage/*
+- docs/*
+- test-functional/*
