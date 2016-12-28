@@ -29,8 +29,8 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.9.0",
     "ncp": "^1.0.1",
-    "node-uuid": "^1.4.1",
-    "opener": "^1.4.1"
+    "opener": "^1.4.1",
+    "uuid": "^3.0.0"
   },
   "peerDependencies": {
     "mocha": "*"
