@@ -1,24 +1,26 @@
 ---
 engines:
-  csslint:
-    enabled: false
   duplication:
     enabled: true
     config:
       languages:
-      - javascript
+        javascript:
+          mass_threshold: 90
   eslint:
-    enabled: false
+    enabled: true
+    channel: "eslint-3"
+    config:
+      extensions:
+        - ".js"
   fixme:
     enabled: true
 ratings:
   paths:
-  - "**.css"
   - "**.js"
-  - "**.jsx"
 exclude_paths:
-- gulpfile.js
-- src/js/lodash.custom.js
-- dist/js/*.js
-- test/*
-- lib/templates.js
+- dist/*
+- .nyc_output/*
+- _site/*
+- coverage/*
+- docs/*
+- test-functional/*

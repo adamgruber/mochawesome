@@ -1,5 +1,16 @@
 #Changelog
 
+###2.0.0
+- Moved report generation to mochawesome-report package
+- Updated dependencies
+- Switched from jshint to eslint
+- Rewritten using ES6
+- Fixed an issue where test uuid was not generated properly
+- Added `done` function that will get called before mocha exits (eliminates need for `--no-exit` option)
+- Unit tests!
+- Added diff for test error
+- Added ability to display additional test context
+
 ###1.5.4
 - Run pending tests thru `cleanTest` function. Fixes possible scenario where a pending test with a large amount of text could cause node to run out of memory. See [#94](https://github.com/adamgruber/mochawesome/issues/94)
 
@@ -61,7 +72,6 @@
 
 ###1.0.1 - 1.0.5
 - Bugfixes
-
 
 ###1.0.0
 - Redesigned report

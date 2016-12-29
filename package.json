@@ -1,9 +1,14 @@
 {
   "name": "mochawesome",
-  "version": "1.5.4",
+  "version": "2.0.0",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
-    "test": "gulp build"
+    "lint": "eslint src test",
+    "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
+    "test:fn": "mocha test-functional/test.js --opts test-functional/mocha.opts",
+    "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
+    "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
+    "build": "babel src -d dist"
   },
   "author": "Adam Gruber",
   "license": "MIT",
@@ -15,47 +20,60 @@
     "mocha",
     "reporter",
     "json",
-    "handlebars"
+    "html"
   ],
-  "engine": "node >= 0.10.0",
-  "main": "mochawesome.js",
+  "engine": "node >= 4",
+  "main": "dist/mochawesome.js",
+  "nyc": {
+    "include": [
+      "src/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false,
+    "reporter": [
+      "lcov",
+      "html",
+      "text-summary"
+    ],
+    "cache": true,
+    "check-coverage": true,
+    "lines": 99,
+    "statements": 99,
+    "functions": 100,
+    "branches": 90
+  },
   "dependencies": {
-    "async": "^0.9.0",
-    "chalk": "^1.0.0",
-    "handlebars": "^3.0.3",
-    "highlight.js": "^8.5.0",
-    "json-stringify-safe": "^5.0.0",
-    "lodash": "^3.1.0",
-    "mkdirp": "^0.5.1",
-    "moment": "^2.9.0",
-    "ncp": "^1.0.1",
-    "node-uuid": "^1.4.1",
-    "opener": "^1.4.1"
+    "babel-runtime": "^6.20.0",
+    "chalk": "^1.1.3",
+    "diff": "^3.0.0",
+    "fs-extra": "^1.0.0",
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.3",
+    "mochawesome-report-generator": "^1.0.1",
+    "uuid": "^3.0.1"
   },
   "peerDependencies": {
     "mocha": "*"
   },
   "devDependencies": {
-    "bootstrap": "^3.3.2",
-    "chart.js": "^1.0.1",
-    "fiveby": "^1.0.0",
-    "gulp": "^3.8.1",
-    "gulp-concat": "^2.4.3",
-    "gulp-declare": "^0.3.0",
-    "gulp-handlebars": "^4.0.0",
-    "gulp-jshint": "^1.9.0",
-    "gulp-less": "^3.0.3",
-    "gulp-mocha": "^2.2.0",
-    "gulp-plumber": "^0.6.6",
-    "gulp-spawn-mocha": "^0.5.2",
-    "gulp-uglify": "^1.1.0",
-    "gulp-util": "^3.0.2",
-    "gulp-watch": "^4.1.0",
-    "gulp-wrap": "^0.10.1",
-    "jquery": "^2.1.3",
-    "jshint-stylish": "^1.0.0",
-    "merge-stream": "^0.1.7",
-    "mocha": "~2",
-    "should": "^3.3.2"
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.20.0",
+    "babel-plugin-istanbul": "^3.0.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-stage-3": "^6.11.0",
+    "babel-register": "^6.14.0",
+    "cross-env": "^3.1.2",
+    "eslint": "^3.10.2",
+    "eslint-config-airbnb-base": "^10.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "*",
+    "nyc": "^9.0.1",
+    "proxyquire": "^1.7.10",
+    "should": "^11.1.2",
+    "sinon": "^1.17.5"
   }
 }
