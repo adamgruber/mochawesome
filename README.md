@@ -2,7 +2,7 @@ mochawesome
 ===========
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It generates a full fledged HTML/CSS report that helps visualize your test suites.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
 ##Version 2.0 is here! :tada:
 With the arrival of 2.0 comes some often requested features, a code rewrite, and a complete redesign of the report.
@@ -37,8 +37,7 @@ To start, the actual report generation has been moved out into its own package, 
 <img src="./docs/marge-report-menu-1.0.1.png" alt="Mochawesome Report Menu" width="75%" />
 
 ###Browser Support
-Tested to work in Chrome. *Should* work in any modern web browser including IE9+.
-Mochawesome generates a self-contained report that can be viewed offline. 
+The generated report has been tested to work in Chrome. It *should* work in any modern web browser, including IE9+. It is also fully self-contained for offline viewing. 
 
 ##Usage
 
