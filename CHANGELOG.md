@@ -1,5 +1,8 @@
 #Changelog
 
+###1.5.5
+- Change `fs.close` method to `fs.closeSync` in `reportGenerator.js` to be in line with other sync methods. Addresses [#107](https://github.com/adamgruber/mochawesome/issues/107)
+
 ###1.5.4
 - Run pending tests thru `cleanTest` function. Fixes possible scenario where a pending test with a large amount of text could cause node to run out of memory. See [#94](https://github.com/adamgruber/mochawesome/issues/94)
 
