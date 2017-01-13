@@ -2,6 +2,7 @@ const Mocha = require('mocha');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const Assert = require('assert').AssertionError;
+const path = require('path');
 
 const { Runner, Suite, Test } = Mocha;
 const makeTest = (title, doneFn) => new Test(title, doneFn);
@@ -11,9 +12,17 @@ const reportStub = sinon.stub();
 
 const mochawesome = proxyquire('../src/mochawesome', {
   'fs-extra': { outputFile: writeFileStub },
-  'mochawesome-report': {
+  'mochawesome-report-generator': {
     create: reportStub
   }
+});
+
+// node throws a warning for unhandled promise rejections
+// these are expected in this test so we just handle here
+// to quiet the warning
+process.on('unhandledRejection', reason => {
+  console.error(reason);
+  process.exit(0);
 });
 
 describe('mochawesome reporter', () => {
@@ -121,7 +130,7 @@ describe('mochawesome reporter', () => {
     });
 
     it('should apply reporter options via environment variables', done => {
-      process.env.MOCHAWESOME_REPORTDIR = 'testReportDir';
+      process.env.MOCHAWESOME_REPORTDIR = 'testReportDir/subdir';
       process.env.MOCHAWESOME_INLINEASSETS = 'true';
       process.env.MOCHAWESOME_AUTOOPEN = false;
 
@@ -131,8 +140,7 @@ describe('mochawesome reporter', () => {
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        // console.log(mochaReporter.config);
-        mochaReporter.config.reportDir.should.equal('testReportDir');
+        mochaReporter.config.reportDir.should.equal(path.resolve(__dirname, '../testReportDir/subdir'));
         mochaReporter.config.inlineAssets.should.equal(true);
         mochaReporter.config.autoOpen.should.equal(false);
         done();
@@ -146,6 +154,7 @@ describe('mochawesome reporter', () => {
       mochaReporter = new mocha._reporter(runner, {
         reporterOptions: {
           reportDir: 'testReportDir',
+          reportFilename: 'testReportFilename',
           reportTitle: 'testReportTitle',
           inlineAssets: 'true',
           autoOpen: true,
@@ -158,7 +167,8 @@ describe('mochawesome reporter', () => {
 
 
       runner.run(failureCount => {
-        mochaReporter.config.reportDir.should.equal('testReportDir');
+        mochaReporter.config.reportDir.should.equal(path.resolve(__dirname, '../testReportDir'));
+        mochaReporter.config.reportFilename.should.equal('testReportFilename');
         mochaReporter.config.reportTitle.should.equal('testReportTitle');
         mochaReporter.config.inlineAssets.should.equal(true);
         mochaReporter.config.autoOpen.should.equal(true);

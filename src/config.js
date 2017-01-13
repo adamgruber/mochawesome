@@ -1,7 +1,7 @@
 const path = require('path');
 
 const baseConfig = {
-  reportDir: path.join('.', 'mochawesome-reports'),
+  reportDir: './mochawesome-reports',
   reportFilename: 'mochawesome',
   reportTitle: process.cwd().split(path.sep).pop(),
   reportPageTitle: 'Mochawesome Report Card',
@@ -35,9 +35,9 @@ function _getOption(optToGet, options, isBool) {
 
 module.exports = function (opts) {
   const options = {};
-  const reportFilename = _getOption('reportFilename', opts);
 
-  options.reportDir = _getOption('reportDir', opts);
+  options.reportFilename = _getOption('reportFilename', opts);
+  options.reportDir = path.resolve(_getOption('reportDir', opts));
   options.reportTitle = _getOption('reportTitle', opts);
   options.reportPageTitle = _getOption('reportPageTitle', opts);
   options.inlineAssets = _getOption('inlineAssets', opts, true);
@@ -47,8 +47,8 @@ module.exports = function (opts) {
   options.quiet = _getOption('quiet', opts, true);
 
   // Report Files
-  options.reportJsonFile = path.join(options.reportDir, `${reportFilename}.json`);
-  options.reportHtmlFile = path.join(options.reportDir, `${reportFilename}.html`);
+  options.reportJsonFile = path.join(options.reportDir, `${options.reportFilename}.json`);
+  options.reportHtmlFile = path.join(options.reportDir, `${options.reportFilename}.html`);
 
   return Object.assign(baseConfig, options);
 };
