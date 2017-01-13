@@ -17,9 +17,12 @@ const mochawesome = proxyquire('../src/mochawesome', {
   }
 });
 
+// node throws a warning for unhandled promise rejections
+// these are expected in this test so we just handle here
+// to quiet the warning
 process.on('unhandledRejection', reason => {
   console.error(reason);
-  process.exit(1);
+  process.exit(0);
 });
 
 describe('mochawesome reporter', () => {
