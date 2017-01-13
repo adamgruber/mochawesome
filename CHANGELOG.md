@@ -1,5 +1,10 @@
 #Changelog
 
+###2.0.1
+- Fixed an issue where `reportFilename` was not propagated to `config` object
+- Updated handling of `reportDir` option to allow relative paths
+- Bumped mochawesome-report-generator dependency
+
 ###2.0.0
 - Moved report generation to mochawesome-report package
 - Updated dependencies
