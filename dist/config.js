@@ -9,7 +9,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var path = require('path');
 
 var baseConfig = {
-  reportDir: path.join('.', 'mochawesome-reports'),
+  reportDir: './mochawesome-reports',
   reportFilename: 'mochawesome',
   reportTitle: process.cwd().split(path.sep).pop(),
   reportPageTitle: 'Mochawesome Report Card',
@@ -37,9 +37,9 @@ function _getOption(optToGet, options, isBool) {
 
 module.exports = function (opts) {
   var options = {};
-  var reportFilename = _getOption('reportFilename', opts);
 
-  options.reportDir = _getOption('reportDir', opts);
+  options.reportFilename = _getOption('reportFilename', opts);
+  options.reportDir = path.resolve(_getOption('reportDir', opts));
   options.reportTitle = _getOption('reportTitle', opts);
   options.reportPageTitle = _getOption('reportPageTitle', opts);
   options.inlineAssets = _getOption('inlineAssets', opts, true);
@@ -49,8 +49,8 @@ module.exports = function (opts) {
   options.quiet = _getOption('quiet', opts, true);
 
   // Report Files
-  options.reportJsonFile = path.join(options.reportDir, reportFilename + '.json');
-  options.reportHtmlFile = path.join(options.reportDir, reportFilename + '.html');
+  options.reportJsonFile = path.join(options.reportDir, options.reportFilename + '.json');
+  options.reportHtmlFile = path.join(options.reportDir, options.reportFilename + '.html');
 
   return (0, _assign2.default)(baseConfig, options);
 };
