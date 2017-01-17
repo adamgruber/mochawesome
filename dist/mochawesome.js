@@ -25,7 +25,7 @@ var _typeof3 = _interopRequireDefault(_typeof2);
  */
 
 var done = function () {
-  var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(output, config, exit) {
+  var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(output, config, failures, exit) {
     var reportJsonFile, reportHtmlFile;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
@@ -46,7 +46,7 @@ var done = function () {
           case 7:
             log('Report HTML saved to ' + reportHtmlFile, null, config);
 
-            exit();
+            exit(failures);
             _context.next = 15;
             break;
 
@@ -55,7 +55,7 @@ var done = function () {
             _context.t0 = _context['catch'](1);
 
             log(_context.t0, 'error', config);
-            exit();
+            exit(failures);
 
           case 15:
           case 'end':
@@ -65,7 +65,7 @@ var done = function () {
     }, _callee, this, [[1, 11]]);
   }));
 
-  return function done(_x, _x2, _x3) {
+  return function done(_x, _x2, _x3, _x4) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -338,7 +338,7 @@ function saveFile(filename, data) {
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the report
   this.done = function (failures, exit) {
-    return done(_this.output, _this.config, exit);
+    return done(_this.output, _this.config, failures, exit);
   };
 
   // Reset total tests counter

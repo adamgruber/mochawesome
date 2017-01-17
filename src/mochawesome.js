@@ -289,7 +289,7 @@ function saveFile(filename, data) {
  * @param {Function} exit
  */
 
-async function done(output, config, exit) {
+async function done(output, config, failures, exit) {
   const { reportJsonFile, reportHtmlFile } = config;
   try {
     // Save the JSON to disk
@@ -300,10 +300,10 @@ async function done(output, config, exit) {
     await marge.create(output, config);
     log(`Report HTML saved to ${reportHtmlFile}`, null, config);
 
-    exit();
+    exit(failures);
   } catch (err) {
     log(err, 'error', config);
-    exit();
+    exit(failures);
   }
 }
 
@@ -317,7 +317,7 @@ async function done(output, config, exit) {
 function Mochawesome(runner, options) {
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the report
-  this.done = (failures, exit) => done(this.output, this.config, exit);
+  this.done = (failures, exit) => done(this.output, this.config, failures, exit);
 
   // Reset total tests counter
   totalTestsRegistered = 0;
