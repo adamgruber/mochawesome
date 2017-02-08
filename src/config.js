@@ -29,7 +29,7 @@ function _getOption(optToGet, options, isBool) {
       : process.env[envVar];
   }
   return isBool
-    ? baseConfig[optToGet] === 'true'
+    ? baseConfig[optToGet] === true
     : baseConfig[optToGet];
 }
 
