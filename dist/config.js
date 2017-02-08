@@ -32,7 +32,7 @@ function _getOption(optToGet, options, isBool) {
   if (typeof process.env[envVar] !== 'undefined') {
     return isBool ? process.env[envVar] === 'true' : process.env[envVar];
   }
-  return isBool ? baseConfig[optToGet] === 'true' : baseConfig[optToGet];
+  return isBool ? baseConfig[optToGet] === true : baseConfig[optToGet];
 }
 
 module.exports = function (opts) {
