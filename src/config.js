@@ -8,7 +8,7 @@ const baseConfig = {
   inlineAssets: false,
   autoOpen: false,
   enableCharts: true,
-  enableTestCode: true,
+  enableCode: true,
   quiet: false
 };
 
@@ -29,7 +29,7 @@ function _getOption(optToGet, options, isBool) {
       : process.env[envVar];
   }
   return isBool
-    ? baseConfig[optToGet] === 'true'
+    ? baseConfig[optToGet] === true
     : baseConfig[optToGet];
 }
 
@@ -43,7 +43,7 @@ module.exports = function (opts) {
   options.inlineAssets = _getOption('inlineAssets', opts, true);
   options.autoOpen = _getOption('autoOpen', opts, true);
   options.enableCharts = _getOption('enableCharts', opts, true);
-  options.enableTestCode = _getOption('enableTestCode', opts, true);
+  options.enableCode = _getOption('enableCode', opts, true);
   options.quiet = _getOption('quiet', opts, true);
 
   // Report Files
