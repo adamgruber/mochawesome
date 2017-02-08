@@ -16,7 +16,7 @@ var baseConfig = {
   inlineAssets: false,
   autoOpen: false,
   enableCharts: true,
-  enableTestCode: true,
+  enableCode: true,
   quiet: false
 };
 
@@ -45,7 +45,7 @@ module.exports = function (opts) {
   options.inlineAssets = _getOption('inlineAssets', opts, true);
   options.autoOpen = _getOption('autoOpen', opts, true);
   options.enableCharts = _getOption('enableCharts', opts, true);
-  options.enableTestCode = _getOption('enableTestCode', opts, true);
+  options.enableCode = _getOption('enableCode', opts, true);
   options.quiet = _getOption('quiet', opts, true);
 
   // Report Files
