@@ -225,8 +225,4 @@ describe('mochawesome reporter', () => {
       });
     });
   });
-
-  describe('log function', () => {
-
-  });
 });
