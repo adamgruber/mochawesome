@@ -1,5 +1,12 @@
 #Changelog
 
+###2.0.3
+- Fixed [#126](https://github.com/adamgruber/mochawesome/issues/126)
+- Fix default options handling
+- Add `enableCode` option to be consistent with mochawesome-report-generator options
+- Deprecate `enableTestCode` option
+- Add `dev` option for testing
+
 ###2.0.2
 - Fixed [#111](https://github.com/adamgruber/mochawesome/issues/111)
 
