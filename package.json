@@ -1,6 +1,6 @@
 {
   "name": "mochawesome",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
     "lint": "eslint src test",
