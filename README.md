@@ -94,7 +94,8 @@ Option Name | Type | Default | Description
 `reportPageTitle` | string | mochawesome-report | Browser title
 `inlineAssets` | boolean | false | Inline report assets (scripts, styles)
 `enableCharts` | boolean | true | Display Suite charts
-`enableTestCode` | boolean | true | Display test code
+`enableCode` | boolean | true | Display test code
+`enableTestCode` | boolean | true | Same as `enableCode` *deprecated*
 `autoOpen` | boolean | false | Open the report after running tests
 `quiet` | boolean | false | Silence console messages
 

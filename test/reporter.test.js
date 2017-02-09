@@ -157,8 +157,9 @@ describe('mochawesome reporter', () => {
           reportFilename: 'testReportFilename',
           reportTitle: 'testReportTitle',
           inlineAssets: 'true',
-          autoOpen: true,
-          quiet: true
+          enableCharts: 'true',
+          enableTestCode: false,
+          autoOpen: true
         }
       });
 
@@ -171,8 +172,9 @@ describe('mochawesome reporter', () => {
         mochaReporter.config.reportFilename.should.equal('testReportFilename');
         mochaReporter.config.reportTitle.should.equal('testReportTitle');
         mochaReporter.config.inlineAssets.should.equal(true);
+        mochaReporter.config.enableCharts.should.equal(true);
+        mochaReporter.config.enableCode.should.equal(false);
         mochaReporter.config.autoOpen.should.equal(true);
-        mochaReporter.config.quiet.should.equal(true);
         done();
       });
     });
@@ -201,17 +203,6 @@ describe('mochawesome reporter', () => {
 
     it('should log an error when fs.outputFile fails', done => {
       writeFileStub.yields({ message: 'outputFile failed' });
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
-
-      runner.run(failureCount => {
-        mochaReporter.done(failureCount, done);
-      });
-    });
-
-    it('should log an error when report creation fails', done => {
-      writeFileStub.yields(null, {});
-      reportStub.returns(Promise.reject({ message: 'report creation failed' }));
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
