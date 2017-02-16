@@ -18,7 +18,6 @@ To start, the actual report generation has been moved out into its own package, 
 - New [options](#options) including hiding test code and/or charts 
 - Enhanced navigation menu with clearer filtering options
 - New option to disable console messages
-- Test coverage!
 
 ###Plus...
 - At-a-glance stats including pass percentage
