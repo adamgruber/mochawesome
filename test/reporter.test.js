@@ -7,14 +7,21 @@ const path = require('path');
 const { Runner, Suite, Test } = Mocha;
 const makeTest = (title, doneFn) => new Test(title, doneFn);
 
-const writeFileStub = sinon.stub();
+const outputFileStub = sinon.stub();
 const reportStub = sinon.stub();
+const logStub = sinon.stub();
+
+const utils = proxyquire('../src/utils', {
+  'fs-extra': { outputFile: outputFileStub }
+});
+
+utils.log = logStub;
 
 const mochawesome = proxyquire('../src/mochawesome', {
-  'fs-extra': { outputFile: writeFileStub },
   'mochawesome-report-generator': {
     create: reportStub
-  }
+  },
+  './utils': utils
 });
 
 // node throws a warning for unhandled promise rejections
@@ -25,29 +32,32 @@ process.on('unhandledRejection', reason => {
   process.exit(0);
 });
 
-describe('mochawesome reporter', () => {
+describe('Mochawesome Reporter', () => {
   let mocha;
   let suite;
   let subSuite;
   let runner;
   let mochaReporter;
 
-  describe('test handling', () => {
-    beforeEach(() => {
-      mocha = new Mocha({ reporter: mochawesome });
-      suite = new Suite('', 'root');
-      subSuite = new Suite('Mochawesome Suite', 'root');
-      suite.addSuite(subSuite);
-      runner = new Runner(suite);
-      mochaReporter = new mocha._reporter(runner);
+  beforeEach(() => {
+    mocha = new Mocha({ reporter: mochawesome });
+    suite = new Suite('', 'root');
+    subSuite = new Suite('Mochawesome Suite', 'root');
+    suite.addSuite(subSuite);
+    runner = new Runner(suite);
+    mochaReporter = new mocha._reporter(runner, {
+      reporterOptions: {
+        quiet: true
+      }
     });
+  });
 
+  describe('Test Handling', () => {
     it('should have 1 test passing', done => {
       const test = makeTest('passing test', () => {});
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        // console.log(mochaReporter.stats);
         failureCount.should.equal(0);
         mochaReporter.stats.passPercent.should.equal(100);
         mochaReporter.stats.passPercentClass.should.equal('success');
@@ -61,7 +71,6 @@ describe('mochawesome reporter', () => {
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        // console.log(mochaReporter.stats);
         failureCount.should.equal(1);
         mochaReporter.stats.passPercent.should.equal(0);
         mochaReporter.stats.passPercentClass.should.equal('danger');
@@ -74,7 +83,6 @@ describe('mochawesome reporter', () => {
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        // console.log(mochaReporter.stats);
         failureCount.should.equal(0);
         mochaReporter.stats.pending.should.equal(1);
         mochaReporter.stats.pendingPercent.should.equal(100);
@@ -91,7 +99,6 @@ describe('mochawesome reporter', () => {
       [ passTest1, passTest2, passTest3, failTest ].forEach(test => subSuite.addTest(test));
 
       runner.run(failureCount => {
-        // console.log(mochaReporter.stats);
         mochaReporter.stats.passes.should.equal(3);
         mochaReporter.stats.failures.should.equal(1);
         mochaReporter.stats.passPercent.should.equal(75);
@@ -102,7 +109,6 @@ describe('mochawesome reporter', () => {
 
     it('should handle empty suite', done => {
       runner.run(failureCount => {
-        // console.log(mochaReporter.stats);
         failureCount.should.equal(0);
         done();
       });
@@ -120,15 +126,7 @@ describe('mochawesome reporter', () => {
     });
   });
 
-  describe('options handling', () => {
-    beforeEach(() => {
-      mocha = new Mocha({ reporter: mochawesome });
-      suite = new Suite('', 'root');
-      subSuite = new Suite('Mochawesome Suite', 'root');
-      suite.addSuite(subSuite);
-      runner = new Runner(suite);
-    });
-
+  describe('Options Handling', () => {
     it('should apply reporter options via environment variables', done => {
       process.env.MOCHAWESOME_REPORTDIR = 'testReportDir/subdir';
       process.env.MOCHAWESOME_INLINEASSETS = 'true';
@@ -180,48 +178,50 @@ describe('mochawesome reporter', () => {
     });
   });
 
-  describe('reporter done function', () => {
+  describe('Reporter Done Function', () => {
+    let mochaExitFn;
+
     beforeEach(() => {
-      mocha = new Mocha({ reporter: mochawesome });
-      suite = new Suite('', 'root');
-      subSuite = new Suite('Mochawesome Suite', 'root');
-      suite.addSuite(subSuite);
-      runner = new Runner(suite);
-      mochaReporter = new mocha._reporter(runner);
+      mochaExitFn = sinon.spy();
+      logStub.reset();
     });
 
-    it('should call the reporter done function successfully', done => {
+    it('should call the reporter done function successfully', () => {
       reportStub.returns(Promise.resolve({}));
-      writeFileStub.yields(null, {});
+      outputFileStub.yields(null, {});
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
-      runner.run(failureCount => {
-        mochaReporter.done(failureCount, done);
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.args[0][0].should.equal(0);
+        logStub.neverCalledWith('error').should.equal(true);
       });
     });
 
-    it('should log an error when fs.outputFile fails', done => {
-      writeFileStub.yields({ message: 'outputFile failed' });
+    it('should log an error when fs.outputFile fails', () => {
+      outputFileStub.yields({ message: 'outputFile failed' });
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
-      runner.run(failureCount => {
-        mochaReporter.done(failureCount, done);
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.args[0][0].should.equal(0);
+        logStub.called.should.equal(true);
+        logStub.args[0][1].should.equal('error');
       });
     });
 
-    it('should not log when quiet option is true', done => {
+    it('should not log when quiet option is true', () => {
       reportStub.returns(Promise.resolve({}));
-      writeFileStub.yields(null, {});
+      outputFileStub.yields(null, {});
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
       mochaReporter = new mocha._reporter(runner, {
         reporterOptions: { quiet: true }
       });
 
-      runner.run(failureCount => {
-        mochaReporter.done(failureCount, done);
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.args[0][0].should.equal(0);
+        logStub.args[0][2].should.have.property('quiet', true);
       });
     });
   });
