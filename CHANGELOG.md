@@ -1,5 +1,10 @@
 #Changelog
 
+###2.0.4
+- Better handling of different coding styles in test code. [#98](https://github.com/adamgruber/mochawesome/issues/98)
+- Separate utility functions from main reporter code for better test coverage
+- Bump `mochawesome-report-generator` and `fs-extra` packages
+
 ###2.0.3
 - Fixed [#126](https://github.com/adamgruber/mochawesome/issues/126)
 - Fix default options handling
