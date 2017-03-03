@@ -1,4 +1,4 @@
-## Submitting issues
+## Submitting Issues
 
 ### Example required
 
@@ -14,3 +14,7 @@ You must provide a clear and simple way to reproduce the issue.
 ## Pull requests
 
 **Contributions are welcome**! Pull requests will be reviewed and may be integrated into the codebase at my discretion.
+
+## Triaging and Closing Issues
+
+I will make every effort to triage each issue in a timely manner. If you open an issue it is expected that you will respond to any questions and/or provide additional feedback when requested. In an effort to keep the issues manageable, any issues awaiting further feedback that are more than 30 days old may be closed.
