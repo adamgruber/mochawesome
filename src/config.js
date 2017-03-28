@@ -9,9 +9,23 @@ const baseConfig = {
   autoOpen: false,
   enableCharts: true,
   enableCode: true,
+  timestamp: false,
+  overwrite: true,
   quiet: false,
-  dev: false
+  dev: false,
+  saveJson: true
 };
+
+const boolOpts = [
+  'inlineAssets',
+  'autoOpen',
+  'enableCharts',
+  'enableCode',
+  'timestamp',
+  'overwrite',
+  'quiet',
+  'dev'
+];
 
 function _getOption(optToGet, options, isBool) {
   const envVar = `MOCHAWESOME_${optToGet.toUpperCase()}`;
@@ -41,20 +55,22 @@ module.exports = function (opts) {
     delete opts.enableTestCode;
   }
 
-  options.reportFilename = _getOption('reportFilename', opts);
-  options.reportDir = path.resolve(_getOption('reportDir', opts));
-  options.reportTitle = _getOption('reportTitle', opts);
-  options.reportPageTitle = _getOption('reportPageTitle', opts);
-  options.inlineAssets = _getOption('inlineAssets', opts, true);
-  options.autoOpen = _getOption('autoOpen', opts, true);
-  options.enableCharts = _getOption('enableCharts', opts, true);
-  options.enableCode = _getOption('enableCode', opts, true);
-  options.quiet = _getOption('quiet', opts, true);
-  options.dev = _getOption('dev', opts, true);
-
-  // Report Files
-  options.reportJsonFile = path.join(options.reportDir, `${options.reportFilename}.json`);
-  options.reportHtmlFile = path.join(options.reportDir, `${options.reportFilename}.html`);
+  [
+    'reportFilename',
+    'reportDir',
+    'reportTitle',
+    'reportPageTitle',
+    'inlineAssets',
+    'autoOpen',
+    'enableCharts',
+    'enableCode',
+    'timestamp',
+    'overwrite',
+    'quiet',
+    'dev'
+  ].forEach(optName => {
+    options[optName] = _getOption(optName, opts, boolOpts.indexOf(optName) >= 0);
+  });
 
   return Object.assign(baseConfig, options);
 };
