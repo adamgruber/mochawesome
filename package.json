@@ -56,10 +56,9 @@
     "babel-runtime": "^6.20.0",
     "chalk": "^1.1.3",
     "diff": "^3.0.0",
-    "fs-extra": "^2.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.3",
-    "mochawesome-report-generator": "^1.1.0",
+    "mochawesome-report-generator": "^1.2.0",
     "uuid": "^3.0.1"
   },
   "peerDependencies": {
@@ -81,6 +80,6 @@
     "nyc": "^9.0.1",
     "proxyquire": "^1.7.10",
     "should": "^11.1.2",
-    "sinon": "^1.17.5"
+    "sinon": "^2.1.0"
   }
 }

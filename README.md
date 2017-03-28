@@ -2,13 +2,13 @@ mochawesome
 ===========
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
 ## Version 2.0 is here! :tada:
-With the arrival of 2.0 comes some often requested features, a code rewrite, and a complete redesign of the report.
+With the arrival of 2.0 comes some often requested features, a code rewrite, and a complete redesign of the report. See the [CHANGELOG][] for up-to-date changes.
 
 ### mochawesome-report-generator (marge)
-To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][2]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
+To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
 
 ### New Features
 - Every bit of the report has been redesigned for a cleaner, more streamlined look
@@ -96,6 +96,8 @@ Option Name | Type | Default | Description
 `enableCode` | boolean | true | Display test code
 `enableTestCode` | boolean | true | Same as `enableCode` *deprecated*
 `autoOpen` | boolean | false | Open the report after running tests
+`overwrite` | boolean | true | Overwrite existing report files
+`timestamp` | boolean | false | Append timestamp to report filename
 `quiet` | boolean | false | Silence console messages
 
 *Setting a custom filename will change both the report html and json files.*
@@ -184,5 +186,6 @@ describe('test suite', function () {
 ## v1.x
 Documentation for version 1.x can be found [here](https://github.com/adamgruber/mochawesome/tree/v1.X).
 
-[1]: http://visionmedia.github.io/mocha/
-[2]: https://github.com/adamgruber/mochawesome-report-generator
+[mocha]: https://mochajs.org/
+[mochawesome-report-generator]: https://github.com/adamgruber/mochawesome-report-generator
+[CHANGELOG]: CHANGELOG.md
