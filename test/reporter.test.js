@@ -2,18 +2,13 @@ const Mocha = require('mocha');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const Assert = require('assert').AssertionError;
-const path = require('path');
+const utils = require('../src/utils');
 
 const { Runner, Suite, Test } = Mocha;
 const makeTest = (title, doneFn) => new Test(title, doneFn);
 
-const outputFileStub = sinon.stub();
 const reportStub = sinon.stub();
 const logStub = sinon.stub();
-
-const utils = proxyquire('../src/utils', {
-  'fs-extra': { outputFile: outputFileStub }
-});
 
 utils.log = logStub;
 
@@ -130,7 +125,7 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        mochaReporter.config.reportDir.should.equal(path.resolve(__dirname, '../testReportDir/subdir'));
+        mochaReporter.config.reportDir.should.equal('testReportDir/subdir');
         mochaReporter.config.inlineAssets.should.equal(true);
         mochaReporter.config.autoOpen.should.equal(false);
         done();
@@ -158,7 +153,7 @@ describe('Mochawesome Reporter', () => {
 
 
       runner.run(failureCount => {
-        mochaReporter.config.reportDir.should.equal(path.resolve(__dirname, '../testReportDir'));
+        mochaReporter.config.reportDir.should.equal('testReportDir');
         mochaReporter.config.reportFilename.should.equal('testReportFilename');
         mochaReporter.config.reportTitle.should.equal('testReportTitle');
         mochaReporter.config.inlineAssets.should.equal(true);
@@ -176,6 +171,7 @@ describe('Mochawesome Reporter', () => {
     beforeEach(() => {
       mochaExitFn = sinon.spy();
       logStub.reset();
+      reportStub.reset();
     });
 
     it('should not have an unhandled error', () => {
@@ -191,8 +187,7 @@ describe('Mochawesome Reporter', () => {
     });
 
     it('should call the reporter done function successfully', () => {
-      reportStub.returns(Promise.resolve({}));
-      outputFileStub.yields(null, {});
+      reportStub.resolves([]);
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
@@ -202,8 +197,8 @@ describe('Mochawesome Reporter', () => {
       });
     });
 
-    it('should log an error when fs.outputFile fails', () => {
-      outputFileStub.yields({ message: 'outputFile failed' });
+    it('should log an error when report creation fails', () => {
+      reportStub.rejects({ message: 'report creation failed' });
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
@@ -215,8 +210,7 @@ describe('Mochawesome Reporter', () => {
     });
 
     it('should not log when quiet option is true', () => {
-      reportStub.returns(Promise.resolve({}));
-      outputFileStub.yields(null, {});
+      reportStub.resolves([]);
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
       mochaReporter = new mocha._reporter(runner, {
