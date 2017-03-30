@@ -1,27 +1,15 @@
-const path = require('path');
+const marge = require('mochawesome-report-generator');
 
-const baseConfig = {
-  reportDir: './mochawesome-reports',
-  reportFilename: 'mochawesome',
-  reportTitle: process.cwd().split(path.sep).pop(),
-  reportPageTitle: 'Mochawesome Report Card',
-  inlineAssets: false,
-  autoOpen: false,
-  enableCharts: true,
-  enableCode: true,
-  timestamp: false,
-  overwrite: true,
-  quiet: false,
-  dev: false,
+// Grab shared base config from mochawesome-report-generator
+const baseConfig = Object.assign(marge.getBaseConfig(), {
   saveJson: true
-};
+});
 
 const boolOpts = [
   'inlineAssets',
   'autoOpen',
   'enableCharts',
   'enableCode',
-  'timestamp',
   'overwrite',
   'quiet',
   'dev'

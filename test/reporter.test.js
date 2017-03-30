@@ -1,5 +1,6 @@
 const Mocha = require('mocha');
 const sinon = require('sinon');
+const path = require('path');
 const proxyquire = require('proxyquire');
 const Assert = require('assert').AssertionError;
 const utils = require('../src/utils');
@@ -12,10 +13,33 @@ const logStub = sinon.stub();
 
 utils.log = logStub;
 
+const config = proxyquire('../src/config', {
+  'mochawesome-report-generator': {
+    getBaseConfig: () => ({
+      reportFilename: 'mochawesome',
+      reportDir: 'mochawesome-report',
+      reportTitle: process.cwd().split(path.sep).pop(),
+      reportPageTitle: 'Mochawesome Report',
+      inline: false,
+      inlineAssets: false,
+      charts: true,
+      enableCharts: true,
+      code: true,
+      enableCode: true,
+      autoOpen: false,
+      overwrite: true,
+      timestamp: false,
+      ts: false,
+      dev: false
+    })
+  }
+});
+
 const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
     create: reportStub
   },
+  './config': config,
   './utils': utils
 });
 
