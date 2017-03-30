@@ -6,6 +6,7 @@
     "lint": "eslint src test",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
     "test:fn": "mocha test-functional/test.js --opts test-functional/mocha.opts",
+    "test:prog": "node ./test-programmatic",
     "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
     "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
     "build": "babel src -d dist"
