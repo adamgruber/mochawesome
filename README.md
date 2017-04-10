@@ -4,13 +4,13 @@ mochawesome
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##Version 2.0 is here! :tada:
+## Version 2.0 is here! :tada:
 With the arrival of 2.0 comes some often requested features, a code rewrite, and a complete redesign of the report.
 
-###mochawesome-report-generator (marge)
+### mochawesome-report-generator (marge)
 To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][2]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
 
-###New Features
+### New Features
 - Every bit of the report has been redesigned for a cleaner, more streamlined look
 - Built using React and mobx
 - Supports displaying [additional test context](#adding-test-context) including images!
@@ -18,9 +18,8 @@ To start, the actual report generation has been moved out into its own package, 
 - New [options](#options) including hiding test code and/or charts 
 - Enhanced navigation menu with clearer filtering options
 - New option to disable console messages
-- Test coverage!
 
-###Plus...
+### Plus...
 - At-a-glance stats including pass percentage
 - Beautiful charts
 - Supports nested `describe`s
@@ -31,15 +30,15 @@ To start, the actual report generation has been moved out into its own package, 
 - Saves JSON output for further processing
 - Offline viewing
 
-###Sample Report
+### Sample Report
 
 <img src="./docs/marge-report-1.0.1.png" alt="Mochawesome Report" width="75%" />
 <img src="./docs/marge-report-menu-1.0.1.png" alt="Mochawesome Report Menu" width="75%" />
 
-###Browser Support
+### Browser Support
 The generated report has been tested to work in Chrome. It *should* work in any modern web browser, including IE9+. It is also fully self-contained for offline viewing. 
 
-##Usage
+## Usage
 
 1. Add Mochawesome to your project:
 
@@ -57,7 +56,7 @@ The generated report has been tested to work in Chrome. It *should* work in any 
   });
   ```
 
-##Output
+## Output
 Mochawesome generates the following inside your project directory:
 ```
 mochawesome-report/
@@ -83,7 +82,7 @@ The two main files to be aware of are:
 **mochawesome.json** - The raw json output used to render the report
 
 
-##Options
+## Options
 Mochawesome supports options via environment variables or passed directly to mocha.
 
 Option Name | Type | Default | Description 
@@ -103,7 +102,7 @@ Option Name | Type | Default | Description
 
 **Options passed in will take precedence over environment variables.**
 
-####Environment variables
+#### Environment variables
 Options can be set via environment variable. To do this you must prefix the variable with `MOCHAWESOME_` and then uppercase the variable name.
 ```bash
 $ export MOCHAWESOME_REPORTDIR=customReportDir
@@ -111,7 +110,7 @@ $ export MOCHAWESOME_INLINEASSETS=true
 $ export MOCHAWESOME_AUTOOPEN=true
 ```
 
-####Mocha options
+#### Mocha options
 You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag.
 ```bash
 $ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename
@@ -129,10 +128,10 @@ var mocha = new Mocha({
 });
 ```
 
-##Adding Test Context
+## Adding Test Context
 One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible with the `addContext` helper method. This method will add extra information to the test object that will then be displayed inside the report.
 
-###addContext(testObj, context)
+### `addContext(testObj, context)`
 
 param | type | description
 :---- | :--- | :----------
@@ -153,7 +152,7 @@ Context passed as an object must adhere to the following shape:
 }
 ```
 
-####Example
+#### Example
 *When using the `addContext` helper, you cannot use an arrow function in your `it` statement because your `this` value will not be the test object.*
 ```js
 const addContext = require('mochawesome/addContext');
@@ -182,7 +181,7 @@ describe('test suite', function () {
 });
 ```
 
-##v1.x
+## v1.x
 Documentation for version 1.x can be found [here](https://github.com/adamgruber/mochawesome/tree/v1.X).
 
 [1]: http://visionmedia.github.io/mocha/
