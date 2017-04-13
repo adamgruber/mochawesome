@@ -24,7 +24,7 @@
 - Updated handling of `reportDir` option to allow relative paths
 - Bumped mochawesome-report-generator dependency (requires 1.0.3 or higher)
 
-### 2.0.0
+## 2.0.0
 - Moved report generation to mochawesome-report package
 - Updated dependencies
 - Switched from jshint to eslint
@@ -100,7 +100,7 @@
 ### 1.0.1 - 1.0.5
 - Bugfixes
 
-### 1.0.0
+## 1.0.0
 - Redesigned report
 - Mobile friendly
 - Complete refactor of client-side script

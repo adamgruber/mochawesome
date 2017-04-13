@@ -24,3 +24,5 @@ exclude_paths:
 - coverage/*
 - docs/*
 - test-functional/*
+- test/sample-suite.js
+- test/sample-tests.js
