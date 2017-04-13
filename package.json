@@ -1,6 +1,6 @@
 {
   "name": "mochawesome",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
   "scripts": {
     "lint": "eslint src test",
@@ -24,6 +24,13 @@
   ],
   "engine": "node >= 4",
   "main": "dist/mochawesome.js",
+  "files": [
+    "LICENSE.md",
+    "README.md",
+    "CHANGELOG.md",
+    "addContext.js",
+    "dist"
+  ],
   "nyc": {
     "include": [
       "src/*.js"

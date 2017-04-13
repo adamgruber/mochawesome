@@ -37,24 +37,24 @@ var done = function () {
 
           case 7:
             log('Report HTML saved to ' + reportHtmlFile, null, config);
-
-            exit(failures);
-            _context.next = 15;
+            _context.next = 13;
             break;
 
-          case 11:
-            _context.prev = 11;
+          case 10:
+            _context.prev = 10;
             _context.t0 = _context['catch'](1);
 
             log(_context.t0, 'error', config);
-            exit(failures);
 
-          case 15:
+          case 13:
+            exit && exit(failures);
+
+          case 14:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, this, [[1, 11]]);
+    }, _callee, this, [[1, 10]]);
   }));
 
   return function done(_x, _x2, _x3, _x4) {
