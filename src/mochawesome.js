@@ -35,12 +35,10 @@ async function done(output, config, failures, exit) {
     // Create and save the HTML to disk
     await marge.create(output, config);
     log(`Report HTML saved to ${reportHtmlFile}`, null, config);
-
-    exit(failures);
   } catch (err) {
     log(err, 'error', config);
-    exit(failures);
   }
+  exit && exit(failures);
 }
 
 /**
