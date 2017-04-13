@@ -24,14 +24,6 @@ const mochawesome = proxyquire('../src/mochawesome', {
   './utils': utils
 });
 
-// node throws a warning for unhandled promise rejections
-// these are expected in this test so we just handle here
-// to quiet the warning
-process.on('unhandledRejection', reason => {
-  console.error(reason);
-  process.exit(0);
-});
-
 describe('Mochawesome Reporter', () => {
   let mocha;
   let suite;
@@ -184,6 +176,18 @@ describe('Mochawesome Reporter', () => {
     beforeEach(() => {
       mochaExitFn = sinon.spy();
       logStub.reset();
+    });
+
+    it('should not have an unhandled error', () => {
+      reportStub.returns(Promise.resolve({}));
+      outputFileStub.yields(null, {});
+      const test = makeTest('test', () => {});
+      subSuite.addTest(test);
+
+      return mochaReporter.done(0).then(() => {
+        mochaExitFn.called.should.equal(false);
+        logStub.neverCalledWith('error').should.equal(true);
+      });
     });
 
     it('should call the reporter done function successfully', () => {
