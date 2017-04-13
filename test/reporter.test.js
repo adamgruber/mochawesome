@@ -200,7 +200,6 @@ describe('Mochawesome Reporter', () => {
 
     it('should not have an unhandled error', () => {
       reportStub.returns(Promise.resolve({}));
-      outputFileStub.yields(null, {});
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
 
@@ -227,6 +226,7 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.called.should.equal(true);
         mochaExitFn.args[0][0].should.equal(0);
         logStub.called.should.equal(true);
         logStub.args[0][1].should.equal('error');
