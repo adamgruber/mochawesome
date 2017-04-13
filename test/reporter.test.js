@@ -16,7 +16,6 @@ utils.log = logStub;
 const config = proxyquire('../src/config', {
   'mochawesome-report-generator': {
     getBaseConfig: () => ({
-      reportFilename: 'mochawesome',
       reportDir: 'mochawesome-report',
       reportTitle: process.cwd().split(path.sep).pop(),
       reportPageTitle: 'Mochawesome Report',
