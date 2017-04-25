@@ -56,7 +56,7 @@
     "diff": "^3.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.3",
-    "mochawesome-report-generator": "^2.0.0",
+    "mochawesome-report-generator": "^2.0.2",
     "uuid": "^3.0.1"
   },
   "peerDependencies": {
