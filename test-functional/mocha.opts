@@ -1,4 +1,4 @@
 --stack-trace
---compilers js:babel-core/register
+--require babel-register
 --require should
 --reporter mochawesome

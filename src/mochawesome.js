@@ -10,8 +10,7 @@ const {
   log,
   getPercentClass,
   cleanTest,
-  traverseSuites,
-  saveFile
+  traverseSuites
 } = utils;
 
 // Track the total number of tests registered
@@ -20,25 +19,27 @@ const totalTestsRegistered = { total: 0 };
 /**
  * Done function gets called before mocha exits
  *
+ * Creates and saves the report HTML and JSON files
+ *
  * @param {Object} output
  * @param {Object} config
  * @param {Function} exit
+ *
+ * @return {Promise} Resolves with successful report creation
  */
 
-async function done(output, config, failures, exit) {
-  const { reportJsonFile, reportHtmlFile } = config;
-  try {
-    // Save the JSON to disk
-    await saveFile(reportJsonFile, output);
-    log(`Report JSON saved to ${reportJsonFile}`, null, config);
-
-    // Create and save the HTML to disk
-    await marge.create(output, config);
-    log(`Report HTML saved to ${reportHtmlFile}`, null, config);
-  } catch (err) {
-    log(err, 'error', config);
-  }
-  exit && exit(failures);
+function done(output, config, failures, exit) {
+  return marge.create(output, config)
+    .then(([ htmlFile, jsonFile ]) => {
+      log(`Report JSON saved to ${jsonFile}`, null, config);
+      log(`Report HTML saved to ${htmlFile}`, null, config);
+    })
+    .catch(err => {
+      log(err, 'error', config);
+    })
+    .then(() => {
+      exit && exit(failures);
+    });
 }
 
 /**
@@ -50,7 +51,7 @@ async function done(output, config, failures, exit) {
 
 function Mochawesome(runner, options) {
   // Done function will be called before mocha exits
-  // This is where we will save JSON and generate the report
+  // This is where we will save JSON and generate the HTML report
   this.done = (failures, exit) => done(this.output, this.config, failures, exit);
 
   // Reset total tests counter
