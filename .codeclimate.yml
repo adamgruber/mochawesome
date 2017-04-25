@@ -18,11 +18,12 @@ ratings:
   paths:
   - "**.js"
 exclude_paths:
-- dist/*
-- .nyc_output/*
-- _site/*
-- coverage/*
-- docs/*
-- test-functional/*
+- dist/
+- .nyc_output/
+- _site/
+- coverage/
+- docs/
+- test-functional/
+- test-programmatic/
 - test/sample-suite.js
 - test/sample-tests.js

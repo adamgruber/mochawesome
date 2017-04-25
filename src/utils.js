@@ -1,4 +1,3 @@
-const fs = require('fs-extra');
 const _ = require('lodash');
 const chalk = require('chalk');
 const uuid = require('uuid');
@@ -166,7 +165,6 @@ function cleanTest(test) {
  * @param {Integer} totalTestsRegistered.total
  */
 function cleanSuite(suite, totalTestsRegistered) {
-  // console.log(stringify(suite));
   suite.uuid = uuid.v4();
 
   const cleanTests = _.map(suite.tests, cleanTest);
@@ -230,7 +228,6 @@ function cleanSuite(suite, totalTestsRegistered) {
     'rootEmpty',
     '_timeout'
   ]);
-  // console.log(suite.suites[0].tests);
 }
 
 /**
@@ -258,21 +255,6 @@ function traverseSuites(suite, totalTestsRegistered) {
   }
 }
 
-/**
- * Saves a file
- *
- * @param {String} filename
- * @param {String} data
- *
- * @return {Promise}
- */
-
-function saveFile(filename, data) {
-  return new Promise((resolve, reject) => {
-    fs.outputFile(filename, data, err => err === null ? resolve(true) : reject(err));
-  });
-}
-
 module.exports = {
   log,
   getPercentClass,
@@ -280,6 +262,5 @@ module.exports = {
   cleanCode,
   cleanTest,
   cleanSuite,
-  traverseSuites,
-  saveFile
+  traverseSuites
 };

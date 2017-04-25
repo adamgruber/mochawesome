@@ -1,16 +1,11 @@
 'use strict';
 
-var _promise = require('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var fs = require('fs-extra');
 var _ = require('lodash');
 var chalk = require('chalk');
 var uuid = require('uuid');
@@ -175,7 +170,6 @@ function cleanTest(test) {
  * @param {Integer} totalTestsRegistered.total
  */
 function cleanSuite(suite, totalTestsRegistered) {
-  // console.log(stringify(suite));
   suite.uuid = uuid.v4();
 
   var cleanTests = _.map(suite.tests, cleanTest);
@@ -213,7 +207,6 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.rootEmpty = suite.root && suite.totalTests === 0;
 
   removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
-  // console.log(suite.suites[0].tests);
 }
 
 /**
@@ -241,23 +234,6 @@ function traverseSuites(suite, totalTestsRegistered) {
   }
 }
 
-/**
- * Saves a file
- *
- * @param {String} filename
- * @param {String} data
- *
- * @return {Promise}
- */
-
-function saveFile(filename, data) {
-  return new _promise2.default(function (resolve, reject) {
-    fs.outputFile(filename, data, function (err) {
-      return err === null ? resolve(true) : reject(err);
-    });
-  });
-}
-
 module.exports = {
   log: log,
   getPercentClass: getPercentClass,
@@ -265,6 +241,5 @@ module.exports = {
   cleanCode: cleanCode,
   cleanTest: cleanTest,
   cleanSuite: cleanSuite,
-  traverseSuites: traverseSuites,
-  saveFile: saveFile
+  traverseSuites: traverseSuites
 };
