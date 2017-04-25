@@ -1,73 +1,8 @@
 'use strict';
 
-var _regenerator = require('babel-runtime/regenerator');
+var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
 
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-/**
- * Done function gets called before mocha exits
- *
- * @param {Object} output
- * @param {Object} config
- * @param {Function} exit
- */
-
-var done = function () {
-  var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(output, config, failures, exit) {
-    var reportJsonFile, reportHtmlFile;
-    return _regenerator2.default.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            reportJsonFile = config.reportJsonFile, reportHtmlFile = config.reportHtmlFile;
-            _context.prev = 1;
-            _context.next = 4;
-            return saveFile(reportJsonFile, output);
-
-          case 4:
-            log('Report JSON saved to ' + reportJsonFile, null, config);
-
-            // Create and save the HTML to disk
-            _context.next = 7;
-            return marge.create(output, config);
-
-          case 7:
-            log('Report HTML saved to ' + reportHtmlFile, null, config);
-            _context.next = 13;
-            break;
-
-          case 10:
-            _context.prev = 10;
-            _context.t0 = _context['catch'](1);
-
-            log(_context.t0, 'error', config);
-
-          case 13:
-            exit && exit(failures);
-
-          case 14:
-          case 'end':
-            return _context.stop();
-        }
-      }
-    }, _callee, this, [[1, 10]]);
-  }));
-
-  return function done(_x, _x2, _x3, _x4) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-/**
- * Initialize a new reporter.
- *
- * @param {Runner} runner
- * @api public
- */
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -82,16 +17,51 @@ var utils = require('./utils');
 var log = utils.log,
     getPercentClass = utils.getPercentClass,
     cleanTest = utils.cleanTest,
-    traverseSuites = utils.traverseSuites,
-    saveFile = utils.saveFile;
+    traverseSuites = utils.traverseSuites;
 
 // Track the total number of tests registered
 
-var totalTestsRegistered = { total: 0 };function Mochawesome(runner, options) {
+var totalTestsRegistered = { total: 0 };
+
+/**
+ * Done function gets called before mocha exits
+ *
+ * Creates and saves the report HTML and JSON files
+ *
+ * @param {Object} output
+ * @param {Object} config
+ * @param {Function} exit
+ *
+ * @return {Promise} Resolves with successful report creation
+ */
+
+function done(output, config, failures, exit) {
+  return marge.create(output, config).then(function (_ref) {
+    var _ref2 = (0, _slicedToArray3.default)(_ref, 2),
+        htmlFile = _ref2[0],
+        jsonFile = _ref2[1];
+
+    log('Report JSON saved to ' + jsonFile, null, config);
+    log('Report HTML saved to ' + htmlFile, null, config);
+  }).catch(function (err) {
+    log(err, 'error', config);
+  }).then(function () {
+    exit && exit(failures);
+  });
+}
+
+/**
+ * Initialize a new reporter.
+ *
+ * @param {Runner} runner
+ * @api public
+ */
+
+function Mochawesome(runner, options) {
   var _this = this;
 
   // Done function will be called before mocha exits
-  // This is where we will save JSON and generate the report
+  // This is where we will save JSON and generate the HTML report
   this.done = function (failures, exit) {
     return done(_this.output, _this.config, failures, exit);
   };
