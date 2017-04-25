@@ -1,5 +1,8 @@
 # Changelog
 
+### [2.1.0](https://github.com/adamgruber/mochawesome/releases/tag/2.1.0)
+- Added new options: `overwrite` and `timestamp`
+
 ### [2.0.5](https://github.com/adamgruber/mochawesome/releases/tag/2.0.5)
 - Fix `UnhandledPromiseRejectionWarning` error when calling nonexistant `exit` function
 - Limit files included in package
