@@ -171,7 +171,7 @@ function cleanTest(test) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-
+  suite.tests = suite.tests.concat(suite._beforeAll, suite._beforeEach, suite._afterAll, suite._afterEach);
   var cleanTests = _.map(suite.tests, cleanTest);
   var passingTests = _.filter(cleanTests, { state: 'passed' });
   var failingTests = _.filter(cleanTests, { state: 'failed' });
