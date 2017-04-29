@@ -153,12 +153,25 @@ function cleanTest(test) {
     err: err,
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
-    parentUUID: test.parent && test.parent.uuid
+    parentUUID: test.parent && test.parent.uuid,
+    type: test.type
   };
 
   cleaned.skipped = !cleaned.pass && !cleaned.fail && !cleaned.pending;
 
   return cleaned;
+}
+
+/**
+ * Filters all failed hooks from suite
+ * And concates them to a single array
+ *
+ * @param {Object} suite
+ */
+function getFailedHooks(suite) {
+  var failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
+  failedHooks = _.filter(failedHooks, { state: 'failed' });
+  return failedHooks;
 }
 
 /**
@@ -171,7 +184,7 @@ function cleanTest(test) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-  suite.tests = suite.tests.concat(suite._beforeAll, suite._beforeEach, suite._afterAll, suite._afterEach);
+  suite.tests = suite.tests.concat(getFailedHooks(suite));
   var cleanTests = _.map(suite.tests, cleanTest);
   var passingTests = _.filter(cleanTests, { state: 'passed' });
   var failingTests = _.filter(cleanTests, { state: 'failed' });
