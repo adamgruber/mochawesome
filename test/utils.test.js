@@ -145,7 +145,8 @@ describe('Mochawesome Utils', () => {
       'isRoot',
       'uuid',
       'parentUUID',
-      'skipped'
+      'skipped',
+      'type'
     ];
 
     it('returns cleaned passing test', () => {
