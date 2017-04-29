@@ -153,8 +153,7 @@ function cleanTest(test) {
     err: err,
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
-    parentUUID: test.parent && test.parent.uuid,
-    type: test.type
+    parentUUID: test.parent && test.parent.uuid
   };
 
   cleaned.skipped = !cleaned.pass && !cleaned.fail && !cleaned.pending;
@@ -184,7 +183,7 @@ function getFailedHooks(suite) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-  suite.tests = suite.tests.concat(getFailedHooks(suite));
+  var failedHooks = _.map(getFailedHooks(suite), cleanTest);
   var cleanTests = _.map(suite.tests, cleanTest);
   var passingTests = _.filter(cleanTests, { state: 'passed' });
   var failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -199,6 +198,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   totalTestsRegistered.total += suite.tests.length;
 
   suite.tests = cleanTests;
+  suite.failedHooks = failedHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
@@ -206,6 +206,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
   suite.hasTests = suite.tests.length > 0;
+  suite.hasFailedHooks = suite.failedHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -219,7 +220,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.duration = duration;
   suite.rootEmpty = suite.root && suite.totalTests === 0;
 
-  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
+  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'failedHooks', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasFailedHooks', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
 }
 
 /**
