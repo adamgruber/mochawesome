@@ -16,7 +16,6 @@ module.exports = {
       _retries: -1,
       _currentRetry: 0,
       pending: false,
-      type: 'test',
       parent: {
         title: 'Mochawesome Suite',
         ctx: {},
@@ -89,8 +88,7 @@ module.exports = {
       isRoot: false,
       uuid: '0e877e24-a28b-4869-bcb4-7c3529d84ef6',
       parentUUID: 'a8a6bd0a-3e18-4aa3-ba36-f660e07ebed8',
-      skipped: false,
-      type: 'test'
+      skipped: false
     }
   },
   failing: {
@@ -107,7 +105,6 @@ module.exports = {
       _retries: -1,
       _currentRetry: 0,
       pending: false,
-      type: 'test',
       parent: {
         title: 'Mochawesome Suite',
         ctx: {},
@@ -205,8 +202,7 @@ module.exports = {
       isRoot: false,
       uuid: '2bcbe88c-acd6-4a53-ba3a-61a59188d5b0',
       parentUUID: '56508f44-b4e6-40f0-bae8-b15e0720f120',
-      skipped: false,
-      type: 'test'
+      skipped: false
     }
   },
   pending: {
@@ -222,7 +218,6 @@ module.exports = {
       _retries: -1,
       _currentRetry: 0,
       pending: true,
-      type: 'test',
       parent: {
         title: 'Mochawesome Suite',
         ctx: {},
@@ -290,8 +285,7 @@ module.exports = {
       isRoot: false,
       uuid: '6e8e6fe4-b2a1-4cdf-8f94-099f98b5b472',
       parentUUID: '88d24c3c-9262-4f6f-9419-a9fe259e3c95',
-      skipped: false,
-      type: 'test'
+      skipped: false
     }
   }
 };

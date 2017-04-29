@@ -145,8 +145,7 @@ describe('Mochawesome Utils', () => {
       'isRoot',
       'uuid',
       'parentUUID',
-      'skipped',
-      'type'
+      'skipped'
     ];
 
     it('returns cleaned passing test', () => {
@@ -178,12 +177,14 @@ describe('Mochawesome Utils', () => {
       'fullFile',
       'file',
       'tests',
+      'failedHooks',
       'suites',
       'passes',
       'failures',
       'pending',
       'skipped',
       'hasTests',
+      'hasFailedHooks',
       'hasSuites',
       'totalTests',
       'totalPasses',
