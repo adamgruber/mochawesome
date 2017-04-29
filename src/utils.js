@@ -204,7 +204,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
-  suite.totalFailures = _.filter(failingTests, { type: 'test' }).length;
+  suite.totalFailures = failingTests.length;
   suite.totalPending = pendingTests.length;
   suite.totalSkipped = skippedTests.length;
   suite.hasPasses = passingTests.length > 0;
