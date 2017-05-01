@@ -1,5 +1,10 @@
 # Changelog
 
+### [2.2.0](https://github.com/adamgruber/mochawesome/releases/tag/2.2.0)
+- Enable using `addContext` in `beforeEach` and `afterEach` test hooks
+- Fix a bug where you could pass an object with empty title string to `addContext`
+- Allow a context value of `undefined` to be displayed in the report
+
 ### [2.1.0](https://github.com/adamgruber/mochawesome/releases/tag/2.1.0)
 - Added new options: `overwrite` and `timestamp`
 

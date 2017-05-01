@@ -135,7 +135,7 @@ var mocha = new Mocha({
 ## Adding Test Context
 One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible with the `addContext` helper method. This method will add extra information to the test object that will then be displayed inside the report.
 
-### addContext(testObj, context)
+### `addContext(testObj, context)`
 
 param | type | description
 :---- | :--- | :----------
@@ -182,6 +182,26 @@ describe('test suite', function () {
       }
     });
   })
+});
+```
+
+As of version 2.2.0 it is possible to use `addContext` from within a `beforeEach` or `afterEach` test hook.
+```js
+describe('test suite', () => {
+  beforeEach(function () {
+    addContext(this, 'some context')
+  });
+
+  afterEach(function () {
+    addContext(this, {
+      title: 'afterEach context',
+      value: { a: 1 }
+    });
+  });
+
+  it('should display with beforeEach and afterEach context', () => {
+    // assert something
+  });
 });
 ```
 
