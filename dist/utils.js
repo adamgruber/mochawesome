@@ -162,18 +162,6 @@ function cleanTest(test) {
 }
 
 /**
- * Filters all failed hooks from suite
- * And concates them to a single array
- *
- * @param {Object} suite
- */
-function getFailedHooks(suite) {
-  var failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
-  failedHooks = _.filter(failedHooks, { state: 'failed' });
-  return failedHooks;
-}
-
-/**
  * Mutates the suite object to add properties needed to render
  * the template and remove unused properties.
  *
@@ -183,7 +171,7 @@ function getFailedHooks(suite) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-  var failedHooks = _.map(getFailedHooks(suite), cleanTest);
+
   var cleanTests = _.map(suite.tests, cleanTest);
   var passingTests = _.filter(cleanTests, { state: 'passed' });
   var failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -198,7 +186,6 @@ function cleanSuite(suite, totalTestsRegistered) {
   totalTestsRegistered.total += suite.tests.length;
 
   suite.tests = cleanTests;
-  suite.failedHooks = failedHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
@@ -206,7 +193,6 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
   suite.hasTests = suite.tests.length > 0;
-  suite.hasFailedHooks = suite.failedHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -220,7 +206,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.duration = duration;
   suite.rootEmpty = suite.root && suite.totalTests === 0;
 
-  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'failedHooks', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasFailedHooks', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
+  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
 }
 
 /**
