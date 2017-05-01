@@ -148,7 +148,8 @@ function cleanTest(test) {
     err,
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
-    parentUUID: test.parent && test.parent.uuid
+    parentUUID: test.parent && test.parent.uuid,
+    isHook: test.type === 'hook'
   };
 
   cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending);
@@ -158,14 +159,13 @@ function cleanTest(test) {
 
 /**
  * Filters all failed hooks from suite
- * And concates them to a single array
+ * And concatenates them to a single array
  *
  * @param {Object} suite
  */
 function getFailedHooks(suite) {
-  let failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
-  failedHooks = _.filter(failedHooks, { state: 'failed' });
-  return failedHooks;
+  const failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
+  return _.filter(failedHooks, { state: 'failed' });
 }
 
 /**
@@ -278,5 +278,6 @@ module.exports = {
   cleanCode,
   cleanTest,
   cleanSuite,
+  getFailedHooks,
   traverseSuites
 };
