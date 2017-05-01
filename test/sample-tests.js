@@ -16,6 +16,7 @@ module.exports = {
       _retries: -1,
       _currentRetry: 0,
       pending: false,
+      type: 'test',
       parent: {
         title: 'Mochawesome Suite',
         ctx: {},
@@ -106,6 +107,7 @@ module.exports = {
       _retries: -1,
       _currentRetry: 0,
       pending: false,
+      type: 'test',
       parent: {
         title: 'Mochawesome Suite',
         ctx: {},
@@ -220,6 +222,7 @@ module.exports = {
       _retries: -1,
       _currentRetry: 0,
       pending: true,
+      type: 'test',
       parent: {
         title: 'Mochawesome Suite',
         ctx: {},
