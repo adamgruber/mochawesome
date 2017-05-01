@@ -136,6 +136,72 @@ describe('Mochawesome Reporter', () => {
     });
   });
 
+  describe('Hook Handling', () => {
+    it('Before each failing hook', done => {
+      const test = makeTest('passing test', () => {});
+      subSuite.beforeEach('Before Each failure', () => {
+        throw new Error('Dummy hook error');
+      });
+      subSuite.addTest(test);
+      runner.run(failureCount => {
+        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        done();
+      });
+    });
+
+    it('Before all failing hook', done => {
+      const test = makeTest('passing test', () => {});
+      subSuite.beforeAll('Before All failure', () => {
+        throw new Error('Dummy hook error');
+      });
+      subSuite.addTest(test);
+      runner.run(failureCount => {
+        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        done();
+      });
+    });
+
+    it('After each failing hook', done => {
+      const test = makeTest('passing test', () => {});
+      subSuite.afterEach('After Each failure', () => {
+        throw new Error('Dummy hook error');
+      });
+      subSuite.addTest(test);
+      runner.run(failureCount => {
+        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        done();
+      });
+    });
+
+    it('After all failing hook', done => {
+      const test = makeTest('passing test', () => {});
+      subSuite.afterAll('After all failure', () => {
+        throw new Error('Dummy hook error');
+      });
+      subSuite.addTest(test);
+      runner.run(failureCount => {
+        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        done();
+      });
+    });
+
+    it('Should not have skipped hook in the report', done => {
+      const error = { expected: { a: 1 }, actual: { a: 2 } };
+      const test = makeTest('failing test', tDone => tDone(new Assert(error)));
+      subSuite.afterAll('Skipped hook', () => {});
+      subSuite.addTest(test);
+      runner.run(failureCount => {
+        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(false);
+        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(0);
+        done();
+      });
+    });
+  });
+
   describe('Options Handling', () => {
     it('should apply reporter options via environment variables', done => {
       process.env.MOCHAWESOME_REPORTDIR = 'testReportDir/subdir';

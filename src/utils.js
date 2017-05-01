@@ -148,12 +148,24 @@ function cleanTest(test) {
     err,
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
-    parentUUID: test.parent && test.parent.uuid
+    parentUUID: test.parent && test.parent.uuid,
+    isHook: test.type === 'hook'
   };
 
   cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending);
 
   return cleaned;
+}
+
+/**
+ * Filters all failed hooks from suite
+ * And concatenates them to a single array
+ *
+ * @param {Object} suite
+ */
+function getFailedHooks(suite) {
+  const failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
+  return _.filter(failedHooks, { state: 'failed' });
 }
 
 /**
@@ -166,7 +178,7 @@ function cleanTest(test) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-
+  const failedHooks = _.map(getFailedHooks(suite), cleanTest);
   const cleanTests = _.map(suite.tests, cleanTest);
   const passingTests = _.filter(cleanTests, { state: 'passed' });
   const failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -181,6 +193,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   totalTestsRegistered.total += suite.tests.length;
 
   suite.tests = cleanTests;
+  suite.failedHooks = failedHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
@@ -188,6 +201,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
   suite.hasTests = suite.tests.length > 0;
+  suite.hasFailedHooks = suite.failedHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -206,12 +220,14 @@ function cleanSuite(suite, totalTestsRegistered) {
     'fullFile',
     'file',
     'tests',
+    'failedHooks',
     'suites',
     'passes',
     'failures',
     'pending',
     'skipped',
     'hasTests',
+    'hasFailedHooks',
     'hasSuites',
     'totalTests',
     'totalPasses',
@@ -262,5 +278,6 @@ module.exports = {
   cleanCode,
   cleanTest,
   cleanSuite,
+  getFailedHooks,
   traverseSuites
 };
