@@ -14,7 +14,8 @@ const {
   removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
-  cleanSuite
+  cleanSuite,
+  getFailedHooks
 } = utils;
 
 describe('Mochawesome Utils', () => {
@@ -214,6 +215,15 @@ describe('Mochawesome Utils', () => {
       cleanSuite(s, totalTestsRegistered);
       s.should.have.properties(expectedProps);
       s.should.deepEqual(sampleSuite.two.cleaned);
+    });
+  });
+
+  describe('getFailedHooks', () => {
+    it('passing suit with one failed hook', () => {
+      const s = cloneDeep(sampleSuite.two.raw);
+      const hooks = getFailedHooks(s);
+      hooks.length.should.equal(1);
+      hooks[0].type.should.equal('hook');
     });
   });
 });
