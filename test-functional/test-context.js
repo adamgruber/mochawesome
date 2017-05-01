@@ -85,4 +85,38 @@ describe('Master Test Suite', () => {
       (1+1).should.equal(2);
     });
   });
+
+  describe('beforeEach Context', () => {
+    beforeEach(function () {
+      addContext(this, 'this is the beforeEach context');
+    });
+
+    it('should have text context beforeEach context', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'this is the test context');
+      done();
+    });
+    it('should have url context, no protocol and beforeEach context', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'www.apple.com');
+      done();
+    });
+  });
+
+  describe('afterEach Context', () => {
+    beforeEach(function () {
+      addContext(this, 'this is the afterEach context');
+    });
+
+    it('should have text context afterEach context', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'this is the test context');
+      done();
+    });
+    it('should have url context, no protocol and afterEach context', function (done) {
+      (1+1).should.equal(2);
+      addContext(this, 'www.apple.com');
+      done();
+    });
+  });
 });
