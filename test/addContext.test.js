@@ -4,39 +4,70 @@ describe('addContext', () => {
   let testObj;
   let test;
 
-  beforeEach(() => {
-    testObj = { test: {} };
-    test = testObj.test;
-  });
-
-  it('should add context as string', () => {
-    addContext(testObj, 'test context');
-    test.should.eql({ context: 'test context' });
-  });
-
-  it('should add context as object', () => {
-    addContext(testObj, {
-      title: 'context title',
-      value: true
+  function contextTests() {
+    it('as a string', () => {
+      addContext(testObj, 'test context');
+      test.should.eql({ context: 'test context' });
     });
-    test.should.eql({
-      context: {
+
+    it('as an object', () => {
+      addContext(testObj, {
         title: 'context title',
         value: true
-      }
+      });
+      test.should.eql({
+        context: {
+          title: 'context title',
+          value: true
+        }
+      });
     });
+
+    it('as an object with undefined value', () => {
+      addContext(testObj, {
+        title: 'context title',
+        value: undefined
+      });
+      test.should.eql({
+        context: {
+          title: 'context title',
+          value: 'undefined'
+        }
+      });
+    });
+
+    it('as multiple items', () => {
+      addContext(testObj, 'test context 1');
+      addContext(testObj, 'test context 2');
+      addContext(testObj, { title: 'test context 3', value: true });
+      test.should.eql({
+        context: [ 'test context 1', 'test context 2', { title: 'test context 3', value: true } ]
+      });
+    });
+  }
+
+  describe('when run inside a test', () => {
+    beforeEach(() => {
+      testObj = { test: {} };
+      test = testObj.test;
+    });
+    contextTests();
   });
 
-  it('should add multiple context items', () => {
-    addContext(testObj, 'test context 1');
-    addContext(testObj, 'test context 2');
-    addContext(testObj, { title: 'test context 3', value: true });
-    test.should.eql({
-      context: [ 'test context 1', 'test context 2', { title: 'test context 3', value: true } ]
+  describe('when run inside a beforeEach', () => {
+    beforeEach(() => {
+      testObj = { currentTest: {} };
+      test = testObj.currentTest;
     });
+    contextTests();
   });
 
   describe('No context is added when', () => {
+    beforeEach(() => {
+      testObj = { test: {} };
+      test = testObj.test;
+    });
+
     it('wrong number of args', () => {
       addContext('');
       test.should.not.have.property('context');
@@ -59,6 +90,11 @@ describe('addContext', () => {
 
     it('wrong context object, no title', () => {
       addContext(testObj, { value: 'test' });
+      test.should.not.have.property('context');
+    });
+
+    it('wrong context object, empty title', () => {
+      addContext(testObj, { title: '', value: undefined });
       test.should.not.have.property('context');
     });
 
