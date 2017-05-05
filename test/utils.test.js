@@ -178,14 +178,16 @@ describe('Mochawesome Utils', () => {
       'fullFile',
       'file',
       'tests',
-      'failedHooks',
+      'beforeFailedHooks',
+      'afterFailedHooks',
       'suites',
       'passes',
       'failures',
       'pending',
       'skipped',
       'hasTests',
-      'hasFailedHooks',
+      'hasBeforeFailedHooks',
+      'hasAfterFailedHooks',
       'hasSuites',
       'totalTests',
       'totalPasses',
@@ -222,8 +224,8 @@ describe('Mochawesome Utils', () => {
     it('passing suit with one failed hook', () => {
       const s = cloneDeep(sampleSuite.two.raw);
       const hooks = getFailedHooks(s);
-      hooks.length.should.equal(1);
-      hooks[0].type.should.equal('hook');
+      hooks.before.length.should.equal(1);
+      hooks.before[0].type.should.equal('hook');
     });
   });
 });

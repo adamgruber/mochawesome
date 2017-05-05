@@ -144,8 +144,8 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasBeforeFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].beforeFailedHooks.length.should.equal(1);
         done();
       });
     });
@@ -157,8 +157,8 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasBeforeFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].beforeFailedHooks.length.should.equal(1);
         done();
       });
     });
@@ -170,8 +170,8 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasAfterFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].afterFailedHooks.length.should.equal(1);
         done();
       });
     });
@@ -183,8 +183,8 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasAfterFailedHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].afterFailedHooks.length.should.equal(1);
         done();
       });
     });
@@ -195,8 +195,10 @@ describe('Mochawesome Reporter', () => {
       subSuite.afterAll('Skipped hook', () => {});
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(false);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(0);
+        mochaReporter.runner.suite.suites[0].hasAfterFailedHooks.should.equal(false);
+        mochaReporter.runner.suite.suites[0].afterFailedHooks.length.should.equal(0);
+        mochaReporter.runner.suite.suites[0].hasBeforeFailedHooks.should.equal(false);
+        mochaReporter.runner.suite.suites[0].beforeFailedHooks.length.should.equal(0);
         done();
       });
     });

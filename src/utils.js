@@ -164,8 +164,12 @@ function cleanTest(test) {
  * @param {Object} suite
  */
 function getFailedHooks(suite) {
-  const failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
-  return _.filter(failedHooks, { state: 'failed' });
+  const beforeHooks = [].concat(suite._beforeAll, suite._beforeEach);
+  const afterHooks = [].concat(suite._afterAll, suite._afterEach);
+  return {
+    before: _.filter(beforeHooks, { state: 'failed' }),
+    after: _.filter(afterHooks, { state: 'failed' })
+  };
 }
 
 /**
@@ -178,7 +182,9 @@ function getFailedHooks(suite) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-  const failedHooks = _.map(getFailedHooks(suite), cleanTest);
+  const hooks = getFailedHooks(suite);
+  const beforeFailedHooks = _.map(hooks.before, cleanTest);
+  const afterFailedHooks = _.map(hooks.after, cleanTest);
   const cleanTests = _.map(suite.tests, cleanTest);
   const passingTests = _.filter(cleanTests, { state: 'passed' });
   const failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -193,7 +199,8 @@ function cleanSuite(suite, totalTestsRegistered) {
   totalTestsRegistered.total += suite.tests.length;
 
   suite.tests = cleanTests;
-  suite.failedHooks = failedHooks;
+  suite.beforeFailedHooks = beforeFailedHooks;
+  suite.afterFailedHooks = afterFailedHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
@@ -201,7 +208,8 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
   suite.hasTests = suite.tests.length > 0;
-  suite.hasFailedHooks = suite.failedHooks.length > 0;
+  suite.hasBeforeFailedHooks = suite.beforeFailedHooks.length > 0;
+  suite.hasAfterFailedHooks = suite.afterFailedHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -220,14 +228,16 @@ function cleanSuite(suite, totalTestsRegistered) {
     'fullFile',
     'file',
     'tests',
-    'failedHooks',
+    'beforeFailedHooks',
+    'afterFailedHooks',
     'suites',
     'passes',
     'failures',
     'pending',
     'skipped',
     'hasTests',
-    'hasFailedHooks',
+    'hasBeforeFailedHooks',
+    'hasAfterFailedHooks',
     'hasSuites',
     'totalTests',
     'totalPasses',
