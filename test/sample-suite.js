@@ -110,8 +110,8 @@ module.exports = {
         parent: '[Circular ~]'
       } ],
       tests: [],
-      beforeFailedHooks: [],
-      afterFailedHooks: [],
+      beforeHooks: [],
+      afterHooks: [],
       pending: [],
       root: true,
       _timeout: 2000,
@@ -122,8 +122,8 @@ module.exports = {
       failures: [],
       skipped: [],
       hasTests: false,
-      hasBeforeFailedHooks: false,
-      hasAfterFailedHooks: false,
+      hasBeforeHooks: false,
+      hasAfterHooks: false,
       hasSuites: true,
       totalTests: 0,
       totalPasses: 0,
@@ -258,7 +258,7 @@ module.exports = {
         skipped: false,
         isHook: false
       } ],
-      beforeFailedHooks: [
+      beforeHooks: [
         {
         title: "\"before all\" hook",
         fullTitle: "\"before all\" hook",
@@ -279,7 +279,7 @@ module.exports = {
         isHook: true
       }
       ],
-      afterFailedHooks: [],
+      afterHooks: [],
       pending: [],
       root: false,
       rootEmpty: false,
@@ -309,8 +309,8 @@ module.exports = {
       failures: [],
       skipped: [],
       hasTests: true,
-      hasBeforeFailedHooks: true,
-      hasAfterFailedHooks: false,
+      hasBeforeHooks: true,
+      hasAfterHooks: false,
       hasSuites: false,
       totalTests: 1,
       totalPasses: 1,

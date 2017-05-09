@@ -14,7 +14,13 @@ var stringify = require('json-stringify-safe');
 var errorPrefix = 'Error adding context:';
 var ERRORS = {
   INVALID_ARGS: errorPrefix + ' Invalid arguments.',
-  INVALID_CONTEXT: errorPrefix + ' Expected a string or an object of shape { title: string, value: any } but saw:'
+  INVALID_TEST: errorPrefix + ' Invalid test object.',
+  INVALID_CONTEXT: function INVALID_CONTEXT(ctx) {
+    var expected = 'Expected a string or an object of shape { title: string, value: any } but saw:';
+    return errorPrefix + ' ' + expected + '\n' + stringify(ctx, function (key, val) {
+      return val === undefined ? 'undefined' : val;
+    }, 2);
+  }
 };
 
 /**
@@ -35,9 +41,10 @@ function _isValidContext(ctx) {
   /*
    * Context is valid if any of the following are true:
    * 1. Type is string and it is not empty
-   * 2. Type is object and it has properties 'title' and 'value'
+   * 2. Type is object and it has properties `title` and `value` and `title` is not empty
    */
-  return typeof ctx === 'string' && !isEmpty(ctx) || Object.hasOwnProperty.call(ctx, 'title') && Object.hasOwnProperty.call(ctx, 'value');
+  if (!ctx) return false;
+  return typeof ctx === 'string' && !isEmpty(ctx) || Object.hasOwnProperty.call(ctx, 'title') && !isEmpty(ctx.title) && Object.hasOwnProperty.call(ctx, 'value');
 }
 
 /**
@@ -75,7 +82,7 @@ var addContext = function addContext() {
   }
 
   // Check args to see if we should bother continuing
-  if (args.length !== 2 || !isObject(args[0]) || !args[0].test) {
+  if (args.length !== 2 || !isObject(args[0])) {
     log(ERRORS.INVALID_ARGS, 'error');
     return;
   }
@@ -84,12 +91,28 @@ var addContext = function addContext() {
 
   // Ensure that context meets the requirements
   if (!_isValidContext(ctx)) {
-    log(ERRORS.INVALID_CONTEXT + '\n' + stringify(ctx, null, 2), 'error');
+    log(ERRORS.INVALID_CONTEXT(ctx), 'error');
     return;
   }
 
-  // Context is valid we can proceed
-  var test = args[0].test;
+  /* Context is valid, now get the test object
+   * If `addContext` is called from inside a `beforeEach` or `afterEach`
+   * the test object will be `.currentTest`, otherwise just `.test`
+   */
+  var test = args[0].currentTest || args[0].test;
+
+  if (!test) {
+    log(ERRORS.INVALID_TEST, 'error');
+    return;
+  }
+
+  /* If context is an object, and value is `undefined`
+   * change it to 'undefined' so it can be displayed
+   * correctly in the report
+   */
+  if (ctx.title && ctx.value === undefined) {
+    ctx.value = 'undefined';
+  }
 
   // Test doesn't already have context -> set it
   if (!test.context) {

@@ -144,8 +144,9 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasBeforeFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].beforeFailedHooks.length.should.equal(1);
+        console.log(mochaReporter.runner.suite.suites[0]);
+        mochaReporter.runner.suite.suites[0].hasBeforeHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].beforeHooks.length.should.equal(1);
         done();
       });
     });
@@ -157,8 +158,8 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasBeforeFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].beforeFailedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasBeforeHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].beforeHooks.length.should.equal(1);
         done();
       });
     });
@@ -170,8 +171,8 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasAfterFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].afterFailedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasAfterHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].afterHooks.length.should.equal(1);
         done();
       });
     });
@@ -183,22 +184,34 @@ describe('Mochawesome Reporter', () => {
       });
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasAfterFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].afterFailedHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasAfterHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].afterHooks.length.should.equal(1);
         done();
       });
     });
 
-    it('Should not have skipped hook in the report', done => {
+    it('Should have skipped hook in the report', done => {
       const error = { expected: { a: 1 }, actual: { a: 2 } };
       const test = makeTest('failing test', tDone => tDone(new Assert(error)));
       subSuite.afterAll('Skipped hook', () => {});
       subSuite.addTest(test);
       runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasAfterFailedHooks.should.equal(false);
-        mochaReporter.runner.suite.suites[0].afterFailedHooks.length.should.equal(0);
-        mochaReporter.runner.suite.suites[0].hasBeforeFailedHooks.should.equal(false);
-        mochaReporter.runner.suite.suites[0].beforeFailedHooks.length.should.equal(0);
+        mochaReporter.runner.suite.suites[0].hasAfterHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].afterHooks.length.should.equal(1);
+        done();
+      });
+    });
+
+    it('Should have succeeded hooks in the report', done => {
+      const test = makeTest('passing test', () => {});
+      subSuite.beforeAll('Before all success', () => {});
+      subSuite.afterAll('After all success', () => {});
+      subSuite.addTest(test);
+      runner.run(failureCount => {
+        mochaReporter.runner.suite.suites[0].hasAfterHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].afterHooks.length.should.equal(1);
+        mochaReporter.runner.suite.suites[0].hasBeforeHooks.should.equal(true);
+        mochaReporter.runner.suite.suites[0].beforeHooks.length.should.equal(1);
         done();
       });
     });
