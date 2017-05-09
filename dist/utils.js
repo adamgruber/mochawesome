@@ -153,12 +153,25 @@ function cleanTest(test) {
     err: err,
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
-    parentUUID: test.parent && test.parent.uuid
+    parentUUID: test.parent && test.parent.uuid,
+    isHook: test.type === 'hook'
   };
 
   cleaned.skipped = !cleaned.pass && !cleaned.fail && !cleaned.pending;
 
   return cleaned;
+}
+
+/**
+ * Gets all hooks in the suite and separates them by before/after
+ *
+ * @param {Object} suite
+ */
+function getHooks(suite) {
+  return {
+    before: [].concat(suite._beforeAll, suite._beforeEach),
+    after: [].concat(suite._afterAll, suite._afterEach)
+  };
 }
 
 /**
@@ -171,7 +184,9 @@ function cleanTest(test) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-
+  var hooks = getHooks(suite);
+  var beforeHooks = _.map(hooks.before, cleanTest);
+  var afterHooks = _.map(hooks.after, cleanTest);
   var cleanTests = _.map(suite.tests, cleanTest);
   var passingTests = _.filter(cleanTests, { state: 'passed' });
   var failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -186,6 +201,8 @@ function cleanSuite(suite, totalTestsRegistered) {
   totalTestsRegistered.total += suite.tests.length;
 
   suite.tests = cleanTests;
+  suite.beforeHooks = beforeHooks;
+  suite.afterHooks = afterHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
@@ -193,6 +210,8 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
   suite.hasTests = suite.tests.length > 0;
+  suite.hasBeforeHooks = suite.beforeHooks.length > 0;
+  suite.hasAfterHooks = suite.afterHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -206,7 +225,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.duration = duration;
   suite.rootEmpty = suite.root && suite.totalTests === 0;
 
-  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
+  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'beforeHooks', 'afterHooks', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasBeforeHooks', 'hasAfterHooks', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
 }
 
 /**
@@ -241,5 +260,6 @@ module.exports = {
   cleanCode: cleanCode,
   cleanTest: cleanTest,
   cleanSuite: cleanSuite,
+  getHooks: getHooks,
   traverseSuites: traverseSuites
 };
