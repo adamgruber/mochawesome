@@ -73,9 +73,9 @@ function Mochawesome(runner, options) {
   const allPasses = [];
   let endCalled = false;
 
-  // Add a unique identifier to each test
+  // Add a unique identifier to each test/hook
   runner.on('test', test => (test.uuid = uuid.v4()));
-
+  runner.on('hook', hook => (hook.uuid = uuid.v4()));
   // Add test to array of all tests
   runner.on('test end', test => allTests.push(test));
 

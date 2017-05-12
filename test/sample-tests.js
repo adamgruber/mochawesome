@@ -293,5 +293,235 @@ module.exports = {
       skipped: false,
       isHook: false
     }
+  },
+  hook: {
+    raw: {
+      title: '\"before each\" hook: failing beforeEach hook for \"passing test\"',
+      body: 'function () {\n      console.log(a); // eslint-disable-line\n    }',
+      async: 0,
+      sync: true,
+      _timeout: 2000,
+      _slow: 75,
+      _enableTimeouts: true,
+      timedOut: false,
+      _trace: {},
+      _retries: -1,
+      _currentRetry: 0,
+      pending: false,
+      type: 'hook',
+      parent: {
+        title: 'Test Suite - Failed Before Each',
+        ctx: {
+          currentTest: {
+            title: 'passing test',
+            body: 'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
+            async: 1,
+            sync: false,
+            _timeout: 2000,
+            _slow: 75,
+            _enableTimeouts: true,
+            timedOut: false,
+            _trace: {},
+            _retries: -1,
+            _currentRetry: 0,
+            pending: false,
+            type: 'test',
+            file: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+            parent: '[Circular ~.parent]',
+            ctx: '[Circular ~.parent.ctx]',
+            uuid: 'fde7ab64-61b9-4c6d-b893-6f013a6317db'
+          },
+          _runnable: '[Circular ~]',
+          test: '[Circular ~]'
+        },
+        suites: [],
+        tests: [
+          {
+            title: 'passing test',
+            body: 'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
+            async: 1,
+            sync: false,
+            _timeout: 2000,
+            _slow: 75,
+            _enableTimeouts: true,
+            timedOut: false,
+            _trace: {},
+            _retries: -1,
+            _currentRetry: 0,
+            pending: false,
+            type: 'test',
+            file: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+            parent: '[Circular ~.parent]',
+            ctx: {
+              currentTest: '[Circular ~.parent.tests.0]',
+              _runnable: '[Circular ~]',
+              test: '[Circular ~]'
+            },
+            uuid: 'fde7ab64-61b9-4c6d-b893-6f013a6317db'
+          }
+        ],
+        pending: false,
+        _beforeEach: [
+          '[Circular ~]'
+        ],
+        _beforeAll: [],
+        _afterEach: [],
+        _afterAll: [],
+        root: false,
+        _timeout: 2000,
+        _enableTimeouts: true,
+        _slow: 75,
+        _retries: -1,
+        _onlyTests: [],
+        _onlySuites: [],
+        delayed: false,
+        parent: {
+          title: 'Hooks',
+          suites: [
+            '[Circular ~.parent]'
+          ],
+          tests: [],
+          pending: [],
+          root: false,
+          _timeout: 2000,
+          file: '/test-functional/test-hooks.js',
+          uuid: '93a639a5-429e-44a0-854c-6758408fca62',
+          beforeHooks: [],
+          afterHooks: [],
+          fullFile: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+          passes: [],
+          failures: [],
+          skipped: [],
+          hasBeforeHooks: false,
+          hasAfterHooks: false,
+          hasTests: false,
+          hasSuites: true,
+          totalTests: 0,
+          totalPasses: 0,
+          totalFailures: 0,
+          totalPending: 0,
+          totalSkipped: 0,
+          hasPasses: false,
+          hasFailures: false,
+          hasPending: false,
+          hasSkipped: false,
+          duration: 0,
+          rootEmpty: false
+        },
+        file: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+        uuid: '3303effe-2b74-4156-a141-6cf51324e8f5'
+      },
+      ctx: {
+        currentTest: {
+          title: 'passing test',
+          body: 'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
+          async: 1,
+          sync: false,
+          _timeout: 2000,
+          _slow: 75,
+          _enableTimeouts: true,
+          timedOut: false,
+          _trace: {},
+          _retries: -1,
+          _currentRetry: 0,
+          pending: false,
+          type: 'test',
+          file: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+          parent: {
+            title: 'Test Suite - Failed Before Each',
+            ctx: '[Circular ~.ctx]',
+            suites: [],
+            tests: [
+              '[Circular ~.ctx.currentTest]'
+            ],
+            pending: false,
+            _beforeEach: [
+              '[Circular ~]'
+            ],
+            _beforeAll: [],
+            _afterEach: [],
+            _afterAll: [],
+            root: false,
+            _timeout: 2000,
+            _enableTimeouts: true,
+            _slow: 75,
+            _retries: -1,
+            _onlyTests: [],
+            _onlySuites: [],
+            delayed: false,
+            parent: {
+              title: 'Hooks',
+              suites: [
+                '[Circular ~.ctx.currentTest.parent]'
+              ],
+              tests: [],
+              pending: [],
+              root: false,
+              _timeout: 2000,
+              file: '/test-functional/test-hooks.js',
+              uuid: '93a639a5-429e-44a0-854c-6758408fca62',
+              beforeHooks: [],
+              afterHooks: [],
+              fullFile: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+              passes: [],
+              failures: [],
+              skipped: [],
+              hasBeforeHooks: false,
+              hasAfterHooks: false,
+              hasTests: false,
+              hasSuites: true,
+              totalTests: 0,
+              totalPasses: 0,
+              totalFailures: 0,
+              totalPending: 0,
+              totalSkipped: 0,
+              hasPasses: false,
+              hasFailures: false,
+              hasPending: false,
+              hasSkipped: false,
+              duration: 0,
+              rootEmpty: false
+            },
+            file: '/Users/adamg/Sites/mafork/test-functional/test-hooks.js',
+            uuid: '3303effe-2b74-4156-a141-6cf51324e8f5'
+          },
+          ctx: '[Circular ~.ctx]',
+          uuid: 'fde7ab64-61b9-4c6d-b893-6f013a6317db'
+        },
+        _runnable: '[Circular ~]',
+        test: '[Circular ~]'
+      },
+      uuid: '51933158-66a0-4b6c-bc04-65d7ce24804b',
+      _events: {},
+      _eventsCount: 1,
+      duration: 0,
+      _error: null,
+      originalTitle: '\"before each\" hook: failing beforeEach hook',
+      state: 'failed',
+      err: {
+        estack: 'ReferenceError: a is not defined\n    at Context.<anonymous> (test-functional/test-hooks.js:4:19)'
+      }
+    },
+    cleaned: {
+      title: '\"before each\" hook: failing beforeEach hook for \"passing test\"',
+      fullTitle: '\"before each\" hook: failing beforeEach hook for \"passing test\"',
+      timedOut: false,
+      duration: 0,
+      state: 'failed',
+      speed: undefined,
+      pass: false,
+      fail: true,
+      pending: false,
+      context: undefined,
+      code: 'console.log(a); // eslint-disable-line',
+      err: {
+        estack: 'ReferenceError: a is not defined\n    at Context.<anonymous> (test-functional/test-hooks.js:4:19)'
+      },
+      isRoot: false,
+      uuid: '51933158-66a0-4b6c-bc04-65d7ce24804b',
+      parentUUID: '3303effe-2b74-4156-a141-6cf51324e8f5',
+      isHook: true,
+      skipped: false
+    }
   }
 };

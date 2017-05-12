@@ -14,8 +14,7 @@ const {
   removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
-  cleanSuite,
-  getFailedHooks
+  cleanSuite
 } = utils;
 
 describe('Mochawesome Utils', () => {
@@ -146,7 +145,8 @@ describe('Mochawesome Utils', () => {
       'isRoot',
       'uuid',
       'parentUUID',
-      'skipped'
+      'skipped',
+      'isHook'
     ];
 
     it('returns cleaned passing test', () => {
@@ -169,6 +169,13 @@ describe('Mochawesome Utils', () => {
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.pending.cleaned);
     });
+
+    it('returns cleaned hook', () => {
+      const cleaned = cleanTest(sampleTests.hook.raw);
+      delete cleaned.err.stack;
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleTests.hook.cleaned);
+    });
   });
 
   describe('cleanSuite', () => {
@@ -177,15 +184,17 @@ describe('Mochawesome Utils', () => {
       'title',
       'fullFile',
       'file',
+      'beforeHooks',
+      'afterHooks',
       'tests',
-      'failedHooks',
       'suites',
       'passes',
       'failures',
       'pending',
       'skipped',
+      'hasBeforeHooks',
+      'hasAfterHooks',
       'hasTests',
-      'hasFailedHooks',
       'hasSuites',
       'totalTests',
       'totalPasses',
@@ -215,15 +224,6 @@ describe('Mochawesome Utils', () => {
       cleanSuite(s, totalTestsRegistered);
       s.should.have.properties(expectedProps);
       s.should.deepEqual(sampleSuite.two.cleaned);
-    });
-  });
-
-  describe('getFailedHooks', () => {
-    it('passing suit with one failed hook', () => {
-      const s = cloneDeep(sampleSuite.two.raw);
-      const hooks = getFailedHooks(s);
-      hooks.length.should.equal(1);
-      hooks[0].type.should.equal('hook');
     });
   });
 });
