@@ -152,7 +152,7 @@ function cleanTest(test) {
     isHook: test.type === 'hook'
   };
 
-  cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending);
+  cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending && !cleaned.isHook);
 
   return cleaned;
 }
