@@ -173,36 +173,13 @@ describe('Mochawesome Reporter', () => {
       });
     }
 
-    function skippedHookTest(hookType, isBefore) {
-      it(`${hookType} skipped hook`, done => {
-        const error = { expected: { a: 1 }, actual: { a: 2 } };
-        const test = makeTest('failing test', tDone => tDone(new Assert(error)));
-        subSuite[hookType](`${hookType} skipped hook`, () => {});
-        subSuite.addTest(test);
-        runner.run(failureCount => {
-          const testSuite = mochaReporter.runner.suite.suites[0];
-          const { hasBeforeHooks, hasAfterHooks, beforeHooks, afterHooks } = testSuite;
-          hasBeforeHooks.should.equal(isBefore);
-          hasAfterHooks.should.equal(!isBefore);
-          afterHooks.length.should.equal(isBefore ? 0 : 1);
-          beforeHooks.length.should.equal(isBefore ? 1 : 0);
-          isBefore
-            ? beforeHooks[0].skipped.should.equal(true)
-            : afterHooks[0].skipped.should.equal(true);
-          done();
-        });
-      });
-    }
-
     [ 'beforeAll', 'beforeEach' ].forEach(type => {
       passingHookTest(type, true);
       failingHookTest(type, true);
-      skippedHookTest(type, true);
     });
 
     [ 'afterAll', 'afterEach' ].forEach(type => {
       passingHookTest(type, false);
-      skippedHookTest(type, false);
       failingHookTest(type, false);
     });
   });
