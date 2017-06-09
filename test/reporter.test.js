@@ -137,68 +137,50 @@ describe('Mochawesome Reporter', () => {
   });
 
   describe('Hook Handling', () => {
-    it('Before each failing hook', done => {
-      const test = makeTest('passing test', () => {});
-      subSuite.beforeEach('Before Each failure', () => {
-        throw new Error('Dummy hook error');
+    function passingHookTest(hookType, isBefore) {
+      it(`${hookType} passing hook`, done => {
+        const test = makeTest('passing test', () => {});
+        subSuite[hookType](`${hookType} passing hook`, () => {});
+        subSuite.addTest(test);
+        runner.run(failureCount => {
+          const testSuite = mochaReporter.runner.suite.suites[0];
+          const { hasBeforeHooks, hasAfterHooks, beforeHooks, afterHooks } = testSuite;
+          hasBeforeHooks.should.equal(isBefore);
+          hasAfterHooks.should.equal(!isBefore);
+          afterHooks.length.should.equal(isBefore ? 0 : 1);
+          beforeHooks.length.should.equal(isBefore ? 1 : 0);
+          done();
+        });
       });
-      subSuite.addTest(test);
-      runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
-        done();
+    }
+
+    function failingHookTest(hookType, isBefore) {
+      it(`${hookType} failing hook`, done => {
+        const test = makeTest('passing test', () => {});
+        subSuite[hookType](`${hookType} failing hook`, () => {
+          throw new Error('Dummy hook error');
+        });
+        subSuite.addTest(test);
+        runner.run(failureCount => {
+          const testSuite = mochaReporter.runner.suite.suites[0];
+          const { hasBeforeHooks, hasAfterHooks, beforeHooks, afterHooks } = testSuite;
+          hasBeforeHooks.should.equal(isBefore);
+          hasAfterHooks.should.equal(!isBefore);
+          afterHooks.length.should.equal(isBefore ? 0 : 1);
+          beforeHooks.length.should.equal(isBefore ? 1 : 0);
+          done();
+        });
       });
+    }
+
+    [ 'beforeAll', 'beforeEach' ].forEach(type => {
+      passingHookTest(type, true);
+      failingHookTest(type, true);
     });
 
-    it('Before all failing hook', done => {
-      const test = makeTest('passing test', () => {});
-      subSuite.beforeAll('Before All failure', () => {
-        throw new Error('Dummy hook error');
-      });
-      subSuite.addTest(test);
-      runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
-        done();
-      });
-    });
-
-    it('After each failing hook', done => {
-      const test = makeTest('passing test', () => {});
-      subSuite.afterEach('After Each failure', () => {
-        throw new Error('Dummy hook error');
-      });
-      subSuite.addTest(test);
-      runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
-        done();
-      });
-    });
-
-    it('After all failing hook', done => {
-      const test = makeTest('passing test', () => {});
-      subSuite.afterAll('After all failure', () => {
-        throw new Error('Dummy hook error');
-      });
-      subSuite.addTest(test);
-      runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(true);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(1);
-        done();
-      });
-    });
-
-    it('Should not have skipped hook in the report', done => {
-      const error = { expected: { a: 1 }, actual: { a: 2 } };
-      const test = makeTest('failing test', tDone => tDone(new Assert(error)));
-      subSuite.afterAll('Skipped hook', () => {});
-      subSuite.addTest(test);
-      runner.run(failureCount => {
-        mochaReporter.runner.suite.suites[0].hasFailedHooks.should.equal(false);
-        mochaReporter.runner.suite.suites[0].failedHooks.length.should.equal(0);
-        done();
-      });
+    [ 'afterAll', 'afterEach' ].forEach(type => {
+      passingHookTest(type, false);
+      failingHookTest(type, false);
     });
   });
 

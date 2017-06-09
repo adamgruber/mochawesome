@@ -152,20 +152,9 @@ function cleanTest(test) {
     isHook: test.type === 'hook'
   };
 
-  cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending);
+  cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending && !cleaned.isHook);
 
   return cleaned;
-}
-
-/**
- * Filters all failed hooks from suite
- * And concatenates them to a single array
- *
- * @param {Object} suite
- */
-function getFailedHooks(suite) {
-  const failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
-  return _.filter(failedHooks, { state: 'failed' });
 }
 
 /**
@@ -178,7 +167,8 @@ function getFailedHooks(suite) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-  const failedHooks = _.map(getFailedHooks(suite), cleanTest);
+  const beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), cleanTest);
+  const afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), cleanTest);
   const cleanTests = _.map(suite.tests, cleanTest);
   const passingTests = _.filter(cleanTests, { state: 'passed' });
   const failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -192,16 +182,18 @@ function cleanSuite(suite, totalTestsRegistered) {
 
   totalTestsRegistered.total += suite.tests.length;
 
+  suite.beforeHooks = beforeHooks;
+  suite.afterHooks = afterHooks;
   suite.tests = cleanTests;
-  suite.failedHooks = failedHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
   suite.failures = failingTests;
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
+  suite.hasBeforeHooks = suite.beforeHooks.length > 0;
+  suite.hasAfterHooks = suite.afterHooks.length > 0;
   suite.hasTests = suite.tests.length > 0;
-  suite.hasFailedHooks = suite.failedHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -219,15 +211,17 @@ function cleanSuite(suite, totalTestsRegistered) {
     'title',
     'fullFile',
     'file',
+    'beforeHooks',
+    'afterHooks',
     'tests',
-    'failedHooks',
     'suites',
     'passes',
     'failures',
     'pending',
     'skipped',
+    'hasBeforeHooks',
+    'hasAfterHooks',
     'hasTests',
-    'hasFailedHooks',
     'hasSuites',
     'totalTests',
     'totalPasses',
@@ -278,6 +272,5 @@ module.exports = {
   cleanCode,
   cleanTest,
   cleanSuite,
-  getFailedHooks,
   traverseSuites
 };

@@ -1,3 +1,5 @@
+const tests = require('./sample-tests');
+
 /* eslint-disable */
 module.exports = {
   one: {
@@ -109,8 +111,9 @@ module.exports = {
         delayed: false,
         parent: '[Circular ~]'
       } ],
+      beforeHooks: [],
+      afterHooks: [],
       tests: [],
-      failedHooks: [],
       pending: [],
       root: true,
       _timeout: 2000,
@@ -120,8 +123,9 @@ module.exports = {
       passes: [],
       failures: [],
       skipped: [],
+      hasBeforeHooks: false,
+      hasAfterHooks: false,
       hasTests: false,
-      hasFailedHooks: false,
       hasSuites: true,
       totalTests: 0,
       totalPasses: 0,
@@ -165,36 +169,8 @@ module.exports = {
         speed: 'fast'
       } ],
       pending: false,
-      _beforeEach: [],
-      _beforeAll: [
-        {
-        title:  "\"before all\" hook",
-        body: "() => {\n            throw new Error();\n        }",
-        async: 0,
-        sync: true,
-        _timeout: 2000,
-        _slow: 75,
-        _enableTimeouts: true,
-        timedOut: false,
-        _trace: {},
-        _retries: -1,
-        _currentRetry: 0,
-        pending: false,
-        type: "hook",
-        parent: "[Circular ~]",
-        ctx: {
-          _runnable: "[Circular ~._beforeAll.0]",
-          test: "[Circular ~._beforeAll.0]"
-        },
-        uuid: 'e061e1eb-e9aa-49e4-b6f3-41bbb27752a8',
-        _events: {},
-        _eventsCount: 1,
-        duration: 0,
-        _error: null,
-        state: "failed",
-        err: {}
-    }
-      ],
+      _beforeEach: [tests.hook.raw],
+      _beforeAll: [],
       _afterEach: [],
       _afterAll: [],
       root: false,
@@ -256,27 +232,8 @@ module.exports = {
         skipped: false,
         isHook: false
       } ],
-      failedHooks: [
-        {
-        title: "\"before all\" hook",
-        fullTitle: "\"before all\" hook",
-        timedOut: false,
-        duration: 0,
-        state: "failed",
-        pass: false,
-        fail: true,
-        pending: false,
-        context: undefined,
-        code: "throw new Error();",
-        err: {},
-        isRoot: undefined,
-        uuid: "e061e1eb-e9aa-49e4-b6f3-41bbb27752a8",
-        parentUUID: undefined,
-        skipped: false,
-        speed: undefined,
-        isHook: true
-      }
-      ],
+      beforeHooks: [tests.hook.cleaned],
+      afterHooks: [],
       pending: [],
       root: false,
       rootEmpty: false,
@@ -305,8 +262,9 @@ module.exports = {
       } ],
       failures: [],
       skipped: [],
+      hasBeforeHooks: true,
+      hasAfterHooks: false,
       hasTests: true,
-      hasFailedHooks: true,
       hasSuites: false,
       totalTests: 1,
       totalPasses: 1,
