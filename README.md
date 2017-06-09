@@ -5,6 +5,7 @@ mochawesome
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
 ## :tada: Latest Changes
+- Display before and after hooks alongside your tests
 - Use `addContext` in `beforeEach` and `afterEach` test hooks
 - New [options](#options): `overwrite` and `timestamp`
 

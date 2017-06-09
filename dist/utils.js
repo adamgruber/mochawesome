@@ -157,20 +157,9 @@ function cleanTest(test) {
     isHook: test.type === 'hook'
   };
 
-  cleaned.skipped = !cleaned.pass && !cleaned.fail && !cleaned.pending;
+  cleaned.skipped = !cleaned.pass && !cleaned.fail && !cleaned.pending && !cleaned.isHook;
 
   return cleaned;
-}
-
-/**
- * Filters all failed hooks from suite
- * And concatenates them to a single array
- *
- * @param {Object} suite
- */
-function getFailedHooks(suite) {
-  var failedHooks = [].concat(suite._afterAll, suite._afterEach, suite._beforeAll, suite._beforeEach);
-  return _.filter(failedHooks, { state: 'failed' });
 }
 
 /**
@@ -183,7 +172,8 @@ function getFailedHooks(suite) {
  */
 function cleanSuite(suite, totalTestsRegistered) {
   suite.uuid = uuid.v4();
-  var failedHooks = _.map(getFailedHooks(suite), cleanTest);
+  var beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), cleanTest);
+  var afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), cleanTest);
   var cleanTests = _.map(suite.tests, cleanTest);
   var passingTests = _.filter(cleanTests, { state: 'passed' });
   var failingTests = _.filter(cleanTests, { state: 'failed' });
@@ -197,16 +187,18 @@ function cleanSuite(suite, totalTestsRegistered) {
 
   totalTestsRegistered.total += suite.tests.length;
 
+  suite.beforeHooks = beforeHooks;
+  suite.afterHooks = afterHooks;
   suite.tests = cleanTests;
-  suite.failedHooks = failedHooks;
   suite.fullFile = suite.file || '';
   suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
   suite.passes = passingTests;
   suite.failures = failingTests;
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
+  suite.hasBeforeHooks = suite.beforeHooks.length > 0;
+  suite.hasAfterHooks = suite.afterHooks.length > 0;
   suite.hasTests = suite.tests.length > 0;
-  suite.hasFailedHooks = suite.failedHooks.length > 0;
   suite.hasSuites = suite.suites.length > 0;
   suite.totalTests = suite.tests.length;
   suite.totalPasses = passingTests.length;
@@ -220,7 +212,7 @@ function cleanSuite(suite, totalTestsRegistered) {
   suite.duration = duration;
   suite.rootEmpty = suite.root && suite.totalTests === 0;
 
-  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'tests', 'failedHooks', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasTests', 'hasFailedHooks', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
+  removeAllPropsFromObjExcept(suite, ['title', 'fullFile', 'file', 'beforeHooks', 'afterHooks', 'tests', 'suites', 'passes', 'failures', 'pending', 'skipped', 'hasBeforeHooks', 'hasAfterHooks', 'hasTests', 'hasSuites', 'totalTests', 'totalPasses', 'totalFailures', 'totalPending', 'totalSkipped', 'hasPasses', 'hasFailures', 'hasPending', 'hasSkipped', 'root', 'uuid', 'duration', 'rootEmpty', '_timeout']);
 }
 
 /**
@@ -255,6 +247,5 @@ module.exports = {
   cleanCode: cleanCode,
   cleanTest: cleanTest,
   cleanSuite: cleanSuite,
-  getFailedHooks: getFailedHooks,
   traverseSuites: traverseSuites
 };

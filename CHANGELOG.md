@@ -1,5 +1,9 @@
 # Changelog
 
+### [2.2.1](https://github.com/adamgruber/mochawesome/releases/tag/2.2.1)
+- Separated out before and after hooks
+- Bumped mochawesome-report-generator dependency to 2.1.0
+
 ### [2.2.0](https://github.com/adamgruber/mochawesome/releases/tag/2.2.0)
 - Enable using `addContext` in `beforeEach` and `afterEach` test hooks
 - Fix a bug where you could pass an object with empty title string to `addContext`

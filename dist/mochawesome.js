@@ -85,11 +85,13 @@ function Mochawesome(runner, options) {
   var allPasses = [];
   var endCalled = false;
 
-  // Add a unique identifier to each test
+  // Add a unique identifier to each test/hook
   runner.on('test', function (test) {
     return test.uuid = uuid.v4();
   });
-
+  runner.on('hook', function (hook) {
+    return hook.uuid = uuid.v4();
+  });
   // Add test to array of all tests
   runner.on('test end', function (test) {
     return allTests.push(test);
