@@ -79,15 +79,21 @@ function cleanCode(str) {
   return str;
 }
 
+
 /**
- * Return a plain-object representation of `test`
+ * Return a plain-object representation of `err`
  * free of cyclic properties etc.
  *
- * @param {Object} test
+ * @param {Object} err
  *
- * @return {Object} cleaned test
+ * @return {Object} cleaned err
  */
-function cleanTest(test) {
+function cleanErr(err) {
+  const { name, message, actual, expected, stack, showDiff } = err;
+  let cleanedActual;
+  let cleanedExpected;
+  let cleanedDiff;
+
   /**
    * Check that a / b have the same type.
    */
@@ -96,27 +102,14 @@ function cleanTest(test) {
     return objToString.call(a) === objToString.call(b);
   }
 
-  /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
-  let code = test.fn ? test.fn.toString() : test.body;
-  const err = test.err || {};
-  const { actual, expected, showDiff, stack } = err;
-
-  if (code) {
-    code = cleanCode(code);
-  }
-
-  if (stack) {
-    err.estack = err.stack;
-  }
-
   // Create diff for the error
   if (showDiff !== false && sameType(actual, expected) && expected !== undefined) {
     /* istanbul ignore if */
     if (!(_.isString(actual) && _.isString(expected))) {
-      err.actual = mochaUtils.stringify(actual);
-      err.expected = mochaUtils.stringify(expected);
+      cleanedActual = mochaUtils.stringify(actual);
+      cleanedExpected = mochaUtils.stringify(expected);
     }
-    err.diff = diff
+    cleanedDiff = diff
       .createPatch('string', err.actual, err.expected)
       .split('\n')
       .splice(4)
@@ -133,6 +126,34 @@ function cleanTest(test) {
       .join('\n');
   }
 
+  return {
+    name,
+    message,
+    actual: cleanedActual,
+    expected: cleanedExpected,
+    estack: stack,
+    diff: cleanedDiff
+  };
+}
+
+/**
+ * Return a plain-object representation of `test`
+ * free of cyclic properties etc.
+ *
+ * @param {Object} test
+ *
+ * @return {Object} cleaned test
+ */
+function cleanTest(test) {
+  /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
+  let code = test.fn ? test.fn.toString() : test.body;
+  const err = test.err || {};
+  // const { actual, expected, showDiff, stack } = err;
+
+  if (code) {
+    code = cleanCode(code);
+  }
+
   const cleaned = {
     title: test.title,
     fullTitle: _.isFunction(test.fullTitle) ? test.fullTitle() : /* istanbul ignore next */test.title,
@@ -145,7 +166,7 @@ function cleanTest(test) {
     pending: test.pending,
     context: stringify(test.context, null, 2),
     code,
-    err,
+    err: cleanErr(err),
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
     parentUUID: test.parent && test.parent.uuid,
