@@ -151,28 +151,24 @@ describe('Mochawesome Utils', () => {
 
     it('returns cleaned passing test', () => {
       const cleaned = cleanTest(sampleTests.passing.raw);
-      delete cleaned.err.stack;
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.passing.cleaned);
     });
 
     it('returns cleaned failing test', () => {
       const cleaned = cleanTest(sampleTests.failing.raw);
-      delete cleaned.err.stack;
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.failing.cleaned);
     });
 
     it('returns cleaned pending test', () => {
       const cleaned = cleanTest(sampleTests.pending.raw);
-      delete cleaned.err.stack;
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.pending.cleaned);
     });
 
     it('returns cleaned hook', () => {
       const cleaned = cleanTest(sampleTests.hook.raw);
-      delete cleaned.err.stack;
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.hook.cleaned);
     });

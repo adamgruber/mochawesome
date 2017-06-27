@@ -4,6 +4,7 @@ const uuid = require('uuid');
 const mochaUtils = require('mocha/lib/utils');
 const stringify = require('json-stringify-safe');
 const diff = require('diff');
+const stripAnsi = require('strip-ansi');
 
 /**
  * Return a classname based on percentage
@@ -79,20 +80,43 @@ function cleanCode(str) {
   return str;
 }
 
+/**
+ * Create a unified diff between two strings
+ *
+ * @param {Error}  err          Error object
+ * @param {string} err.actual   Actual result returned
+ * @param {string} err.expected Result expected
+ *
+ * @return {string} diff
+ */
+function createUnifiedDiff({ actual, expected }) {
+  return diff.createPatch('string', actual, expected)
+    .split('\n')
+    .splice(4)
+    .map(line => {
+      if (line.match(/@@/)) {
+        return null;
+      }
+      if (line.match(/\\ No newline/)) {
+        return null;
+      }
+      return line.replace(/^(-|\+)/, '$1 ');
+    })
+    .filter(line => typeof line !== 'undefined' && line !== null)
+    .join('\n');
+}
 
 /**
- * Return a plain-object representation of `err`
- * free of cyclic properties etc.
+ * Return a normalized error object
  *
- * @param {Object} err
+ * @param {Error} err Error object
  *
- * @return {Object} cleaned err
+ * @return {Object} normalized error
  */
-function cleanErr(err) {
+function normalizeErr(err) {
   const { name, message, actual, expected, stack, showDiff } = err;
-  let cleanedActual;
-  let cleanedExpected;
-  let cleanedDiff;
+  let errMessage;
+  let errDiff;
 
   /**
    * Check that a / b have the same type.
@@ -102,37 +126,28 @@ function cleanErr(err) {
     return objToString.call(a) === objToString.call(b);
   }
 
-  // Create diff for the error
+  // Format actual/expected for creating diff
   if (showDiff !== false && sameType(actual, expected) && expected !== undefined) {
     /* istanbul ignore if */
     if (!(_.isString(actual) && _.isString(expected))) {
-      cleanedActual = mochaUtils.stringify(actual);
-      cleanedExpected = mochaUtils.stringify(expected);
+      err.actual = mochaUtils.stringify(actual);
+      err.expected = mochaUtils.stringify(expected);
     }
-    cleanedDiff = diff
-      .createPatch('string', err.actual, err.expected)
-      .split('\n')
-      .splice(4)
-      .map(line => {
-        if (line.match(/@@/)) {
-          return null;
-        }
-        if (line.match(/\\ No newline/)) {
-          return null;
-        }
-        return line.replace(/^(-|\+)/, '$1 ');
-      })
-      .filter(line => typeof line !== 'undefined' && line !== null)
-      .join('\n');
+    errDiff = createUnifiedDiff(err);
+  }
+
+  // Assertion libraries do not output consitent error objects so in order to
+  // get a consistent message object we need to create it ourselves
+  if (name && message) {
+    errMessage = `${name}: ${stripAnsi(message)}`;
+  } else if (stack) {
+    errMessage = stack.replace(/\n.*/g, '');
   }
 
   return {
-    name,
-    message,
-    actual: cleanedActual,
-    expected: cleanedExpected,
-    estack: stack,
-    diff: cleanedDiff
+    message: errMessage,
+    estack: stack && stripAnsi(stack),
+    diff: errDiff
   };
 }
 
@@ -146,13 +161,7 @@ function cleanErr(err) {
  */
 function cleanTest(test) {
   /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
-  let code = test.fn ? test.fn.toString() : test.body;
-  const err = test.err || {};
-  // const { actual, expected, showDiff, stack } = err;
-
-  if (code) {
-    code = cleanCode(code);
-  }
+  const code = test.fn ? test.fn.toString() : test.body;
 
   const cleaned = {
     title: test.title,
@@ -165,8 +174,8 @@ function cleanTest(test) {
     fail: test.state === 'failed',
     pending: test.pending,
     context: stringify(test.context, null, 2),
-    code,
-    err: cleanErr(err),
+    code: code && cleanCode(code),
+    err: (test.err && normalizeErr(test.err)) || {},
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
     parentUUID: test.parent && test.parent.uuid,

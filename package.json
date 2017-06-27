@@ -9,6 +9,7 @@
     "test:prog": "node ./test-programmatic",
     "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
     "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
+    "dev": "babel --watch src -d dist",
     "build": "babel src -d dist"
   },
   "author": "Adam Gruber",
@@ -57,6 +58,7 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.3",
     "mochawesome-report-generator": "^2.1.0",
+    "strip-ansi": "^4.0.0",
     "uuid": "^3.0.1"
   },
   "peerDependencies": {
