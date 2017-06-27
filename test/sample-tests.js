@@ -194,11 +194,7 @@ module.exports = {
       context: undefined,
       code: 'return tDone(new Assert(error));',
       err: {
-        name: 'AssertionError',
-        actual: '{\n  \"a\": 2\n}',
-        expected: '{\n  \"a\": 1\n}',
-        message: '{ a: 2 } undefined { a: 1 }',
-        generatedMessage: true,
+        message: 'AssertionError: { a: 2 } undefined { a: 1 }',
         estack: 'AssertionError: { a: 2 } undefined { a: 1 }',
         diff: ' {\n-   \"a\": 2\n+   \"a\": 1\n }\n'
       },
@@ -499,7 +495,7 @@ module.exports = {
       originalTitle: '\"before each\" hook: failing beforeEach hook',
       state: 'failed',
       err: {
-        estack: 'ReferenceError: a is not defined\n    at Context.<anonymous> (test-functional/test-hooks.js:4:19)'
+        stack: 'ReferenceError: a is not defined\n    at Context.<anonymous> (test-functional/test-hooks.js:4:19)'
       }
     },
     cleaned: {
@@ -515,6 +511,8 @@ module.exports = {
       context: undefined,
       code: 'console.log(a); // eslint-disable-line',
       err: {
+        message: 'ReferenceError: a is not defined',
+        diff: undefined,
         estack: 'ReferenceError: a is not defined\n    at Context.<anonymous> (test-functional/test-hooks.js:4:19)'
       },
       isRoot: false,

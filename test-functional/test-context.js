@@ -25,6 +25,14 @@ function retObj() {
 }
 
 describe('Master Test Suite', () => {
+  before(function () {
+    addContext(this, 'this context is before all tests');
+  });
+
+  after(function () {
+    addContext(this, 'this context is after all tests');
+  });
+
   describe('Test Suite with Context', () => {
     it('should have text context', function (done) {
       (1+1).should.equal(2);
