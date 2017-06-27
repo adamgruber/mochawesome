@@ -6,3 +6,4 @@ mochawesome-report/
 _site/
 coverage/
 .nyc_output/
+dist/
