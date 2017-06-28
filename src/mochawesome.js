@@ -1,5 +1,5 @@
-const Base = require('mocha/lib/reporters/Base');
-const Spec = require('mocha/lib/reporters/Spec');
+const Base = require('mocha/lib/reporters/base');
+const Spec = require('mocha/lib/reporters/spec');
 const uuid = require('uuid');
 const stringify = require('json-stringify-safe');
 const conf = require('./config');
