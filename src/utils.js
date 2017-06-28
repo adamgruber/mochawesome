@@ -107,13 +107,26 @@ function createUnifiedDiff({ actual, expected }) {
 }
 
 /**
+ * Create an inline diff between two strings
+ *
+ * @param {Error}  err          Error object
+ * @param {string} err.actual   Actual result returned
+ * @param {string} err.expected Result expected
+ *
+ * @return {array} diff string objects
+ */
+function createInlineDiff({ actual, expected }) {
+  return diff.diffWordsWithSpace(actual, expected);
+}
+
+/**
  * Return a normalized error object
  *
  * @param {Error} err Error object
  *
  * @return {Object} normalized error
  */
-function normalizeErr(err) {
+function normalizeErr(err, config) {
   const { name, message, actual, expected, stack, showDiff } = err;
   let errMessage;
   let errDiff;
@@ -133,7 +146,7 @@ function normalizeErr(err) {
       err.actual = mochaUtils.stringify(actual);
       err.expected = mochaUtils.stringify(expected);
     }
-    errDiff = createUnifiedDiff(err);
+    errDiff = config.useInlineDiffs ? createInlineDiff(err) : createUnifiedDiff(err);
   }
 
   // Assertion libraries do not output consitent error objects so in order to
@@ -159,7 +172,7 @@ function normalizeErr(err) {
  *
  * @return {Object} cleaned test
  */
-function cleanTest(test) {
+function cleanTest(test, config) {
   /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
   const code = test.fn ? test.fn.toString() : test.body;
 
@@ -175,7 +188,7 @@ function cleanTest(test) {
     pending: test.pending,
     context: stringify(test.context, null, 2),
     code: code && cleanCode(code),
-    err: (test.err && normalizeErr(test.err)) || {},
+    err: (test.err && normalizeErr(test.err, config)) || {},
     isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
     parentUUID: test.parent && test.parent.uuid,
@@ -195,11 +208,11 @@ function cleanTest(test) {
  * @param {Object} totalTestsRegistered
  * @param {Integer} totalTestsRegistered.total
  */
-function cleanSuite(suite, totalTestsRegistered) {
+function cleanSuite(suite, totalTestsRegistered, config) {
   suite.uuid = uuid.v4();
-  const beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), cleanTest);
-  const afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), cleanTest);
-  const cleanTests = _.map(suite.tests, cleanTest);
+  const beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), test => cleanTest(test, config));
+  const afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), test => cleanTest(test, config));
+  const cleanTests = _.map(suite.tests, test => cleanTest(test, config));
   const passingTests = _.filter(cleanTests, { state: 'passed' });
   const failingTests = _.filter(cleanTests, { state: 'failed' });
   const pendingTests = _.filter(cleanTests, { pending: true });
@@ -278,16 +291,16 @@ function cleanSuite(suite, totalTestsRegistered) {
  * @param {Object} totalTestsRegistered
  * @param {Integer} totalTestsRegistered.total
  */
-function traverseSuites(suite, totalTestsRegistered) {
+function traverseSuites(suite, totalTestsRegistered, config) {
   const queue = [];
   let next = suite;
   while (next) {
     if (next.root) {
-      cleanSuite(next, totalTestsRegistered);
+      cleanSuite(next, totalTestsRegistered, config);
     }
     if (next.suites.length) {
       _.each(next.suites, (nextSuite, i) => {
-        cleanSuite(nextSuite, totalTestsRegistered);
+        cleanSuite(nextSuite, totalTestsRegistered, config);
         queue.push(nextSuite);
       });
     }

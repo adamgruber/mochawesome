@@ -129,6 +129,7 @@ describe('Mochawesome Utils', () => {
   });
 
   describe('cleanTest', () => {
+    const config = {};
     const expectedProps = [
       'title',
       'fullTitle',
@@ -150,31 +151,38 @@ describe('Mochawesome Utils', () => {
     ];
 
     it('returns cleaned passing test', () => {
-      const cleaned = cleanTest(sampleTests.passing.raw);
+      const cleaned = cleanTest(sampleTests.passing.raw, config);
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.passing.cleaned);
     });
 
     it('returns cleaned failing test', () => {
-      const cleaned = cleanTest(sampleTests.failing.raw);
+      const cleaned = cleanTest(sampleTests.failing.raw, config);
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.failing.cleaned);
     });
 
+    it('returns cleaned failing test with inline diff', () => {
+      const cleaned = cleanTest(sampleTests.failing.raw, { useInlineDiffs: true });
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleTests.failing.cleanedWithInlineDiff);
+    });
+
     it('returns cleaned pending test', () => {
-      const cleaned = cleanTest(sampleTests.pending.raw);
+      const cleaned = cleanTest(sampleTests.pending.raw, config);
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.pending.cleaned);
     });
 
     it('returns cleaned hook', () => {
-      const cleaned = cleanTest(sampleTests.hook.raw);
+      const cleaned = cleanTest(sampleTests.hook.raw, config);
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.hook.cleaned);
     });
   });
 
   describe('cleanSuite', () => {
+    const config = {};
     const totalTestsRegistered = { total: 0 };
     const expectedProps = [
       'title',
@@ -210,14 +218,14 @@ describe('Mochawesome Utils', () => {
 
     it('cleans a root suite', () => {
       const s = cloneDeep(sampleSuite.one.raw);
-      cleanSuite(s, totalTestsRegistered);
+      cleanSuite(s, totalTestsRegistered, config);
       s.should.have.properties(expectedProps);
       s.should.deepEqual(sampleSuite.one.cleaned);
     });
 
     it('cleans a non-root suite', () => {
       const s = cloneDeep(sampleSuite.two.raw);
-      cleanSuite(s, totalTestsRegistered);
+      cleanSuite(s, totalTestsRegistered, config);
       s.should.have.properties(expectedProps);
       s.should.deepEqual(sampleSuite.two.cleaned);
     });

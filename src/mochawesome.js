@@ -1,4 +1,5 @@
-const mocha = require('mocha');
+const Base = require('mocha/lib/reporters/Base');
+const Spec = require('mocha/lib/reporters/Spec');
 const uuid = require('uuid');
 const stringify = require('json-stringify-safe');
 const conf = require('./config');
@@ -48,7 +49,6 @@ function done(output, config, failures, exit) {
  * @param {Runner} runner
  * @api public
  */
-
 function Mochawesome(runner, options) {
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the HTML report
@@ -57,15 +57,14 @@ function Mochawesome(runner, options) {
   // Reset total tests counter
   totalTestsRegistered.total = 0;
 
-  // Create/Save necessary report dirs/files
-  const reporterOpts = (options && options.reporterOptions) || {};
-  this.config = conf(reporterOpts);
+  // Set the config options
+  this.config = conf(options);
 
   // Call the Base mocha reporter
-  mocha.reporters.Base.call(this, runner);
+  Base.call(this, runner);
 
   // Show the Spec Reporter in the console
-  new mocha.reporters.Spec(runner); // eslint-disable-line
+  new Spec(runner); // eslint-disable-line
 
   const allTests = [];
   const allPending = [];
@@ -102,7 +101,7 @@ function Mochawesome(runner, options) {
 
         const allSuites = this.runner.suite;
 
-        traverseSuites(allSuites, totalTestsRegistered);
+        traverseSuites(allSuites, totalTestsRegistered, this.config);
 
         const obj = {
           stats: this.stats,

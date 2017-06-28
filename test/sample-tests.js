@@ -203,6 +203,34 @@ module.exports = {
       parentUUID: '56508f44-b4e6-40f0-bae8-b15e0720f120',
       skipped: false,
       isHook: false
+    },
+    cleanedWithInlineDiff: {
+      title: 'failing test',
+      fullTitle: 'failing test',
+      timedOut: false,
+      duration: 2,
+      state: 'failed',
+      speed: undefined,
+      pass: false,
+      fail: true,
+      pending: false,
+      context: undefined,
+      code: 'return tDone(new Assert(error));',
+      err: {
+        message: 'AssertionError: { a: 2 } undefined { a: 1 }',
+        estack: 'AssertionError: { a: 2 } undefined { a: 1 }',
+        diff: [
+          { count: 6, value: '{\n  "a": ' },
+          { count: 1, added: undefined, removed: true, value: '2' },
+          { count: 1, added: true, removed: undefined, value: '1' },
+          { count: 2, value: '\n}' }
+        ]
+      },
+      isRoot: false,
+      uuid: '2bcbe88c-acd6-4a53-ba3a-61a59188d5b0',
+      parentUUID: '56508f44-b4e6-40f0-bae8-b15e0720f120',
+      skipped: false,
+      isHook: false
     }
   },
   pending: {
