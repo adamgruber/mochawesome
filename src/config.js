@@ -13,6 +13,7 @@ const boolOpts = [
   'enableCode',
   'overwrite',
   'quiet',
+  'useInlineDiffs',
   'dev'
 ];
 
@@ -37,11 +38,12 @@ function _getOption(optToGet, options, isBool) {
 
 module.exports = function (opts) {
   const options = {};
+  const reporterOpts = (opts && opts.reporterOptions) || {};
 
   // Added for compatibility. enableTestCode option is deprecated as of 2.0.3
-  if (Object.hasOwnProperty.call(opts, 'enableTestCode')) {
-    opts.enableCode = opts.enableTestCode;
-    delete opts.enableTestCode;
+  if (Object.hasOwnProperty.call(reporterOpts, 'enableTestCode')) {
+    reporterOpts.enableCode = reporterOpts.enableTestCode;
+    delete reporterOpts.enableTestCode;
   }
 
   [
@@ -56,7 +58,15 @@ module.exports = function (opts) {
     'timestamp',
     'overwrite',
     'quiet',
+    'inlineDiffs',
     'dev'
+  ].forEach(optName => {
+    options[optName] = _getOption(optName, reporterOpts, boolOpts.indexOf(optName) >= 0);
+  });
+
+  // Transfer options from mocha
+  [
+    'useInlineDiffs'
   ].forEach(optName => {
     options[optName] = _getOption(optName, opts, boolOpts.indexOf(optName) >= 0);
   });

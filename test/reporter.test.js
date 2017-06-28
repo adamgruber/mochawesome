@@ -234,6 +234,18 @@ describe('Mochawesome Reporter', () => {
         done();
       });
     });
+
+    it('should transfer mocha options', done => {
+      mochaReporter = new mocha._reporter(runner, { useInlineDiffs: true });
+
+      const test = makeTest('test', () => {});
+      subSuite.addTest(test);
+
+      runner.run(failureCount => {
+        mochaReporter.config.useInlineDiffs.should.equal(true);
+        done();
+      });
+    });
   });
 
   describe('Reporter Done Function', () => {
