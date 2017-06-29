@@ -7,14 +7,14 @@ const baseConfig = Object.assign(marge.getBaseConfig(), {
 });
 
 const boolOpts = [
-  'inlineAssets',
   'autoOpen',
+  'dev',
   'enableCharts',
   'enableCode',
+  'inlineAssets',
   'overwrite',
   'quiet',
-  'useInlineDiffs',
-  'dev'
+  'useInlineDiffs'
 ];
 
 function _getOption(optToGet, options, isBool) {
@@ -47,19 +47,20 @@ module.exports = function (opts) {
   }
 
   [
-    'reportFilename',
-    'reportDir',
-    'reportTitle',
-    'reportPageTitle',
-    'inlineAssets',
     'autoOpen',
+    'dev',
     'enableCharts',
     'enableCode',
-    'timestamp',
+    'inlineAssets',
+    'inlineDiffs',
     'overwrite',
     'quiet',
-    'inlineDiffs',
-    'dev'
+    'reportDir',
+    'reportFilename',
+    'reportPageTitle',
+    'reportTitle',
+    'showHooks',
+    'timestamp'
   ].forEach(optName => {
     options[optName] = _getOption(optName, reporterOpts, boolOpts.indexOf(optName) >= 0);
   });
