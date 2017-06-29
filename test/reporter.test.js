@@ -13,24 +13,27 @@ const logStub = sinon.stub();
 
 utils.log = logStub;
 
+const baseConfig = {
+  reportDir: 'mochawesome-report',
+  reportTitle: process.cwd().split(path.sep).pop(),
+  reportPageTitle: 'Mochawesome Report',
+  inline: false,
+  inlineAssets: false,
+  charts: true,
+  enableCharts: true,
+  code: true,
+  enableCode: true,
+  autoOpen: false,
+  overwrite: true,
+  timestamp: false,
+  ts: false,
+  dev: false,
+  showHooks: 'failed'
+};
+
 const config = proxyquire('../src/config', {
   'mochawesome-report-generator': {
-    getBaseConfig: () => ({
-      reportDir: 'mochawesome-report',
-      reportTitle: process.cwd().split(path.sep).pop(),
-      reportPageTitle: 'Mochawesome Report',
-      inline: false,
-      inlineAssets: false,
-      charts: true,
-      enableCharts: true,
-      code: true,
-      enableCode: true,
-      autoOpen: false,
-      overwrite: true,
-      timestamp: false,
-      ts: false,
-      dev: false
-    })
+    getBaseConfig: () => baseConfig
   }
 });
 
@@ -196,9 +199,12 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        mochaReporter.config.reportDir.should.equal('testReportDir/subdir');
-        mochaReporter.config.inlineAssets.should.equal(true);
-        mochaReporter.config.autoOpen.should.equal(false);
+        const expectedConfig = Object.assign({}, baseConfig, {
+          reportDir: 'testReportDir/subdir',
+          inlineAssets: true,
+          autoOpen: false
+        });
+        mochaReporter.config.should.deepEqual(expectedConfig);
         done();
       });
     });
@@ -215,7 +221,8 @@ describe('Mochawesome Reporter', () => {
           inlineAssets: 'true',
           enableCharts: 'true',
           enableTestCode: false,
-          autoOpen: true
+          autoOpen: true,
+          showHooks: 'never'
         }
       });
 
@@ -224,13 +231,17 @@ describe('Mochawesome Reporter', () => {
 
 
       runner.run(failureCount => {
-        mochaReporter.config.reportDir.should.equal('testReportDir');
-        mochaReporter.config.reportFilename.should.equal('testReportFilename');
-        mochaReporter.config.reportTitle.should.equal('testReportTitle');
-        mochaReporter.config.inlineAssets.should.equal(true);
-        mochaReporter.config.enableCharts.should.equal(true);
-        mochaReporter.config.enableCode.should.equal(false);
-        mochaReporter.config.autoOpen.should.equal(true);
+        const expectedConfig = Object.assign({}, baseConfig, {
+          reportDir: 'testReportDir',
+          reportFilename: 'testReportFilename',
+          reportTitle: 'testReportTitle',
+          inlineAssets: true,
+          enableCharts: true,
+          enableCode: false,
+          autoOpen: true,
+          showHooks: 'never'
+        });
+        mochaReporter.config.should.deepEqual(expectedConfig);
         done();
       });
     });
@@ -242,7 +253,10 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
 
       runner.run(failureCount => {
-        mochaReporter.config.useInlineDiffs.should.equal(true);
+        const expectedConfig = Object.assign({}, baseConfig, {
+          useInlineDiffs: true
+        });
+        mochaReporter.config.should.deepEqual(expectedConfig);
         done();
       });
     });
