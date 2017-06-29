@@ -23,6 +23,7 @@ exclude_paths:
 - _site/
 - coverage/
 - docs/
+- test/
 - test-functional/
 - test-programmatic/
 - test/sample-suite.js
