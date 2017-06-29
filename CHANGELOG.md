@@ -1,5 +1,11 @@
 # Changelog
 
+### [2.3.0](https://github.com/adamgruber/mochawesome/releases/tag/2.3.0)
+- Added `showHooks` option [#168](https://github.com/adamgruber/mochawesome/pull/168)
+- Support mocha's `--inline-diffs` option [#167](https://github.com/adamgruber/mochawesome/pull/167)
+- Normalize error objects for consistent display [#166](https://github.com/adamgruber/mochawesome/pull/166)
+- Bumped mochawesome-report-generator dependency to 2.2.0
+
 ### [2.2.1](https://github.com/adamgruber/mochawesome/releases/tag/2.2.1)
 - Separated out before and after hooks
 - Bumped mochawesome-report-generator dependency to 2.1.0

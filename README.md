@@ -5,9 +5,10 @@ mochawesome
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
 ## :tada: Latest Changes
+- Support for mocha's `--inline-diffs` option
 - Display before and after hooks alongside your tests
-- Use `addContext` in `beforeEach` and `afterEach` test hooks
-- New [options](#options): `overwrite` and `timestamp`
+- Use `addContext` in test hooks
+- New [option](#options): `showHooks`
 
 See the [CHANGELOG][] for up-to-date changes.
 
@@ -102,6 +103,7 @@ Option Name | Type | Default | Description
 `autoOpen` | boolean | false | Open the report after running tests
 `overwrite` | boolean | true | Overwrite existing report files
 `timestamp` | string | | Append timestamp in specified format to report filename. *See [notes][1].*
+`showHooks` | string | failed | Set the default display mode for hooks
 `quiet` | boolean | false | Silence console messages
 
 *Setting a custom filename will change both the report html and json files.*
