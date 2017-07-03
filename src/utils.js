@@ -213,14 +213,20 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   const beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), test => cleanTest(test, config));
   const afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), test => cleanTest(test, config));
   const cleanTests = _.map(suite.tests, test => cleanTest(test, config));
-  const passingTests = _.filter(cleanTests, { state: 'passed' });
-  const failingTests = _.filter(cleanTests, { state: 'failed' });
-  const pendingTests = _.filter(cleanTests, { pending: true });
-  const skippedTests = _.filter(cleanTests, { skipped: true });
+
+  const passingTests = [];
+  const failingTests = [];
+  const pendingTests = [];
+  const skippedTests = [];
+
   let duration = 0;
 
   _.each(cleanTests, test => {
     duration += test.duration;
+    if (test.state === 'passed') passingTests.push(test.uuid);
+    if (test.state === 'failed') failingTests.push(test.uuid);
+    if (test.pending) pendingTests.push(test.uuid);
+    if (test.skipped) skippedTests.push(test.uuid);
   });
 
   totalTestsRegistered.total += suite.tests.length;
