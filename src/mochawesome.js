@@ -1,7 +1,6 @@
 const Base = require('mocha/lib/reporters/base');
 const Spec = require('mocha/lib/reporters/spec');
 const uuid = require('uuid');
-const stringify = require('json-stringify-safe');
 const conf = require('./config');
 const marge = require('mochawesome-report-generator');
 const utils = require('./utils');
@@ -66,29 +65,12 @@ function Mochawesome(runner, options) {
   // Show the Spec Reporter in the console
   new Spec(runner); // eslint-disable-line
 
-  const allTests = [];
-  const allPending = [];
-  const allFailures = [];
-  const allPasses = [];
   let endCalled = false;
 
   // Add a unique identifier to each test/hook
   runner.on('test', test => (test.uuid = uuid.v4()));
   runner.on('hook', hook => (hook.uuid = uuid.v4()));
-  // Add test to array of all tests
-  runner.on('test end', test => allTests.push(test));
-
-  // Add pending test to array of pending tests
-  runner.on('pending', test => {
-    test.uuid = uuid.v4();
-    allPending.push(test);
-  });
-
-  // Add passing test to array of passing tests
-  runner.on('pass', test => allPasses.push(test));
-
-  // Add failed test to array of failed tests
-  runner.on('fail', test => allFailures.push(test));
+  runner.on('pending', test => (test.uuid = uuid.v4()));
 
   // Process the full suite
   runner.on('end', () => {
@@ -106,10 +88,6 @@ function Mochawesome(runner, options) {
         const obj = {
           stats: this.stats,
           suites: allSuites,
-          allTests: allTests.map(cleanTest),
-          allPending: allPending.map(cleanTest),
-          allPasses: allPasses.map(cleanTest),
-          allFailures: allFailures.map(cleanTest),
           copyrightYear: new Date().getFullYear()
         };
 
@@ -130,7 +108,7 @@ function Mochawesome(runner, options) {
         obj.stats.pendingPercentClass = getPercentClass(pendingPercentage);
 
         // Save the final output to be used in the done function
-        this.output = stringify(obj, null, 2);
+        this.output = obj;
       }
     } catch (e) {
       // required because thrown errors are not handled directly in the
