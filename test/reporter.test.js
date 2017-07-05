@@ -132,8 +132,7 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
       subSuite.file = 'testfile.js';
       runner.run(failureCount => {
-        const output = JSON.parse(mochaReporter.output);
-        output.suites.suites[0].fullFile.should.equal('testfile.js');
+        mochaReporter.output.suites.suites[0].fullFile.should.equal('testfile.js');
         done();
       });
     });
@@ -147,9 +146,7 @@ describe('Mochawesome Reporter', () => {
         subSuite.addTest(test);
         runner.run(failureCount => {
           const testSuite = mochaReporter.runner.suite.suites[0];
-          const { hasBeforeHooks, hasAfterHooks, beforeHooks, afterHooks } = testSuite;
-          hasBeforeHooks.should.equal(isBefore);
-          hasAfterHooks.should.equal(!isBefore);
+          const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);
           done();
@@ -166,9 +163,7 @@ describe('Mochawesome Reporter', () => {
         subSuite.addTest(test);
         runner.run(failureCount => {
           const testSuite = mochaReporter.runner.suite.suites[0];
-          const { hasBeforeHooks, hasAfterHooks, beforeHooks, afterHooks } = testSuite;
-          hasBeforeHooks.should.equal(isBefore);
-          hasAfterHooks.should.equal(!isBefore);
+          const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);
           done();

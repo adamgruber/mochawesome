@@ -240,21 +240,8 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   suite.failures = failingTests;
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
-  suite.hasBeforeHooks = suite.beforeHooks.length > 0;
-  suite.hasAfterHooks = suite.afterHooks.length > 0;
-  suite.hasTests = suite.tests.length > 0;
-  suite.hasSuites = suite.suites.length > 0;
-  suite.totalTests = suite.tests.length;
-  suite.totalPasses = passingTests.length;
-  suite.totalFailures = failingTests.length;
-  suite.totalPending = pendingTests.length;
-  suite.totalSkipped = skippedTests.length;
-  suite.hasPasses = passingTests.length > 0;
-  suite.hasFailures = failingTests.length > 0;
-  suite.hasPending = pendingTests.length > 0;
-  suite.hasSkipped = suite.skipped.length > 0;
   suite.duration = duration;
-  suite.rootEmpty = suite.root && suite.totalTests === 0;
+  suite.rootEmpty = suite.root && suite.tests.length === 0;
 
   removeAllPropsFromObjExcept(suite, [
     'title',
@@ -268,19 +255,6 @@ function cleanSuite(suite, totalTestsRegistered, config) {
     'failures',
     'pending',
     'skipped',
-    'hasBeforeHooks',
-    'hasAfterHooks',
-    'hasTests',
-    'hasSuites',
-    'totalTests',
-    'totalPasses',
-    'totalFailures',
-    'totalPending',
-    'totalSkipped',
-    'hasPasses',
-    'hasFailures',
-    'hasPending',
-    'hasSkipped',
     'root',
     'uuid',
     'duration',
