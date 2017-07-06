@@ -213,14 +213,20 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   const beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), test => cleanTest(test, config));
   const afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), test => cleanTest(test, config));
   const cleanTests = _.map(suite.tests, test => cleanTest(test, config));
-  const passingTests = _.filter(cleanTests, { state: 'passed' });
-  const failingTests = _.filter(cleanTests, { state: 'failed' });
-  const pendingTests = _.filter(cleanTests, { pending: true });
-  const skippedTests = _.filter(cleanTests, { skipped: true });
+
+  const passingTests = [];
+  const failingTests = [];
+  const pendingTests = [];
+  const skippedTests = [];
+
   let duration = 0;
 
   _.each(cleanTests, test => {
     duration += test.duration;
+    if (test.state === 'passed') passingTests.push(test.uuid);
+    if (test.state === 'failed') failingTests.push(test.uuid);
+    if (test.pending) pendingTests.push(test.uuid);
+    if (test.skipped) skippedTests.push(test.uuid);
   });
 
   totalTestsRegistered.total += suite.tests.length;
@@ -234,21 +240,8 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   suite.failures = failingTests;
   suite.pending = pendingTests;
   suite.skipped = skippedTests;
-  suite.hasBeforeHooks = suite.beforeHooks.length > 0;
-  suite.hasAfterHooks = suite.afterHooks.length > 0;
-  suite.hasTests = suite.tests.length > 0;
-  suite.hasSuites = suite.suites.length > 0;
-  suite.totalTests = suite.tests.length;
-  suite.totalPasses = passingTests.length;
-  suite.totalFailures = failingTests.length;
-  suite.totalPending = pendingTests.length;
-  suite.totalSkipped = skippedTests.length;
-  suite.hasPasses = passingTests.length > 0;
-  suite.hasFailures = failingTests.length > 0;
-  suite.hasPending = pendingTests.length > 0;
-  suite.hasSkipped = suite.skipped.length > 0;
   suite.duration = duration;
-  suite.rootEmpty = suite.root && suite.totalTests === 0;
+  suite.rootEmpty = suite.root && suite.tests.length === 0;
 
   removeAllPropsFromObjExcept(suite, [
     'title',
@@ -262,19 +255,6 @@ function cleanSuite(suite, totalTestsRegistered, config) {
     'failures',
     'pending',
     'skipped',
-    'hasBeforeHooks',
-    'hasAfterHooks',
-    'hasTests',
-    'hasSuites',
-    'totalTests',
-    'totalPasses',
-    'totalFailures',
-    'totalPending',
-    'totalSkipped',
-    'hasPasses',
-    'hasFailures',
-    'hasPending',
-    'hasSkipped',
     'root',
     'uuid',
     'duration',
