@@ -145,7 +145,7 @@ describe('Mochawesome Reporter', () => {
         subSuite[hookType](`${hookType} passing hook`, () => {});
         subSuite.addTest(test);
         runner.run(failureCount => {
-          const testSuite = mochaReporter.runner.suite.suites[0];
+          const testSuite = mochaReporter.output.suites.suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);
@@ -162,7 +162,7 @@ describe('Mochawesome Reporter', () => {
         });
         subSuite.addTest(test);
         runner.run(failureCount => {
-          const testSuite = mochaReporter.runner.suite.suites[0];
+          const testSuite = mochaReporter.output.suites.suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);

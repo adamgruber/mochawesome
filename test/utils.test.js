@@ -1,4 +1,3 @@
-const cloneDeep = require('lodash/cloneDeep');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const sampleTests = require('./sample-tests');
@@ -190,17 +189,20 @@ describe('Mochawesome Utils', () => {
     ];
 
     it('cleans a root suite', () => {
-      const s = cloneDeep(sampleSuite.one.raw);
-      cleanSuite(s, totalTestsRegistered, config);
-      s.should.have.properties(expectedProps);
-      s.should.deepEqual(sampleSuite.one.cleaned);
+      const cleaned = cleanSuite(sampleSuite.one.raw, totalTestsRegistered, config);
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleSuite.one.cleaned);
     });
 
     it('cleans a non-root suite', () => {
-      const s = cloneDeep(sampleSuite.two.raw);
-      cleanSuite(s, totalTestsRegistered, config);
-      s.should.have.properties(expectedProps);
-      s.should.deepEqual(sampleSuite.two.cleaned);
+      const cleaned = cleanSuite(sampleSuite.two.raw, totalTestsRegistered, config);
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleSuite.two.cleaned);
+    });
+
+    it('cleans an empty suite', () => {
+      const cleaned = cleanSuite(sampleSuite.three.raw, totalTestsRegistered, config);
+      cleaned.should.equal(sampleSuite.three.cleaned);
     });
   });
 });
