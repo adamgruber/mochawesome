@@ -222,5 +222,29 @@ module.exports = {
       skipped: [],
       duration: 0,
     }
+  },
+  three: {
+    raw: {
+      title: 'Mochawesome Suite',
+      ctx: {},
+      suites: [],
+      tests: [],
+      pending: false,
+      _beforeEach: [],
+      _beforeAll: [],
+      _afterEach: [],
+      _afterAll: [],
+      root: false,
+      _timeout: 2000,
+      _enableTimeouts: true,
+      _slow: 75,
+      _bail: false,
+      _retries: -1,
+      _onlyTests: [],
+      _onlySuites: [],
+      delayed: false,
+      parent: '[Circular ~]'
+    },
+    cleaned: false
   }
 };

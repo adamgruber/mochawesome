@@ -42,21 +42,6 @@ function getPercentClass(pct) {
 }
 
 /**
- * Remove all properties from an object except
- * those that are in the propsToKeep array.
- *
- * @param {Object} obj - object to remove props from
- * @param {Array} propsToKeep - properties to keep
- */
-function removeAllPropsFromObjExcept(obj, propsToKeep) {
-  _.forOwn(obj, (val, prop) => {
-    if (propsToKeep.indexOf(prop) === -1) {
-      delete obj[prop];
-    }
-  });
-}
-
-/**
  * Strip the function definition from `str`,
  * and re-indent for pre whitespace.
  *
@@ -201,99 +186,95 @@ function cleanTest(test, config) {
 }
 
 /**
- * Mutates the suite object to add properties needed to render
- * the template and remove unused properties.
+ * Return a plain-object representation of `suite` with additional properties for rendering.
  *
  * @param {Object} suite
  * @param {Object} totalTestsRegistered
  * @param {Integer} totalTestsRegistered.total
+ *
+ * @return {Object|boolean} cleaned suite or false if suite is empty
  */
 function cleanSuite(suite, totalTestsRegistered, config) {
-  suite.uuid = uuid.v4();
-  const beforeHooks = _.map([].concat(suite._beforeAll, suite._beforeEach), test => cleanTest(test, config));
-  const afterHooks = _.map([].concat(suite._afterAll, suite._afterEach), test => cleanTest(test, config));
-  const cleanTests = _.map(suite.tests, test => cleanTest(test, config));
-
+  let duration = 0;
   const passingTests = [];
   const failingTests = [];
   const pendingTests = [];
   const skippedTests = [];
 
-  let duration = 0;
+  const beforeHooks = _.map(
+    [].concat(suite._beforeAll, suite._beforeEach),
+    test => cleanTest(test, config)
+  );
 
-  _.each(cleanTests, test => {
-    duration += test.duration;
-    if (test.state === 'passed') passingTests.push(test.uuid);
-    if (test.state === 'failed') failingTests.push(test.uuid);
-    if (test.pending) pendingTests.push(test.uuid);
-    if (test.skipped) skippedTests.push(test.uuid);
-  });
+  const afterHooks = _.map(
+    [].concat(suite._afterAll, suite._afterEach),
+    test => cleanTest(test, config)
+  );
 
-  totalTestsRegistered.total += suite.tests.length;
+  const tests = _.map(
+    suite.tests,
+    test => {
+      const cleanedTest = cleanTest(test, config);
+      duration += test.duration;
+      if (cleanedTest.state === 'passed') passingTests.push(cleanedTest.uuid);
+      if (cleanedTest.state === 'failed') failingTests.push(cleanedTest.uuid);
+      if (cleanedTest.pending) pendingTests.push(cleanedTest.uuid);
+      if (cleanedTest.skipped) skippedTests.push(cleanedTest.uuid);
+      return cleanedTest;
+    }
+  );
 
-  suite.beforeHooks = beforeHooks;
-  suite.afterHooks = afterHooks;
-  suite.tests = cleanTests;
-  suite.fullFile = suite.file || '';
-  suite.file = suite.file ? suite.file.replace(process.cwd(), '') : '';
-  suite.passes = passingTests;
-  suite.failures = failingTests;
-  suite.pending = pendingTests;
-  suite.skipped = skippedTests;
-  suite.duration = duration;
-  suite.rootEmpty = suite.root && suite.tests.length === 0;
+  totalTestsRegistered.total += tests.length;
 
-  removeAllPropsFromObjExcept(suite, [
-    'title',
-    'fullFile',
-    'file',
-    'beforeHooks',
-    'afterHooks',
-    'tests',
-    'suites',
-    'passes',
-    'failures',
-    'pending',
-    'skipped',
-    'root',
-    'uuid',
-    'duration',
-    'rootEmpty',
-    '_timeout'
-  ]);
+  const cleaned = {
+    uuid: uuid.v4(),
+    title: suite.title,
+    fullFile: suite.file || '',
+    file: suite.file ? suite.file.replace(process.cwd(), '') : '',
+    beforeHooks,
+    afterHooks,
+    tests,
+    suites: suite.suites,
+    passes: passingTests,
+    failures: failingTests,
+    pending: pendingTests,
+    skipped: skippedTests,
+    duration,
+    root: suite.root,
+    rootEmpty: suite.root && tests.length === 0,
+    _timeout: suite._timeout
+  };
+
+  const isEmptySuite = _.isEmpty(cleaned.suites)
+    && _.isEmpty(cleaned.tests)
+    && _.isEmpty(cleaned.beforeHooks)
+    && _.isEmpty(cleaned.afterHooks);
+
+  return !isEmptySuite && cleaned;
 }
 
 /**
- * Do a breadth-first search to find
- * and format all nested 'suite' objects.
+ * Map over a suite, returning a cleaned suite object
+ * and recursively cleaning any nested suites.
  *
- * @param {Object} suite
- * @param {Object} totalTestsRegistered
- * @param {Integer} totalTestsRegistered.total
+ * @param {Object} suite          Suite to map over
+ * @param {Object} totalTestsReg  Cumulative count of total tests registered
+ * @param {Integer} totalTestsReg.total
+ * @param {Object} config         Reporter configuration
  */
-function traverseSuites(suite, totalTestsRegistered, config) {
-  const queue = [];
-  let next = suite;
-  while (next) {
-    if (next.root) {
-      cleanSuite(next, totalTestsRegistered, config);
-    }
-    if (next.suites.length) {
-      _.each(next.suites, (nextSuite, i) => {
-        cleanSuite(nextSuite, totalTestsRegistered, config);
-        queue.push(nextSuite);
-      });
-    }
-    next = queue.shift();
-  }
+function mapSuites(suite, totalTestsReg, config) {
+  const suites = _.compact(_.map(suite.suites, subSuite => (
+      mapSuites(subSuite, totalTestsReg, config)
+    )));
+  const toBeCleaned = Object.assign({}, suite, { suites });
+  return cleanSuite(toBeCleaned, totalTestsReg, config);
 }
 
 module.exports = {
   log,
   getPercentClass,
-  removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
   cleanSuite,
-  traverseSuites
+  mapSuites
 };

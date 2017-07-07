@@ -9,8 +9,7 @@ const utils = require('./utils');
 const {
   log,
   getPercentClass,
-  cleanTest,
-  traverseSuites
+  mapSuites
 } = utils;
 
 // Track the total number of tests registered
@@ -81,9 +80,7 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const allSuites = this.runner.suite;
-
-        traverseSuites(allSuites, totalTestsRegistered, this.config);
+        const allSuites = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
 
         const obj = {
           stats: this.stats,

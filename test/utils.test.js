@@ -1,4 +1,3 @@
-const cloneDeep = require('lodash/cloneDeep');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const sampleTests = require('./sample-tests');
@@ -11,7 +10,6 @@ const utils = proxyquire('../src/utils', {
 const {
   log,
   getPercentClass,
-  removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
   cleanSuite
@@ -68,19 +66,6 @@ describe('Mochawesome Utils', () => {
 
     it('should return \'success\'', () => {
       getPercentClass(85).should.equal('success');
-    });
-  });
-
-  describe('removeAllPropsFromObjExcept', () => {
-    it('should remove object properties', () => {
-      const obj = {
-        foo: 'foo',
-        bar: 'bar',
-        baz: 'baz'
-      };
-      removeAllPropsFromObjExcept(obj, [ 'foo' ]);
-      obj.should.have.property('foo');
-      obj.should.not.have.properties([ 'bar', 'baz' ]);
     });
   });
 
@@ -204,17 +189,20 @@ describe('Mochawesome Utils', () => {
     ];
 
     it('cleans a root suite', () => {
-      const s = cloneDeep(sampleSuite.one.raw);
-      cleanSuite(s, totalTestsRegistered, config);
-      s.should.have.properties(expectedProps);
-      s.should.deepEqual(sampleSuite.one.cleaned);
+      const cleaned = cleanSuite(sampleSuite.one.raw, totalTestsRegistered, config);
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleSuite.one.cleaned);
     });
 
     it('cleans a non-root suite', () => {
-      const s = cloneDeep(sampleSuite.two.raw);
-      cleanSuite(s, totalTestsRegistered, config);
-      s.should.have.properties(expectedProps);
-      s.should.deepEqual(sampleSuite.two.cleaned);
+      const cleaned = cleanSuite(sampleSuite.two.raw, totalTestsRegistered, config);
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleSuite.two.cleaned);
+    });
+
+    it('cleans an empty suite', () => {
+      const cleaned = cleanSuite(sampleSuite.three.raw, totalTestsRegistered, config);
+      cleaned.should.equal(sampleSuite.three.cleaned);
     });
   });
 });
