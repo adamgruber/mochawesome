@@ -11,7 +11,6 @@ const utils = proxyquire('../src/utils', {
 const {
   log,
   getPercentClass,
-  removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
   cleanSuite
@@ -68,19 +67,6 @@ describe('Mochawesome Utils', () => {
 
     it('should return \'success\'', () => {
       getPercentClass(85).should.equal('success');
-    });
-  });
-
-  describe('removeAllPropsFromObjExcept', () => {
-    it('should remove object properties', () => {
-      const obj = {
-        foo: 'foo',
-        bar: 'bar',
-        baz: 'baz'
-      };
-      removeAllPropsFromObjExcept(obj, [ 'foo' ]);
-      obj.should.have.property('foo');
-      obj.should.not.have.properties([ 'bar', 'baz' ]);
     });
   });
 

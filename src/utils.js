@@ -42,21 +42,6 @@ function getPercentClass(pct) {
 }
 
 /**
- * Remove all properties from an object except
- * those that are in the propsToKeep array.
- *
- * @param {Object} obj - object to remove props from
- * @param {Array} propsToKeep - properties to keep
- */
-function removeAllPropsFromObjExcept(obj, propsToKeep) {
-  _.forOwn(obj, (val, prop) => {
-    if (propsToKeep.indexOf(prop) === -1) {
-      delete obj[prop];
-    }
-  });
-}
-
-/**
  * Strip the function definition from `str`,
  * and re-indent for pre whitespace.
  *
@@ -288,7 +273,6 @@ function mapSuites(suite, totalTestsReg, config) {
 module.exports = {
   log,
   getPercentClass,
-  removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
   cleanSuite,
