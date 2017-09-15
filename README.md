@@ -1,35 +1,49 @@
 mochawesome
 ===========
-[![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
+[![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][1]. It generates a full fledged HTML/CSS report that helps visualize your test suites.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
-##New in 1.3.0
-- Changes to support [mocha][1] v2.4.0 and later
+## :tada: Latest Changes
+- Support for mocha's `--inline-diffs` option
+- Display before and after hooks alongside your tests
+- Use `addContext` in test hooks
+- New [option](#options): `showHooks`
 
-##Features
+See the [CHANGELOG][] for up-to-date changes.
+
+### mochawesome-report-generator (marge)
+To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
+
+### New Features
+- Every bit of the report has been redesigned for a cleaner, more streamlined look
+- Built using React and mobx
+- Supports displaying [additional test context](#adding-test-context) including images!
+- Supports displaying inline diffs for failed tests
+- New [options](#options) including hiding test code and/or charts 
+- Enhanced navigation menu with clearer filtering options
+- New option to disable console messages
+
+### Plus...
 - At-a-glance stats including pass percentage
 - Beautiful charts
-- Support for nested `describe`s
+- Supports nested `describe`s
 - Supports pending tests
-- Filter view by test type
 - Review test code inline
 - Stack trace for failed tests
 - Responsive and mobile-friendly
 - Saves JSON output for further processing
-- Custom report [options](#options)
 - Offline viewing
 
-##Browser Support
-Tested to work in Chrome. *Should* work in any modern web browser including IE9+.
-Mochawesome generates a self-contained report that can be viewed offline. 
+### Sample Report
 
-##Sample Report
+<img src="./docs/marge-report-1.0.1.png" alt="Mochawesome Report" width="75%" />
+<img src="./docs/marge-report-menu-1.0.1.png" alt="Mochawesome Report Menu" width="75%" />
 
-<img src="./docs/mochawesome-screen.png" alt="Mochawesome Report" width="75%" />
+### Browser Support
+The generated report has been tested to work in Chrome. It *should* work in any modern web browser, including IE9+. It is also fully self-contained for offline viewing. 
 
-
-##Usage
+## Usage
 
 1. Add Mochawesome to your project:
 
@@ -43,34 +57,25 @@ Mochawesome generates a self-contained report that can be viewed offline.
 
   ```js
   var mocha = new Mocha({
-      reporter: 'mochawesome'
+    reporter: 'mochawesome'
   });
   ```
 
-##Output
+## Output
 Mochawesome generates the following inside your project directory:
 ```
-mochawesome-reports/
-├── css
-│   └── mochawesome.css
-├── fonts
-│   ├── Roboto+Condensed_300_normal.ttf
-│   ├── Roboto+Condensed_300_normal.woff
-│   ├── Roboto+Condensed_400_normal.svg
-│   ├── Roboto+Condensed_400_normal.ttf
-│   ├── Roboto+Condensed_400_normal.woff
-│   ├── Roboto+Condensed_700_normal.ttf
-│   ├── Roboto+Condensed_700_normal.woff
-│   ├── Roboto+Slab_400_normal.svg
-│   ├── Roboto+Slab_400_normal.ttf
-│   ├── Roboto+Slab_400_normal.woff
-│   ├── mochawesome.eot
-│   ├── mochawesome.svg
-│   ├── mochawesome.ttf
-│   └── mochawesome.woff
-├── js
-│   ├── mochawesome.js
-│   └── vendor.js
+mochawesome-report/
+├── assets
+│   ├── app.css
+│   ├── app.js
+│   ├── MaterialIcons-Regular.woff
+│   ├── MaterialIcons-Regular.woff2
+│   ├── roboto-light-webfont.woff
+│   ├── roboto-light-webfont.woff2
+│   ├── roboto-medium-webfont.woff
+│   ├── roboto-medium-webfont.woff2
+│   ├── roboto-regular-webfont.woff
+│   └── roboto-regular-webfont.woff2
 ├── mochawesome.html
 └── mochawesome.json
 ```
@@ -82,74 +87,132 @@ The two main files to be aware of are:
 **mochawesome.json** - The raw json output used to render the report
 
 
-##Options
-Mochawesome supports options via environment variables or passed in to mocha via `--reporter-options`.
+## Options
+Mochawesome supports options via environment variables or passed directly to mocha.
 
-- `reportDir: {String}` - changes the name of the report directory
-- `reportName: {String}` - changes the name of the report file
-- `reportTitle: {Sring}` - changes the title of the report
-- `inlineAssets: {Boolean}` - when `true` inlines all report assets into a self-contained report file
+Option Name | Type | Default | Description 
+:---------- | :--- | :------ | :----------
+`reportDir` | string | [cwd]/mochawesome-report | Path to save report
+`reportFilename` | string | mochawesome | Filename of saved report *(prior to version 2.0.0 this was called `reportName`)*
+`reportTitle` | string | mochawesome | Report title
+`reportPageTitle` | string | mochawesome-report | Browser title
+`inlineAssets` | boolean | false | Inline report assets (scripts, styles)
+`enableCharts` | boolean | true | Display Suite charts
+`enableCode` | boolean | true | Display test code
+`enableTestCode` | boolean | true | Same as `enableCode` *deprecated*
+`autoOpen` | boolean | false | Open the report after running tests
+`overwrite` | boolean | true | Overwrite existing report files
+`timestamp` | string | | Append timestamp in specified format to report filename. *See [notes][1].*
+`showHooks` | string | failed | Set the default display mode for hooks
+`quiet` | boolean | false | Silence console messages
 
 *Setting a custom filename will change both the report html and json files.*
 
 **Options passed in will take precedence over environment variables.**
 
-
-####Environment variables
+#### Environment variables
+Options can be set via environment variable. To do this you must prefix the variable with `MOCHAWESOME_` and then uppercase the variable name.
 ```bash
 $ export MOCHAWESOME_REPORTDIR=customReportDir
-$ export MOCHAWESOME_REPORTNAME=customReportName
-$ export MOCHAWESOME_REPORTTITLE=customReportTitle
 $ export MOCHAWESOME_INLINEASSETS=true
+$ export MOCHAWESOME_AUTOOPEN=true
 ```
 
-####Mocha options
+#### Mocha options
+You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag.
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportName=customReportName,reportTitle=customReportTitle,inlineAssets=true
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename
 ```
+Options can be passed in programatically as well:
 
 ```js
 var mocha = new Mocha({
-    reporter: 'mochawesome',
-    reporterOptions: {
-      reportDir: 'customReportDir',
-      reportName: 'customReportName',
-      reportTitle: 'customReportTitle',
-      inlineAssets: true
-    }
+  reporter: 'mochawesome',
+  reporterOptions: {
+    reportDir: 'customReportDir',
+    reportFilename: 'customReportFilename',
+    enableCharts: false
+  }
 });
-  ```
-
-
-##Development
-If you wish to make changes to the reporter you will need to clone the repo and build locally. Building requires you to have [gulp](https://github.com/gulpjs/gulp) installed.
-
-###Installation
-```sh
-$ git clone https://github.dowjones.net/grubera/mochawesome
 ```
-###Modifying
-Reporter files are found in `/lib` directory.
-Templates, styles, and client-side scripts are in the `/src` directory.
 
-###Building
-There are several gulp tasks available but the main ones to be aware of are:
+## Adding Test Context
+One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible with the `addContext` helper method. This method will add extra information to the test object that will then be displayed inside the report.
 
-####`gulp build` - Full Build
-Runs jshint, parses LESS, compiles templates, concatenates and minifies scripts.
-*Note: This task will fail if linting fails.*
+### `addContext(testObj, context)`
 
-####`gulp watch` - Watch Files
-Watches for changes to JS, LESS, and MU and builds when a change is detected. If a change is detected in a JS file this will run jshint first before building and will fail on any lint errors.
+param | type | description
+:---- | :--- | :----------
+testObj | object | The test object
+context | string\|object | The context to be added to the test
 
-####`gulp lint` - Lint JS
-This will run jshint only, no building will occur.
+**Context as a string**
 
-####`gulp test` - Run Test
-After building you can run this to test the reporter and see the output.
-*Note: The default gulp task will run this task.*
+Simple strings will be displayed as is. If you pass a URL, the reporter will attempt to turn it into a link. If the URL links to an image, it will be shown inline.
 
-####`gulp testOpts` - Run Test with Options
-After building you can run this to test the reporter and see the output.
+**Context as an object**
 
-[1]: http://visionmedia.github.io/mocha/
+Context passed as an object must adhere to the following shape:
+```js
+{
+  title: 'some title' // must be a string
+  value: {} // can be anything
+}
+```
+
+#### Example
+*When using the `addContext` helper, you cannot use an arrow function in your `it` statement because your `this` value will not be the test object.*
+```js
+const addContext = require('mochawesome/addContext');
+
+describe('test suite', function () {
+  it('should add context', function () {
+    // context can be a simple string
+    addContext(this, 'simple string');
+
+    // context can be a url and the report will create a link
+    addContext(this, 'http://www.url.com/pathname');
+
+    // context can be an image url and the report will show it inline
+    addContext(this, 'http://www.url.com/screenshot-maybe.jpg');
+
+    // context can be an object with title and value properties
+    addContext(this, {
+      title: 'expected output',
+      value: {
+        a: 1,
+        b: '2',
+        c: 'd'
+      }
+    });
+  })
+});
+```
+
+As of version 2.2.0 it is possible to use `addContext` from within a `beforeEach` or `afterEach` test hook.
+```js
+describe('test suite', () => {
+  beforeEach(function () {
+    addContext(this, 'some context')
+  });
+
+  afterEach(function () {
+    addContext(this, {
+      title: 'afterEach context',
+      value: { a: 1 }
+    });
+  });
+
+  it('should display with beforeEach and afterEach context', () => {
+    // assert something
+  });
+});
+```
+
+## v1.x
+Documentation for version 1.x can be found [here](https://github.com/adamgruber/mochawesome/tree/v1.X).
+
+[mocha]: https://mochajs.org/
+[mochawesome-report-generator]: https://github.com/adamgruber/mochawesome-report-generator
+[CHANGELOG]: CHANGELOG.md
+[1]: https://github.com/adamgruber/mochawesome-report-generator/blob/master/README.md#timestamp

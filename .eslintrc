@@ -1,0 +1,48 @@
+{
+  "extends": "airbnb-base",
+  "globals": {
+    "Promise": true,
+    "should": true,
+    "Map": true
+  },
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "arrow-parens": [2, "as-needed"],
+    "brace-style": [2, "1tbs"],
+    "comma-style": [2, "last"],
+    "curly": [2, "multi-line"],
+    "quotes": [2, "single"],
+    "camelcase": 0,
+    "no-debugger": 2,
+    "no-undef": 2,
+    "no-underscore-dangle": 0,
+    "no-mixed-requires": 0,
+    "max-len": [1, 120, 2, {ignoreComments: true}],
+    "quote-props": [1, "consistent-as-needed"],
+    "no-cond-assign": [2, "except-parens"],
+    "radix": 0,
+    "space-infix-ops": 0,
+    "no-unused-vars": [1, {"vars": "local", "args": "none"}],
+    "default-case": 0,
+    "no-param-reassign": 0,
+    "comma-dangle": [2, "never"],
+    "indent": [2, 2],
+    "object-curly-spacing": [2, "always"],
+    "array-bracket-spacing": [2, "always"],
+    "func-names": 0,
+    "no-else-return": 0,
+    "no-console": 0,
+    "no-throw-literal": 0,
+    "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
+    "id-length": 0,
+    "no-unused-expressions": 0,
+    "no-confusing-arrow": 0,
+    "semi": [1, "always"],
+    "global-require": 0,
+    "import/no-unresolved": 0,
+    "import/no-extraneous-dependencies": 0
+  }
+}
