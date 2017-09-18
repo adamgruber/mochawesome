@@ -1,5 +1,8 @@
 # Changelog
 
+### [2.3.1](https://github.com/adamgruber/mochawesome/releases/tag/2.3.1)
+- Fixes an issue where generator functions were not displayed properly [#188](https://github.com/adamgruber/mochawesome/pull/188) (@APshenkin)
+
 ### [2.3.0](https://github.com/adamgruber/mochawesome/releases/tag/2.3.0)
 - Added `showHooks` option [#168](https://github.com/adamgruber/mochawesome/pull/168)
 - Support mocha's `--inline-diffs` option [#167](https://github.com/adamgruber/mochawesome/pull/167)
