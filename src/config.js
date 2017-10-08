@@ -40,12 +40,6 @@ module.exports = function (opts) {
   const options = {};
   const reporterOpts = (opts && opts.reporterOptions) || {};
 
-  // Added for compatibility. enableTestCode option is deprecated as of 2.0.3
-  if (Object.hasOwnProperty.call(reporterOpts, 'enableTestCode')) {
-    reporterOpts.enableCode = reporterOpts.enableTestCode;
-    delete reporterOpts.enableTestCode;
-  }
-
   [
     'autoOpen',
     'dev',
