@@ -52,7 +52,6 @@ module.exports = function (opts) {
     'enableCharts',
     'enableCode',
     'inlineAssets',
-    'inlineDiffs',
     'overwrite',
     'quiet',
     'reportDir',
