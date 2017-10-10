@@ -1,28 +1,20 @@
-const marge = require('mochawesome-report-generator');
-
-// Grab shared base config from mochawesome-report-generator
-const baseConfig = Object.assign(marge.getBaseConfig(), {
-  reportFilename: 'mochawesome',
-  saveJson: true
-});
-
-const boolOpts = [
-  'autoOpen',
-  'dev',
-  'enableCharts',
-  'enableCode',
-  'inlineAssets',
-  'overwrite',
-  'quiet',
-  'useInlineDiffs'
-];
-
-function _getOption(optToGet, options, isBool) {
+/**
+ * Retrieve the value of a user supplied option.
+ * Falls back to `defaultValue`
+ * Order of precedence
+ *  1. User-supplied option
+ *  2. Environment variable
+ *  3. Default value
+ *
+ * @param {string} optToGet  Option name
+ * @param {object} options  User supplied options object
+ * @param {boolean} isBool  Treat option as Boolean
+ * @param {string|boolean} defaultValue  Fallback value
+ *
+ * @return {string|boolean}  Option value
+ */
+function _getOption(optToGet, options, isBool, defaultValue) {
   const envVar = `MOCHAWESOME_${optToGet.toUpperCase()}`;
-  // Order of precedence
-  // 1. Config option
-  // 2. Environment variable
-  // 3. Base config
   if (options && typeof options[optToGet] !== 'undefined') {
     return (isBool && typeof options[optToGet] === 'string')
       ? options[optToGet] === 'true'
@@ -33,37 +25,15 @@ function _getOption(optToGet, options, isBool) {
       ? process.env[envVar] === 'true'
       : process.env[envVar];
   }
-  return baseConfig[optToGet];
+  return defaultValue;
 }
 
 module.exports = function (opts) {
-  const options = {};
   const reporterOpts = (opts && opts.reporterOptions) || {};
-
-  [
-    'autoOpen',
-    'dev',
-    'enableCharts',
-    'enableCode',
-    'inlineAssets',
-    'overwrite',
-    'quiet',
-    'reportDir',
-    'reportFilename',
-    'reportPageTitle',
-    'reportTitle',
-    'showHooks',
-    'timestamp'
-  ].forEach(optName => {
-    options[optName] = _getOption(optName, reporterOpts, boolOpts.indexOf(optName) >= 0);
-  });
-
-  // Transfer options from mocha
-  [
-    'useInlineDiffs'
-  ].forEach(optName => {
-    options[optName] = _getOption(optName, opts, boolOpts.indexOf(optName) >= 0);
-  });
-
-  return Object.assign(baseConfig, options);
+  return {
+    quiet: _getOption('quiet', reporterOpts, true, false),
+    reportFilename: _getOption('reportFilename', reporterOpts, false, 'mochawesome'),
+    saveJson: _getOption('json', reporterOpts, true, true),
+    useInlineDiffs: !!opts.useInlineDiffs
+  };
 };

@@ -20,15 +20,16 @@ const totalTestsRegistered = { total: 0 };
  *
  * Creates and saves the report HTML and JSON files
  *
- * @param {Object} output
- * @param {Object} config
+ * @param {Object} output    Final report object
+ * @param {Object} options   Options to pass to report generator
+ * @param {Object} config    Reporter config object
+ * @param {Number} failures  Number of reported failures
  * @param {Function} exit
  *
  * @return {Promise} Resolves with successful report creation
  */
-
-function done(output, config, failures, exit) {
-  return marge.create(output, config)
+function done(output, options, config, failures, exit) {
+  return marge.create(output, options)
     .then(([ htmlFile, jsonFile ]) => {
       log(`Report JSON saved to ${jsonFile}`, null, config);
       log(`Report HTML saved to ${htmlFile}`, null, config);
@@ -37,7 +38,7 @@ function done(output, config, failures, exit) {
       log(err, 'error', config);
     })
     .then(() => {
-      exit && exit(failures);
+      exit && exit(failures > 0 ? 1 : 0);
     });
 }
 
@@ -48,15 +49,31 @@ function done(output, config, failures, exit) {
  * @api public
  */
 function Mochawesome(runner, options) {
+  // Set the config options
+  this.config = conf(options);
+
+  // Reporter options
+  const reporterOptions = Object.assign(
+    {},
+    (options.reporterOptions || {}),
+    {
+      reportFilename: this.config.reportFilename,
+      saveJson: this.config.saveJson
+    }
+  );
+
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the HTML report
-  this.done = (failures, exit) => done(this.output, this.config, failures, exit);
+  this.done = (failures, exit) => done(
+    this.output,
+    reporterOptions,
+    this.config,
+    failures,
+    exit
+  );
 
   // Reset total tests counter
   totalTestsRegistered.total = 0;
-
-  // Set the config options
-  this.config = conf(options);
 
   // Call the Base mocha reporter
   Base.call(this, runner);
