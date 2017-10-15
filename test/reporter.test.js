@@ -1,6 +1,5 @@
 const Mocha = require('mocha');
 const sinon = require('sinon');
-const path = require('path');
 const proxyquire = require('proxyquire');
 const Assert = require('assert').AssertionError;
 const utils = require('../src/utils');
@@ -14,34 +13,17 @@ const logStub = sinon.stub();
 utils.log = logStub;
 
 const baseConfig = {
-  reportDir: 'mochawesome-report',
-  reportTitle: process.cwd().split(path.sep).pop(),
-  reportPageTitle: 'Mochawesome Report',
-  inline: false,
-  inlineAssets: false,
-  charts: true,
-  enableCharts: true,
-  code: true,
-  enableCode: true,
-  autoOpen: false,
-  overwrite: true,
-  timestamp: false,
-  ts: false,
-  dev: false,
-  showHooks: 'failed'
+  quiet: false,
+  reportFilename: 'mochawesome',
+  saveJson: true,
+  useInlineDiffs: false
 };
-
-const config = proxyquire('../src/config', {
-  'mochawesome-report-generator': {
-    getBaseConfig: () => baseConfig
-  }
-});
 
 const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
     create: reportStub
   },
-  './config': config,
+  'mocha/lib/reporters/spec': () => {},
   './utils': utils
 });
 
@@ -51,6 +33,7 @@ describe('Mochawesome Reporter', () => {
   let subSuite;
   let runner;
   let mochaReporter;
+
 
   beforeEach(() => {
     mocha = new Mocha({ reporter: mochawesome });
@@ -183,76 +166,68 @@ describe('Mochawesome Reporter', () => {
   });
 
   describe('Options Handling', () => {
-    it('should apply reporter options via environment variables', done => {
-      process.env.MOCHAWESOME_REPORTDIR = 'testReportDir/subdir';
-      process.env.MOCHAWESOME_INLINEASSETS = 'true';
-      process.env.MOCHAWESOME_AUTOOPEN = false;
+    const makeReporter = opts => new mocha._reporter(runner, opts);
+    const expected = opts => Object.assign({}, baseConfig, opts);
 
-      mochaReporter = new mocha._reporter(runner);
+    beforeEach(() => {
+      subSuite.addTest(makeTest('test', () => {}));
+    });
 
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
+    describe('environment variables', () => {
+      beforeEach(() => {
+        process.env.MOCHAWESOME_REPORTFILENAME = 'test';
+        mochaReporter = makeReporter({});
+      });
 
-      runner.run(failureCount => {
-        const expectedConfig = Object.assign({}, baseConfig, {
-          reportDir: 'testReportDir/subdir',
-          inlineAssets: true,
-          autoOpen: false
+      afterEach(() => {
+        delete process.env.MOCHAWESOME_REPORTFILENAME;
+      });
+
+      it('should apply reporter options via environment variables', done => {
+        runner.run(failureCount => {
+          mochaReporter.config.should.deepEqual(expected({
+            reportFilename: 'test'
+          }));
+          done();
         });
-        mochaReporter.config.should.deepEqual(expectedConfig);
-        done();
       });
     });
 
-    it('should apply reporter options via passed in object', done => {
-      process.env.MOCHAWESOME_INLINEASSETS = false;
-      process.env.MOCHAWESOME_AUTOOPEN = false;
-
-      mochaReporter = new mocha._reporter(runner, {
-        reporterOptions: {
-          reportDir: 'testReportDir',
-          reportFilename: 'testReportFilename',
-          reportTitle: 'testReportTitle',
-          inlineAssets: 'true',
-          enableCharts: 'true',
-          enableTestCode: false,
-          autoOpen: true,
-          showHooks: 'never'
-        }
+    describe('options object', () => {
+      beforeEach(() => {
+        process.env.MOCHAWESOME_QUIET = 'false';
+        mochaReporter = makeReporter({
+          reporterOptions: {
+            reportFilename: 'testReportFilename',
+            json: 'false',
+            margeSpecificOption: 'something'
+          }
+        });
       });
 
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
-
-
-      runner.run(failureCount => {
-        const expectedConfig = Object.assign({}, baseConfig, {
-          reportDir: 'testReportDir',
-          reportFilename: 'testReportFilename',
-          reportTitle: 'testReportTitle',
-          inlineAssets: true,
-          enableCharts: true,
-          enableCode: false,
-          autoOpen: true,
-          showHooks: 'never'
+      it('should apply reporter options via passed in object', done => {
+        runner.run(failureCount => {
+          mochaReporter.config.should.deepEqual(expected({
+            reportFilename: 'testReportFilename',
+            saveJson: false
+          }));
+          done();
         });
-        mochaReporter.config.should.deepEqual(expectedConfig);
-        done();
       });
     });
 
-    it('should transfer mocha options', done => {
-      mochaReporter = new mocha._reporter(runner, { useInlineDiffs: true });
+    describe('mocha options', () => {
+      beforeEach(() => {
+        mochaReporter = makeReporter({ useInlineDiffs: true });
+      });
 
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
-
-      runner.run(failureCount => {
-        const expectedConfig = Object.assign({}, baseConfig, {
-          useInlineDiffs: true
+      it('should transfer mocha options', done => {
+        runner.run(failureCount => {
+          mochaReporter.config.should.deepEqual(expected({
+            useInlineDiffs: true
+          }));
+          done();
         });
-        mochaReporter.config.should.deepEqual(expectedConfig);
-        done();
       });
     });
   });
@@ -261,15 +236,21 @@ describe('Mochawesome Reporter', () => {
     let mochaExitFn;
 
     beforeEach(() => {
+      subSuite.addTest(makeTest('test', () => {}));
       mochaExitFn = sinon.spy();
       logStub.reset();
       reportStub.reset();
+      mochaReporter = new mocha._reporter(runner, {
+        reporterOptions: {
+          reportDir: 'testDir',
+          inlineAssets: true,
+          quiet: true
+        }
+      });
     });
 
     it('should not have an unhandled error', () => {
       reportStub.returns(Promise.resolve({}));
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
 
       return mochaReporter.done(0).then(() => {
         mochaExitFn.called.should.equal(false);
@@ -279,8 +260,6 @@ describe('Mochawesome Reporter', () => {
 
     it('should call the reporter done function successfully', () => {
       reportStub.resolves([]);
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.args[0][0].should.equal(0);
@@ -288,10 +267,22 @@ describe('Mochawesome Reporter', () => {
       });
     });
 
+    it('should pass reporterOptions to the report generator', () => {
+      reportStub.resolves([]);
+
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        reportStub.args[0][1].should.deepEqual({
+          reportDir: 'testDir',
+          inlineAssets: true,
+          quiet: true,
+          reportFilename: 'mochawesome',
+          saveJson: true
+        });
+      });
+    });
+
     it('should log an error when report creation fails', () => {
       reportStub.rejects({ message: 'report creation failed' });
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.called.should.equal(true);
@@ -303,11 +294,6 @@ describe('Mochawesome Reporter', () => {
 
     it('should not log when quiet option is true', () => {
       reportStub.resolves([]);
-      const test = makeTest('test', () => {});
-      subSuite.addTest(test);
-      mochaReporter = new mocha._reporter(runner, {
-        reporterOptions: { quiet: true }
-      });
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.args[0][0].should.equal(0);
