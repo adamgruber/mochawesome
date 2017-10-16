@@ -2,46 +2,24 @@ mochawesome
 ===========
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=4) and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to helps visualize your test runs.
 
-## :tada: Latest Changes
-- Support for mocha's `--inline-diffs` option
-- Display before and after hooks alongside your tests
-- Use `addContext` in test hooks
-- New [option](#options): `showHooks`
 
-See the [CHANGELOG][] for up-to-date changes.
+## Features
 
-### mochawesome-report-generator (marge)
-To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
+<img align="right" src="./docs/marge-report-1.0.1.png" alt="Mochawesome Report" width="55%" />
 
-### New Features
-- Every bit of the report has been redesigned for a cleaner, more streamlined look
-- Built using React and mobx
-- Supports displaying [additional test context](#adding-test-context) including images!
-- Supports displaying inline diffs for failed tests
-- New [options](#options) including hiding test code and/or charts 
-- Enhanced navigation menu with clearer filtering options
-- New option to disable console messages
-
-### Plus...
-- At-a-glance stats including pass percentage
-- Beautiful charts
-- Supports nested `describe`s
-- Supports pending tests
+- Simple, clean, and modern design
+- Beautiful charts (via ChartJS)
+- Support for test and suite nesting
+- Displays before and after hooks
 - Review test code inline
 - Stack trace for failed tests
+- Support for adding context information to tests
+- Filters to display only the tests you want
 - Responsive and mobile-friendly
-- Saves JSON output for further processing
 - Offline viewing
-
-### Sample Report
-
-<img src="./docs/marge-report-1.0.1.png" alt="Mochawesome Report" width="75%" />
-<img src="./docs/marge-report-menu-1.0.1.png" alt="Mochawesome Report Menu" width="75%" />
-
-### Browser Support
-The generated report has been tested to work in Chrome. It *should* work in any modern web browser, including IE9+. It is also fully self-contained for offline viewing. 
+- Support for IE9+
 
 ## Usage
 
@@ -61,7 +39,7 @@ The generated report has been tested to work in Chrome. It *should* work in any 
   });
   ```
 
-## Output
+### Output
 Mochawesome generates the following inside your project directory:
 ```
 mochawesome-report/
@@ -87,57 +65,48 @@ The two main files to be aware of are:
 **mochawesome.json** - The raw json output used to render the report
 
 
-## Options
-Mochawesome supports options via environment variables or passed directly to mocha.
-
-Option Name | Type | Default | Description 
-:---------- | :--- | :------ | :----------
-`reportDir` | string | [cwd]/mochawesome-report | Path to save report
-`reportFilename` | string | mochawesome | Filename of saved report *(prior to version 2.0.0 this was called `reportName`)*
-`reportTitle` | string | mochawesome | Report title
-`reportPageTitle` | string | mochawesome-report | Browser title
-`inlineAssets` | boolean | false | Inline report assets (scripts, styles)
-`enableCharts` | boolean | true | Display Suite charts
-`enableCode` | boolean | true | Display test code
-`enableTestCode` | boolean | true | Same as `enableCode` *deprecated*
-`autoOpen` | boolean | false | Open the report after running tests
-`overwrite` | boolean | true | Overwrite existing report files
-`timestamp` | string | | Append timestamp in specified format to report filename. *See [notes][1].*
-`showHooks` | string | failed | Set the default display mode for hooks
-`quiet` | boolean | false | Silence console messages
-
-*Setting a custom filename will change both the report html and json files.*
-
-**Options passed in will take precedence over environment variables.**
+### Options
+Options can be passed to the reporter in two ways.
 
 #### Environment variables
-Options can be set via environment variable. To do this you must prefix the variable with `MOCHAWESOME_` and then uppercase the variable name.
+The reporter will try to read environment variables that begin with `MOCHAWESOME_`.
 ```bash
-$ export MOCHAWESOME_REPORTDIR=customReportDir
-$ export MOCHAWESOME_INLINEASSETS=true
-$ export MOCHAWESOME_AUTOOPEN=true
+$ export MOCHAWESOME_REPORTFILENAME=customReportFilename
 ```
+*Note that environment variables must be in uppercase.*
 
-#### Mocha options
-You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag.
+#### Mocha reporter-options
+You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag. Options passed this way will take precedence over environment variables.
 ```bash
 $ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename
 ```
-Options can be passed in programatically as well:
+Alternately, `reporter-options` can be passed in programatically:
 
 ```js
 var mocha = new Mocha({
   reporter: 'mochawesome',
   reporterOptions: {
-    reportDir: 'customReportDir',
     reportFilename: 'customReportFilename',
-    enableCharts: false
+    quiet: true
   }
 });
 ```
 
-## Adding Test Context
-One of the more request features has been the ability to display additional information about a test within the report. As of version 2.0.0 this is now possible with the `addContext` helper method. This method will add extra information to the test object that will then be displayed inside the report.
+#### Available Options
+
+The options below are specific to the reporter. For a list of all available options see [mochawesome-report-generator options][marge-options].
+
+Option Name | Type | Default | Description 
+:---------- | :--- | :------ | :----------
+`quiet` | boolean | false | Silence console messages
+`reportFilename` | string | mochawesome | Filename of saved report <br> *Applies to the generated html and json files.*
+`json` | boolean | true | Save the JSON output for the test run
+
+
+### Adding Test Context
+Mochawesome ships with an `addContext` helper method that can be used to associate additional information with a test. This information will then be displayed inside the report.
+
+**Please note: arrow functions will not work with `addContext`.** See the [example](#example).
 
 ### `addContext(testObj, context)`
 
@@ -161,7 +130,8 @@ Context passed as an object must adhere to the following shape:
 ```
 
 #### Example
-*When using the `addContext` helper, you cannot use an arrow function in your `it` statement because your `this` value will not be the test object.*
+
+Be sure to use ES5 functions and not ES6 arrow functions when using `addContext` to ensure `this` references the test object.
 ```js
 const addContext = require('mochawesome/addContext');
 
@@ -189,7 +159,7 @@ describe('test suite', function () {
 });
 ```
 
-As of version 2.2.0 it is possible to use `addContext` from within a `beforeEach` or `afterEach` test hook.
+It is also possible to use `addContext` from within a `beforeEach` or `afterEach` test hook.
 ```js
 describe('test suite', () => {
   beforeEach(function () {
@@ -209,10 +179,16 @@ describe('test suite', () => {
 });
 ```
 
-## v1.x
-Documentation for version 1.x can be found [here](https://github.com/adamgruber/mochawesome/tree/v1.X).
+## Related
+
+[mochawesome-report-generator][marge]
+
+## License
+
+mochawesome is [MIT licensed][license].
 
 [mocha]: https://mochajs.org/
-[mochawesome-report-generator]: https://github.com/adamgruber/mochawesome-report-generator
+[marge]: https://github.com/adamgruber/mochawesome-report-generator
+[marge-options]: https://github.com/adamgruber/mochawesome-report-generator#options
 [CHANGELOG]: CHANGELOG.md
-[1]: https://github.com/adamgruber/mochawesome-report-generator/blob/master/README.md#timestamp
+[license]: LICENSE.md
