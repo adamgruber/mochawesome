@@ -15,6 +15,7 @@ utils.log = logStub;
 const baseConfig = {
   quiet: false,
   reportFilename: 'mochawesome',
+  saveHtml: true,
   saveJson: true,
   useInlineDiffs: false
 };
@@ -276,6 +277,7 @@ describe('Mochawesome Reporter', () => {
           inlineAssets: true,
           quiet: true,
           reportFilename: 'mochawesome',
+          saveHtml: true,
           saveJson: true
         });
       });

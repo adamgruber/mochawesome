@@ -33,6 +33,7 @@ module.exports = function (opts) {
   return {
     quiet: _getOption('quiet', reporterOpts, true, false),
     reportFilename: _getOption('reportFilename', reporterOpts, false, 'mochawesome'),
+    saveHtml: _getOption('html', reporterOpts, true, true),
     saveJson: _getOption('json', reporterOpts, true, true),
     useInlineDiffs: !!opts.useInlineDiffs
   };
