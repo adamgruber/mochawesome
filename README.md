@@ -2,7 +2,7 @@ mochawesome
 ===========
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=4) and generates a full fledged HTML/CSS report that helps visualize your test suites.
 
 ## :tada: Latest Changes
 - Support for mocha's `--inline-diffs` option
@@ -13,7 +13,7 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 See the [CHANGELOG][] for up-to-date changes.
 
 ### mochawesome-report-generator (marge)
-To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
+To start, the actual report generation has been moved out into its own package, [mochawesome-report-generator][marge]. This will make it easier to implement changes to the report as well as allow for future integration with other test libraries.
 
 ### New Features
 - Every bit of the report has been redesigned for a cleaner, more streamlined look
@@ -88,23 +88,14 @@ The two main files to be aware of are:
 
 
 ## Options
-Mochawesome supports options via environment variables or passed directly to mocha.
+You can pass options to mochawesome via environment variables or via mocha's `reporter-options` argument. The options shown below are specific to the reporter. For all other available options see [mochawesome-report-generator options.][marge-options]
 
 Option Name | Type | Default | Description 
 :---------- | :--- | :------ | :----------
-`reportDir` | string | [cwd]/mochawesome-report | Path to save report
-`reportFilename` | string | mochawesome | Filename of saved report *(prior to version 2.0.0 this was called `reportName`)*
-`reportTitle` | string | mochawesome | Report title
-`reportPageTitle` | string | mochawesome-report | Browser title
-`inlineAssets` | boolean | false | Inline report assets (scripts, styles)
-`enableCharts` | boolean | true | Display Suite charts
-`enableCode` | boolean | true | Display test code
-`enableTestCode` | boolean | true | Same as `enableCode` *deprecated*
-`autoOpen` | boolean | false | Open the report after running tests
-`overwrite` | boolean | true | Overwrite existing report files
-`timestamp` | string | | Append timestamp in specified format to report filename. *See [notes][1].*
-`showHooks` | string | failed | Set the default display mode for hooks
 `quiet` | boolean | false | Silence console messages
+`reportFilename` | string | mochawesome | Filename of saved report
+`json` | boolean | true | Save the JSON output for the test run
+
 
 *Setting a custom filename will change both the report html and json files.*
 
@@ -113,9 +104,7 @@ Option Name | Type | Default | Description
 #### Environment variables
 Options can be set via environment variable. To do this you must prefix the variable with `MOCHAWESOME_` and then uppercase the variable name.
 ```bash
-$ export MOCHAWESOME_REPORTDIR=customReportDir
-$ export MOCHAWESOME_INLINEASSETS=true
-$ export MOCHAWESOME_AUTOOPEN=true
+$ export MOCHAWESOME_REPORTFILENAME=customReportFilename
 ```
 
 #### Mocha options
@@ -129,9 +118,8 @@ Options can be passed in programatically as well:
 var mocha = new Mocha({
   reporter: 'mochawesome',
   reporterOptions: {
-    reportDir: 'customReportDir',
     reportFilename: 'customReportFilename',
-    enableCharts: false
+    quiet: true
   }
 });
 ```
@@ -213,6 +201,7 @@ describe('test suite', () => {
 Documentation for version 1.x can be found [here](https://github.com/adamgruber/mochawesome/tree/v1.X).
 
 [mocha]: https://mochajs.org/
-[mochawesome-report-generator]: https://github.com/adamgruber/mochawesome-report-generator
+[marge]: https://github.com/adamgruber/mochawesome-report-generator
+[marge-options]: https://github.com/adamgruber/mochawesome-report-generator#options
 [CHANGELOG]: CHANGELOG.md
 [1]: https://github.com/adamgruber/mochawesome-report-generator/blob/master/README.md#timestamp
