@@ -58,6 +58,7 @@ function Mochawesome(runner, options) {
     (options.reporterOptions || {}),
     {
       reportFilename: this.config.reportFilename,
+      saveHtml: this.config.saveHtml,
       saveJson: this.config.saveJson
     }
   );
