@@ -78,7 +78,7 @@ $ export MOCHAWESOME_REPORTFILENAME=customReportFilename
 #### Mocha reporter-options
 You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag. Options passed this way will take precedence over environment variables.
 ```bash
-$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename
+$ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename,filter=passed+failed
 ```
 Alternately, `reporter-options` can be passed in programatically:
 
@@ -102,6 +102,7 @@ Option Name | Type | Default | Description
 `reportFilename` | string | mochawesome | Filename of saved report <br> *Applies to the generated html and json files.*
 `html` | boolean | true | Save the HTML output for the test run
 `json` | boolean | true | Save the JSON output for the test run
+`filter` | string | all | Set the filters to be applied after generating the report.
 
 
 ### Adding Test Context

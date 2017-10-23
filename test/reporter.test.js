@@ -17,7 +17,8 @@ const baseConfig = {
   reportFilename: 'mochawesome',
   saveHtml: true,
   saveJson: true,
-  useInlineDiffs: false
+  useInlineDiffs: false,
+  filter: 'all'
 };
 
 const mochawesome = proxyquire('../src/mochawesome', {
@@ -245,7 +246,8 @@ describe('Mochawesome Reporter', () => {
         reporterOptions: {
           reportDir: 'testDir',
           inlineAssets: true,
-          quiet: true
+          quiet: true,
+          filter: 'all'
         }
       });
     });
@@ -278,7 +280,8 @@ describe('Mochawesome Reporter', () => {
           quiet: true,
           reportFilename: 'mochawesome',
           saveHtml: true,
-          saveJson: true
+          saveJson: true,
+          filter: 'all'
         });
       });
     });
