@@ -31,8 +31,12 @@ const totalTestsRegistered = { total: 0 };
 function done(output, options, config, failures, exit) {
   return marge.create(output, options)
     .then(([ htmlFile, jsonFile ]) => {
-      log(`Report JSON saved to ${jsonFile}`, null, config);
-      log(`Report HTML saved to ${htmlFile}`, null, config);
+      if (!htmlFile && !jsonFile) {
+        log('No files were generated', 'warn', config);
+      } else {
+        jsonFile && log(`Report JSON saved to ${jsonFile}`, null, config);
+        htmlFile && log(`Report HTML saved to ${htmlFile}`, null, config);
+      }
     })
     .catch(err => {
       log(err, 'error', config);
