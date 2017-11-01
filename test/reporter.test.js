@@ -259,12 +259,41 @@ describe('Mochawesome Reporter', () => {
       });
     });
 
-    it('should call the reporter done function successfully', () => {
+    it('should log message when no files generated', () => {
       reportStub.resolves([]);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.args[0][0].should.equal(0);
-        logStub.neverCalledWith('error').should.equal(true);
+        logStub.args[0][0].should.equal('No files were generated');
+      });
+    });
+
+    it('should log message when only html file generated', () => {
+      reportStub.resolves([ 'html', null ]);
+
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.args[0][0].should.equal(0);
+        logStub.callCount.should.equal(1);
+        logStub.args[0][0].should.equal('Report HTML saved to html');
+      });
+    });
+
+    it('should log message when only json file generated', () => {
+      reportStub.resolves([ null, 'json' ]);
+
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.args[0][0].should.equal(0);
+        logStub.callCount.should.equal(1);
+        logStub.args[0][0].should.equal('Report JSON saved to json');
+      });
+    });
+
+    it('should log message when html and json files generated', () => {
+      reportStub.resolves([ 'html', 'json' ]);
+
+      return mochaReporter.done(0, mochaExitFn).then(() => {
+        mochaExitFn.args[0][0].should.equal(0);
+        logStub.callCount.should.equal(2);
       });
     });
 
