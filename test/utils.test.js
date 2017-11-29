@@ -93,6 +93,11 @@ describe('Mochawesome Utils', () => {
       cleanCode(fnStr).should.equal(expected);
     });
 
+    it('should clean standard function syntax with param', () => {
+      fnStr = 'function (done) { return true; }';
+      cleanCode(fnStr).should.equal(expected);
+    });
+
     it('should clean arrow function syntax, single line', () => {
       fnStr = '() => { return true; }';
       cleanCode(fnStr).should.equal(expected);
@@ -109,6 +114,21 @@ describe('Mochawesome Utils', () => {
       fnStr = `() => 
       {
         return true;}`;
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean arrow function syntax with param', () => {
+      fnStr = '(done) => { return true; }';
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean async standard function syntax', () => {
+      fnStr = 'async function () {return true; }';
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean async arrow function syntax', () => {
+      fnStr = 'async () => { return true; }';
       cleanCode(fnStr).should.equal(expected);
     });
   });
