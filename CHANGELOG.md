@@ -1,4 +1,23 @@
-# Changelog
+# mochawesome changelog
+
+## [3.0.0] / 2017-11-30
+This release is in tandem with and requires mochawesome-report-generator >= 3.0.0.
+
+### Added
+- New option: `html`. Allows user to specify whether or not to generate the HTML report. Defaults to `true`.
+
+### Changed
+- **BREAKING:** This release features a trimmed-down data output that removes properties that are not necessary for the report generation. This change will only affect things that consume the JSON output and does not affect usage of the reporter itself.
+
+- Suites are now cleaned by mapping over them instead of a breadth-first traversal
+
+- Options handling was overhauled and greatly simplified. The reporter will only concern itself with options directly related to the reporter. All other options are passed through to the report generator as-is.
+
+- Updated the `done` function to display better output when only one or no files have been generated.
+
+
+### Removed
+- `enableTestCode` option was deprecated as of 2.0.3 and has been removed. Use `enableCode` instead.
 
 ### [2.3.0]
 - Added `showHooks` option [#168](https://github.com/adamgruber/mochawesome/pull/168)
@@ -126,6 +145,7 @@
 - Custom font-icon set
 - All fonts are now local to the report
 
+[3.0.0]: https://github.com/adamgruber/mochawesome/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/adamgruber/mochawesome/compare/2.2.1...2.3.0
 [2.2.1]: https://github.com/adamgruber/mochawesome/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/adamgruber/mochawesome/compare/2.1.0...2.2.0
