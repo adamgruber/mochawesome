@@ -264,8 +264,8 @@ function cleanSuite(suite, totalTestsRegistered, config) {
  */
 function mapSuites(suite, totalTestsReg, config) {
   const suites = _.compact(_.map(suite.suites, subSuite => (
-      mapSuites(subSuite, totalTestsReg, config)
-    )));
+    mapSuites(subSuite, totalTestsReg, config)
+  )));
   const toBeCleaned = Object.assign({}, suite, { suites });
   return cleanSuite(toBeCleaned, totalTestsReg, config);
 }
