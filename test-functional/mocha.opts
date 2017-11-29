@@ -1,4 +1,4 @@
 --stack-trace
 --require babel-register
 --require should
---reporter mochawesome
+--reporter src/mochawesome
