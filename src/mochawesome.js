@@ -1,7 +1,6 @@
 const Base = require('mocha/lib/reporters/base');
 const Spec = require('mocha/lib/reporters/spec');
 const uuid = require('uuid');
-const stringify = require('json-stringify-safe');
 const conf = require('./config');
 const marge = require('mochawesome-report-generator');
 const utils = require('./utils');
@@ -10,8 +9,7 @@ const utils = require('./utils');
 const {
   log,
   getPercentClass,
-  cleanTest,
-  traverseSuites
+  mapSuites
 } = utils;
 
 // Track the total number of tests registered
@@ -22,24 +20,29 @@ const totalTestsRegistered = { total: 0 };
  *
  * Creates and saves the report HTML and JSON files
  *
- * @param {Object} output
- * @param {Object} config
+ * @param {Object} output    Final report object
+ * @param {Object} options   Options to pass to report generator
+ * @param {Object} config    Reporter config object
+ * @param {Number} failures  Number of reported failures
  * @param {Function} exit
  *
  * @return {Promise} Resolves with successful report creation
  */
-
-function done(output, config, failures, exit) {
-  return marge.create(output, config)
+function done(output, options, config, failures, exit) {
+  return marge.create(output, options)
     .then(([ htmlFile, jsonFile ]) => {
-      log(`Report JSON saved to ${jsonFile}`, null, config);
-      log(`Report HTML saved to ${htmlFile}`, null, config);
+      if (!htmlFile && !jsonFile) {
+        log('No files were generated', 'warn', config);
+      } else {
+        jsonFile && log(`Report JSON saved to ${jsonFile}`, null, config);
+        htmlFile && log(`Report HTML saved to ${htmlFile}`, null, config);
+      }
     })
     .catch(err => {
       log(err, 'error', config);
     })
     .then(() => {
-      exit && exit(failures);
+      exit && exit(failures > 0 ? 1 : 0);
     });
 }
 
@@ -50,15 +53,32 @@ function done(output, config, failures, exit) {
  * @api public
  */
 function Mochawesome(runner, options) {
+  // Set the config options
+  this.config = conf(options);
+
+  // Reporter options
+  const reporterOptions = Object.assign(
+    {},
+    (options.reporterOptions || {}),
+    {
+      reportFilename: this.config.reportFilename,
+      saveHtml: this.config.saveHtml,
+      saveJson: this.config.saveJson
+    }
+  );
+
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the HTML report
-  this.done = (failures, exit) => done(this.output, this.config, failures, exit);
+  this.done = (failures, exit) => done(
+    this.output,
+    reporterOptions,
+    this.config,
+    failures,
+    exit
+  );
 
   // Reset total tests counter
   totalTestsRegistered.total = 0;
-
-  // Set the config options
-  this.config = conf(options);
 
   // Call the Base mocha reporter
   Base.call(this, runner);
@@ -66,29 +86,18 @@ function Mochawesome(runner, options) {
   // Show the Spec Reporter in the console
   new Spec(runner); // eslint-disable-line
 
-  const allTests = [];
-  const allPending = [];
-  const allFailures = [];
-  const allPasses = [];
   let endCalled = false;
 
   // Add a unique identifier to each test/hook
-  runner.on('test', test => (test.uuid = uuid.v4()));
-  runner.on('hook', hook => (hook.uuid = uuid.v4()));
-  // Add test to array of all tests
-  runner.on('test end', test => allTests.push(test));
-
-  // Add pending test to array of pending tests
+  runner.on('test', test => {
+    test.uuid = uuid.v4();
+  });
+  runner.on('hook', hook => {
+    hook.uuid = uuid.v4();
+  });
   runner.on('pending', test => {
     test.uuid = uuid.v4();
-    allPending.push(test);
   });
-
-  // Add passing test to array of passing tests
-  runner.on('pass', test => allPasses.push(test));
-
-  // Add failed test to array of failed tests
-  runner.on('fail', test => allFailures.push(test));
 
   // Process the full suite
   runner.on('end', () => {
@@ -99,17 +108,11 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const allSuites = this.runner.suite;
-
-        traverseSuites(allSuites, totalTestsRegistered, this.config);
+        const allSuites = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
 
         const obj = {
           stats: this.stats,
           suites: allSuites,
-          allTests: allTests.map(cleanTest),
-          allPending: allPending.map(cleanTest),
-          allPasses: allPasses.map(cleanTest),
-          allFailures: allFailures.map(cleanTest),
           copyrightYear: new Date().getFullYear()
         };
 
@@ -130,7 +133,7 @@ function Mochawesome(runner, options) {
         obj.stats.pendingPercentClass = getPercentClass(pendingPercentage);
 
         // Save the final output to be used in the done function
-        this.output = stringify(obj, null, 2);
+        this.output = obj;
       }
     } catch (e) {
       // required because thrown errors are not handled directly in the

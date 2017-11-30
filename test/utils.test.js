@@ -1,4 +1,3 @@
-const cloneDeep = require('lodash/cloneDeep');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const sampleTests = require('./sample-tests');
@@ -11,7 +10,6 @@ const utils = proxyquire('../src/utils', {
 const {
   log,
   getPercentClass,
-  removeAllPropsFromObjExcept,
   cleanCode,
   cleanTest,
   cleanSuite
@@ -71,19 +69,6 @@ describe('Mochawesome Utils', () => {
     });
   });
 
-  describe('removeAllPropsFromObjExcept', () => {
-    it('should remove object properties', () => {
-      const obj = {
-        foo: 'foo',
-        bar: 'bar',
-        baz: 'baz'
-      };
-      removeAllPropsFromObjExcept(obj, [ 'foo' ]);
-      obj.should.have.property('foo');
-      obj.should.not.have.properties([ 'bar', 'baz' ]);
-    });
-  });
-
   describe('cleanCode', () => {
     const expected = 'return true;';
     let fnStr;
@@ -105,6 +90,11 @@ describe('Mochawesome Utils', () => {
       {
         return true;
       }`;
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean standard function syntax with param', () => {
+      fnStr = 'function (done) { return true; }';
       cleanCode(fnStr).should.equal(expected);
     });
 
@@ -131,6 +121,21 @@ describe('Mochawesome Utils', () => {
       fnStr = `() => 
       {
         return true;}`;
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean arrow function syntax with param', () => {
+      fnStr = '(done) => { return true; }';
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean async standard function syntax', () => {
+      fnStr = 'async function () {return true; }';
+      cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean async arrow function syntax', () => {
+      fnStr = 'async () => { return true; }';
       cleanCode(fnStr).should.equal(expected);
     });
   });
@@ -203,19 +208,6 @@ describe('Mochawesome Utils', () => {
       'failures',
       'pending',
       'skipped',
-      'hasBeforeHooks',
-      'hasAfterHooks',
-      'hasTests',
-      'hasSuites',
-      'totalTests',
-      'totalPasses',
-      'totalFailures',
-      'totalPending',
-      'totalSkipped',
-      'hasPasses',
-      'hasFailures',
-      'hasPending',
-      'hasSkipped',
       'root',
       'uuid',
       'duration',
@@ -224,17 +216,20 @@ describe('Mochawesome Utils', () => {
     ];
 
     it('cleans a root suite', () => {
-      const s = cloneDeep(sampleSuite.one.raw);
-      cleanSuite(s, totalTestsRegistered, config);
-      s.should.have.properties(expectedProps);
-      s.should.deepEqual(sampleSuite.one.cleaned);
+      const cleaned = cleanSuite(sampleSuite.one.raw, totalTestsRegistered, config);
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleSuite.one.cleaned);
     });
 
     it('cleans a non-root suite', () => {
-      const s = cloneDeep(sampleSuite.two.raw);
-      cleanSuite(s, totalTestsRegistered, config);
-      s.should.have.properties(expectedProps);
-      s.should.deepEqual(sampleSuite.two.cleaned);
+      const cleaned = cleanSuite(sampleSuite.two.raw, totalTestsRegistered, config);
+      cleaned.should.have.properties(expectedProps);
+      cleaned.should.deepEqual(sampleSuite.two.cleaned);
+    });
+
+    it('cleans an empty suite', () => {
+      const cleaned = cleanSuite(sampleSuite.three.raw, totalTestsRegistered, config);
+      cleaned.should.equal(sampleSuite.three.cleaned);
     });
   });
 });
