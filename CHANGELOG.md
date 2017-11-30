@@ -15,9 +15,11 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 
 - Updated the `done` function to display better output when only one or no files have been generated.
 
-
 ### Removed
 - `enableTestCode` option was deprecated as of 2.0.3 and has been removed. Use `enableCode` instead.
+
+### [2.3.1]
+- Fixes an issue where generator functions were not displayed properly [#188](https://github.com/adamgruber/mochawesome/pull/188) (@APshenkin)
 
 ### [2.3.0]
 - Added `showHooks` option [#168](https://github.com/adamgruber/mochawesome/pull/168)
@@ -145,7 +147,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[3.0.0]: https://github.com/adamgruber/mochawesome/compare/2.3.0...3.0.0
+[3.0.0]: https://github.com/adamgruber/mochawesome/compare/2.3.1...3.0.0
+[2.3.1]: https://github.com/adamgruber/mochawesome/compare/2.3.0...2.3.1
 [2.3.0]: https://github.com/adamgruber/mochawesome/compare/2.2.1...2.3.0
 [2.2.1]: https://github.com/adamgruber/mochawesome/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/adamgruber/mochawesome/compare/2.1.0...2.2.0

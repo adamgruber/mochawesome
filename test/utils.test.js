@@ -110,6 +110,13 @@ describe('Mochawesome Utils', () => {
       cleanCode(fnStr).should.equal(expected);
     });
 
+    it('should clean generator function syntax', () => {
+      fnStr = `function* () {
+        return true;
+      }`;
+      cleanCode(fnStr).should.equal(expected);
+    });
+
     it('should clean non-standard arrow function syntax', () => {
       fnStr = `() => 
       {
