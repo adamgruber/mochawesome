@@ -52,8 +52,8 @@ function getPercentClass(pct) {
 function cleanCode(str) {
   str = str
     .replace(/\r\n?|[\n\u2028\u2029]/g, '\n').replace(/^\uFEFF/, '')
-    .replace(/^(async\s*)?(\(.*\)|function\*?)\s*(=>|\(.*\))?\s*{?/, '')
-    .replace(/\s*\}$/, '');
+    .replace(/^(async\s*)?(\(\w*\)|function\*?)\s*(=>|\(.*\))?\s*{?/, '')
+    .replace(/\s*}$/, '');
 
   const spaces = str.match(/^\n?( *)/)[1].length;
   const tabs = str.match(/^\n?(\t*)/)[1].length;
