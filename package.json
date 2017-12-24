@@ -9,6 +9,7 @@
     "test:prog": "node ./test-programmatic",
     "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
     "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
+    "tdd": "npm run lint && cross-env NODE_ENV=test nyc mocha --watch",
     "dev": "babel --watch src -d dist",
     "build": "babel src -d dist",
     "prepack": "npm run test && npm run build"
