@@ -103,6 +103,11 @@ describe('Mochawesome Utils', () => {
       cleanCode(fnStr).should.equal(expected);
     });
 
+    it('should clean arrow function syntax, single line no braces', () => {
+      fnStr = '() => someFunction(arg)';
+      cleanCode(fnStr).should.equal('someFunction(arg)');
+    });
+
     it('should clean arrow function syntax, multi line', () => {
       fnStr = `()=> {
         return true;
