@@ -1,5 +1,9 @@
 # mochawesome changelog
 
+## [3.0.1] / 2017-12-26
+### Fixed
+- Updated RegExp in `cleanCode` method to handle arrow functions without braces. [#220](https://github.com/adamgruber/mochawesome/issues/220)
+
 ## [3.0.0] / 2017-11-30
 This release is in tandem with and requires mochawesome-report-generator >= 3.0.0.
 
