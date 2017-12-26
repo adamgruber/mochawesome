@@ -151,6 +151,7 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
+[3.0.1]: https://github.com/adamgruber/mochawesome/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/adamgruber/mochawesome/compare/2.3.1...3.0.0
 [2.3.1]: https://github.com/adamgruber/mochawesome/compare/2.3.0...2.3.1
 [2.3.0]: https://github.com/adamgruber/mochawesome/compare/2.2.1...2.3.0
