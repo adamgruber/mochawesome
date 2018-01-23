@@ -162,8 +162,8 @@ function cleanTest(test, config) {
   const code = test.fn ? test.fn.toString() : test.body;
 
   const cleaned = {
-    title: test.title,
-    fullTitle: _.isFunction(test.fullTitle) ? test.fullTitle() : /* istanbul ignore next */test.title,
+    title: stripAnsi(test.title),
+    fullTitle: _.isFunction(test.fullTitle) ? stripAnsi(test.fullTitle()) : /* istanbul ignore next */ stripAnsi(test.title),
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,
@@ -228,7 +228,7 @@ function cleanSuite(suite, totalTestsRegistered, config) {
 
   const cleaned = {
     uuid: uuid.v4(),
-    title: suite.title,
+    title: stripAnsi(suite.title),
     fullFile: suite.file || '',
     file: suite.file ? suite.file.replace(process.cwd(), '') : '',
     beforeHooks,
