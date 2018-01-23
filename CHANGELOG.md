@@ -1,5 +1,9 @@
 # mochawesome changelog
 
+## Unreleased
+### Changed
+- Call `stripAnsi` for test/suite titles. [#223](https://github.com/adamgruber/mochawesome/pull/223) (@JoeTheFkingFrypan)
+
 ## [3.0.1] / 2017-12-26
 ### Fixed
 - Updated RegExp in `cleanCode` method to handle arrow functions without braces. [#220](https://github.com/adamgruber/mochawesome/issues/220)
