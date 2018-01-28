@@ -118,7 +118,7 @@ context | string\|object | The context to be added to the test
 
 **Context as a string**
 
-Simple strings will be displayed as is. If you pass a URL, the reporter will attempt to turn it into a link. If the URL links to an image, it will be shown inline.
+Simple strings will be displayed as is. If you pass a URL, the reporter will attempt to turn it into a link. If the URL links to an image or video, it will be shown inline.
 
 **Context as an object**
 
