@@ -28,8 +28,10 @@
   ],
   "engine": "node >= 4",
   "main": "dist/mochawesome.js",
+  "types": "index.d.ts",
   "files": [
     "addContext.js",
+    "index.d.ts",
     "dist"
   ],
   "nyc": {
