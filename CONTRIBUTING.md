@@ -2,7 +2,7 @@
 
 ### Example required
 
-**All bug reports and problem issues require example code**. In addition please submit the following:
+**All bug reports and problem issues require example code**. The best way to do this and ensure the issue can be debugged in the same environment in which it is occurring is to link to a repo where the issue can be reliably reproduced. In addition please submit the following:
 
 - Platform you are running on
 - The version of mochawesome and mocha you are using
