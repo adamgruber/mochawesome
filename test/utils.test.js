@@ -99,7 +99,7 @@ describe('Mochawesome Utils', () => {
     });
 
     it('should clean arrow function syntax, single line', () => {
-      fnStr = '() => { return true; }';
+      fnStr = '() => { return true; } ';
       cleanCode(fnStr).should.equal(expected);
     });
 
@@ -122,26 +122,57 @@ describe('Mochawesome Utils', () => {
       cleanCode(fnStr).should.equal(expected);
     });
 
-    it('should clean non-standard arrow function syntax', () => {
-      fnStr = `() => 
-      {
-        return true;}`;
-      cleanCode(fnStr).should.equal(expected);
-    });
-
     it('should clean arrow function syntax with param', () => {
       fnStr = '(done) => { return true; }';
       cleanCode(fnStr).should.equal(expected);
     });
 
+    it('should clean arrow function syntax with parens', () => {
+      fnStr = '(done) => ( someFunc() )';
+      cleanCode(fnStr).should.equal('someFunc()');
+    });
+
     it('should clean async standard function syntax', () => {
-      fnStr = 'async function () {return true; }';
+      fnStr = 'async function () {return true; } ';
       cleanCode(fnStr).should.equal(expected);
     });
 
     it('should clean async arrow function syntax', () => {
       fnStr = 'async () => { return true; }';
       cleanCode(fnStr).should.equal(expected);
+    });
+
+    it('should clean multi-line code', () => {
+      fnStr = 'function () { var a = 1; return function add(b) { return a + b; }; };';
+      cleanCode(fnStr).should.equal('var a = 1; return function add(b) { return a + b; };');
+    });
+
+    it('should clean code with comments', () => {
+      fnStr = [
+        'function () {',
+        '  var b = 2; // set var',
+        '  const f = () => ({ a: 1 })',
+        '  function adamf() {',
+        '    return b > 3; // make func',
+        '  }',
+        '  console.log(\'test\'); // log the test',
+        '  var a = b;',
+        '  /* return the thing */',
+        '  return true;',
+        '};'
+      ].join('\n');
+      const exp = [
+        'var b = 2; // set var',
+        'const f = () => ({ a: 1 })',
+        'function adamf() {',
+        '  return b > 3; // make func',
+        '}',
+        'console.log(\'test\'); // log the test',
+        'var a = b;',
+        '/* return the thing */',
+        'return true;'
+      ].join('\n');
+      cleanCode(fnStr).should.equal(exp);
     });
   });
 
