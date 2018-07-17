@@ -51,17 +51,20 @@ function getPercentClass(pct) {
  */
 function cleanCode(str) {
   str = str
-    .replace(/\r\n?|[\n\u2028\u2029]/g, '\n').replace(/^\uFEFF/, '')
-    .replace(/^(async\s*)?(\(\w*\)|function\*?)\s*(=>|\(.*\))?\s*{?/, '')
-    .replace(/\s*}$/, '');
+    .replace(/\r\n|[\r\n\u2028\u2029]/g, '\n') // unify linebreaks
+    .replace(/^\uFEFF/, '') // replace zero-width no-break space
+    .replace(/^(?:.|\s)*?(?:{|=>) *\n?(?:\(|{)?/, '') // replace function declaration
+    .replace(/\)\s*\)\s*$/, ')') // replace closing paren
+    .replace(/\s*};?\s*$/, ''); // replace closing bracket
 
+  // Preserve indentation by finding leading tabs/spaces
+  // and removing that amount of space from each line
   const spaces = str.match(/^\n?( *)/)[1].length;
   const tabs = str.match(/^\n?(\t*)/)[1].length;
   /* istanbul ignore next */
-  const re = new RegExp(`^\n?${tabs ? '\t' : ' '}{${tabs || spaces}}`, 'gm');
+  const indentRegex = new RegExp(`^\n?${tabs ? '\t' : ' '}{${tabs || spaces}}`, 'gm');
 
-  str = str.replace(re, '');
-  str = str.replace(/^\s+|\s+$/g, '');
+  str = str.replace(indentRegex, '').trim();
   return str;
 }
 
