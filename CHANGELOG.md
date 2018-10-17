@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [3.1.0] / 2018-10-17
 ### Changed
 - Invert logic for getting test code by checking for `test.body` before `test.fn` inside `cleanTest` method [#252](https://github.com/adamgruber/mochawesome/issues/252)
 
@@ -163,7 +165,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/3.0.3...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/adamgruber/mochawesome/compare/3.0.3...3.1.0
 [3.0.3]: https://github.com/adamgruber/mochawesome/compare/3.0.2...3.0.3
 [3.0.2]: https://github.com/adamgruber/mochawesome/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/adamgruber/mochawesome/compare/3.0.0...3.0.1
