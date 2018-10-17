@@ -161,8 +161,13 @@ function normalizeErr(err, config) {
  * @return {Object} cleaned test
  */
 function cleanTest(test, config) {
-  /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
-  const code = test.fn ? test.fn.toString() : test.body;
+  let code = test.body;
+
+  /* istanbul ignore next */
+  if (code === undefined) {
+    /* istanbul ignore next: test.fn exists prior to mocha 2.4.0 */
+    code = test.fn ? test.fn.toString() : '';
+  }
 
   const cleaned = {
     title: stripAnsi(test.title),
