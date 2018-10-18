@@ -1,8 +1,8 @@
 const Base = require('mocha/lib/reporters/base');
 const Spec = require('mocha/lib/reporters/spec');
 const uuid = require('uuid');
-const conf = require('./config');
 const marge = require('mochawesome-report-generator');
+const conf = require('./config');
 const utils = require('./utils');
 
 // Import the utility functions
