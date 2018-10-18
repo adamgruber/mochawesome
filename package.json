@@ -1,7 +1,7 @@
 {
   "name": "mochawesome",
   "version": "4.0.0-alpha.0",
-  "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
+  "description": "A gorgeous reporter for Mocha.js",
   "scripts": {
     "lint": "eslint src test",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
@@ -10,9 +10,7 @@
     "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
     "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
     "tdd": "npm run lint && cross-env NODE_ENV=test nyc mocha --watch",
-    "dev": "babel --watch src -d dist",
-    "build": "babel src -d dist",
-    "prepack": "npm run test && npm run build"
+    "prepack": "npm run test"
   },
   "author": "Adam Gruber",
   "license": "MIT",
@@ -26,26 +24,21 @@
     "json",
     "html"
   ],
-  "main": "dist/mochawesome.js",
+  "main": "src/mochawesome.js",
   "files": [
     "addContext.js",
-    "dist"
+    "src"
   ],
   "nyc": {
     "include": [
       "src/*.js"
     ],
-    "require": [
-      "babel-register"
-    ],
-    "sourceMap": false,
-    "instrument": false,
     "reporter": [
       "lcov",
       "html",
       "text-summary"
     ],
-    "cache": true,
+    "cache": false,
     "check-coverage": true,
     "lines": 99,
     "statements": 99,
@@ -53,34 +46,29 @@
     "branches": 90
   },
   "dependencies": {
-    "babel-runtime": "^6.20.0",
-    "chalk": "^2.3.0",
-    "diff": "^3.4.0",
+    "chalk": "^2.4.1",
+    "diff": "^3.5.0",
     "json-stringify-safe": "^5.0.1",
-    "lodash": "^4.17.3",
-    "mochawesome-report-generator": "^3.0.1",
-    "strip-ansi": "^4.0.0",
-    "uuid": "^3.0.1"
+    "lodash.isempty": "^4.4.0",
+    "lodash.isfunction": "^3.0.9",
+    "lodash.isobject": "^3.0.2",
+    "lodash.isstring": "^4.0.1",
+    "mochawesome-report-generator": "^3.1.4",
+    "strip-ansi": "^5.0.0",
+    "uuid": "^3.3.2"
   },
   "peerDependencies": {
     "mocha": "*"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-core": "^6.20.0",
-    "babel-plugin-istanbul": "^4.1.5",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-preset-es2015": "^6.14.0",
-    "babel-preset-stage-3": "^6.11.0",
-    "babel-register": "^6.14.0",
-    "cross-env": "^5.1.1",
-    "eslint": "^4.12.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.2.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "mocha": "*",
-    "nyc": "^11.4.0",
-    "proxyquire": "^1.7.10",
-    "should": "^13.1.3",
-    "sinon": "^4.1.2"
+    "nyc": "^13.1.0",
+    "proxyquire": "^2.1.0",
+    "should": "^13.2.3",
+    "sinon": "^7.0.0"
   }
 }

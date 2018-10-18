@@ -1,5 +1,5 @@
-const isObject = require('lodash/isObject');
-const isEmpty = require('lodash/isEmpty');
+const isObject = require('lodash.isobject');
+const isEmpty = require('lodash.isempty');
 const chalk = require('chalk');
 const stringify = require('json-stringify-safe');
 

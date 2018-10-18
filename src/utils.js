@@ -1,4 +1,6 @@
-const _ = require('lodash');
+const isString = require('lodash.isstring');
+const isFunction = require('lodash.isfunction');
+const isEmpty = require('lodash.isempty');
 const chalk = require('chalk');
 const uuid = require('uuid');
 const mochaUtils = require('mocha/lib/utils');
@@ -132,7 +134,7 @@ function normalizeErr(err, config) {
   // Format actual/expected for creating diff
   if (showDiff !== false && sameType(actual, expected) && expected !== undefined) {
     /* istanbul ignore if */
-    if (!(_.isString(actual) && _.isString(expected))) {
+    if (!(isString(actual) && isString(expected))) {
       err.actual = mochaUtils.stringify(actual);
       err.expected = mochaUtils.stringify(expected);
     }
@@ -173,7 +175,7 @@ function cleanTest(test, config) {
 
   const cleaned = {
     title: stripAnsi(test.title),
-    fullTitle: _.isFunction(test.fullTitle) ? stripAnsi(test.fullTitle()) : /* istanbul ignore next */ stripAnsi(test.title),
+    fullTitle: isFunction(test.fullTitle) ? stripAnsi(test.fullTitle()) : /* istanbul ignore next */ stripAnsi(test.title),
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,
@@ -211,28 +213,23 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   const pendingTests = [];
   const skippedTests = [];
 
-  const beforeHooks = _.map(
-    [].concat(suite._beforeAll, suite._beforeEach),
-    test => cleanTest(test, config)
-  );
+  const beforeHooks = [].concat(
+    suite._beforeAll, suite._beforeEach
+  ).map(test => cleanTest(test, config));
 
-  const afterHooks = _.map(
-    [].concat(suite._afterAll, suite._afterEach),
-    test => cleanTest(test, config)
-  );
+  const afterHooks = [].concat(
+    suite._afterAll, suite._afterEach
+  ).map(test => cleanTest(test, config));
 
-  const tests = _.map(
-    suite.tests,
-    test => {
-      const cleanedTest = cleanTest(test, config);
-      duration += test.duration || 0;
-      if (cleanedTest.state === 'passed') passingTests.push(cleanedTest.uuid);
-      if (cleanedTest.state === 'failed') failingTests.push(cleanedTest.uuid);
-      if (cleanedTest.pending) pendingTests.push(cleanedTest.uuid);
-      if (cleanedTest.skipped) skippedTests.push(cleanedTest.uuid);
-      return cleanedTest;
-    }
-  );
+  const tests = suite.tests.map(test => {
+    const cleanedTest = cleanTest(test, config);
+    duration += test.duration || 0;
+    if (cleanedTest.state === 'passed') passingTests.push(cleanedTest.uuid);
+    if (cleanedTest.state === 'failed') failingTests.push(cleanedTest.uuid);
+    if (cleanedTest.pending) pendingTests.push(cleanedTest.uuid);
+    if (cleanedTest.skipped) skippedTests.push(cleanedTest.uuid);
+    return cleanedTest;
+  });
 
   totalTestsRegistered.total += tests.length;
 
@@ -255,10 +252,10 @@ function cleanSuite(suite, totalTestsRegistered, config) {
     _timeout: suite._timeout
   };
 
-  const isEmptySuite = _.isEmpty(cleaned.suites)
-    && _.isEmpty(cleaned.tests)
-    && _.isEmpty(cleaned.beforeHooks)
-    && _.isEmpty(cleaned.afterHooks);
+  const isEmptySuite = isEmpty(cleaned.suites)
+    && isEmpty(cleaned.tests)
+    && isEmpty(cleaned.beforeHooks)
+    && isEmpty(cleaned.afterHooks);
 
   return !isEmptySuite && cleaned;
 }
@@ -273,9 +270,15 @@ function cleanSuite(suite, totalTestsRegistered, config) {
  * @param {Object} config         Reporter configuration
  */
 function mapSuites(suite, totalTestsReg, config) {
-  const suites = _.compact(_.map(suite.suites, subSuite => (
-    mapSuites(subSuite, totalTestsReg, config)
-  )));
+  console.log(suite.suites.length);
+  const suites = suite.suites.reduce((acc, subSuite) => {
+    console.log(subSuite);
+    const mappedSuites = mapSuites(subSuite, totalTestsReg, config);
+    if (mappedSuites) {
+      acc.push(mappedSuites);
+    }
+    return acc;
+  }, []);
   const toBeCleaned = Object.assign({}, suite, { suites });
   return cleanSuite(toBeCleaned, totalTestsReg, config);
 }
