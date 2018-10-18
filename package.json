@@ -1,7 +1,7 @@
 {
   "name": "mochawesome",
   "version": "4.0.0-alpha.0",
-  "description": "A Gorgeous HTML/CSS Reporter for Mocha.js",
+  "description": "A gorgeous reporter for Mocha.js",
   "scripts": {
     "lint": "eslint src test",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha",
@@ -10,8 +10,7 @@
     "test:mem": "mocha test-functional/mem-test.js --opts test-functional/mocha.opts",
     "test:ctx": "mocha test-functional/test-context.js --opts test-functional/mocha.opts",
     "tdd": "npm run lint && cross-env NODE_ENV=test nyc mocha --watch",
-    "build": "cp -r src/ dist/",
-    "prepack": "npm run test && npm run build"
+    "prepack": "npm run test"
   },
   "author": "Adam Gruber",
   "license": "MIT",
@@ -25,10 +24,10 @@
     "json",
     "html"
   ],
-  "main": "dist/mochawesome.js",
+  "main": "src/mochawesome.js",
   "files": [
     "addContext.js",
-    "dist"
+    "src"
   ],
   "nyc": {
     "include": [
