@@ -24,7 +24,7 @@ const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
     create: reportStub
   },
-  'mocha/lib/reporters/spec': () => {},
+  'mocha/lib/reporters/spec': function Spec() {},
   './utils': utils
 });
 

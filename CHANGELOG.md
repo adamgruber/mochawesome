@@ -1,6 +1,12 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Drop support for Node <6
+- Removed Babel dependency
+- Replace lodash dependency with individual modules
+- Updated codeclimate config to version 2
+- Updated various dependencies
 
 ## [3.1.1] / 2018-10-22
 ### Changed
