@@ -5,6 +5,7 @@ const mochaUtils = require('mocha/lib/utils');
 const stringify = require('json-stringify-safe');
 const diff = require('diff');
 const stripAnsi = require('strip-ansi');
+const stripFnStart = require('./stripFnStart');
 
 /**
  * Return a classname based on percentage
@@ -52,8 +53,9 @@ function getPercentClass(pct) {
 function cleanCode(str) {
   str = str
     .replace(/\r\n|[\r\n\u2028\u2029]/g, '\n') // unify linebreaks
-    .replace(/^\uFEFF/, '') // replace zero-width no-break space
-    .replace(/^(?:.|\s)*?(?:{|=>) *\n?(?:\(|{)?/, '') // replace function declaration
+    .replace(/^\uFEFF/, ''); // replace zero-width no-break space
+
+  str = stripFnStart(str) // replace function declaration
     .replace(/\)\s*\)\s*$/, ')') // replace closing paren
     .replace(/\s*};?\s*$/, ''); // replace closing bracket
 
