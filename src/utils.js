@@ -270,9 +270,7 @@ function cleanSuite(suite, totalTestsRegistered, config) {
  * @param {Object} config         Reporter configuration
  */
 function mapSuites(suite, totalTestsReg, config) {
-  console.log(suite.suites.length);
   const suites = suite.suites.reduce((acc, subSuite) => {
-    console.log(subSuite);
     const mappedSuites = mapSuites(subSuite, totalTestsReg, config);
     if (mappedSuites) {
       acc.push(mappedSuites);
