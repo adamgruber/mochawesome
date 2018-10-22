@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [3.1.1] / 2018-10-22
 ### Changed
 - Switch from RegExp to state machine for stripping function start in `cleanCode` method. [#257](https://github.com/adamgruber/mochawesome/issues/257)
 
@@ -167,7 +169,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/3.1.1...HEAD
+[3.1.1]: https://github.com/adamgruber/mochawesome/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/adamgruber/mochawesome/compare/3.0.3...3.1.0
 [3.0.3]: https://github.com/adamgruber/mochawesome/compare/3.0.2...3.0.3
 [3.0.2]: https://github.com/adamgruber/mochawesome/compare/3.0.1...3.0.2
