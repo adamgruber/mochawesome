@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Switch from RegExp to state machine for stripping function start in `cleanCode` method. [#257](https://github.com/adamgruber/mochawesome/issues/257)
 
 ## [3.1.0] / 2018-10-17
 ### Changed
