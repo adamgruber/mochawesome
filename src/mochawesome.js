@@ -108,11 +108,11 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const allSuites = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
+        const rootSuite = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
 
         const obj = {
           stats: this.stats,
-          suites: allSuites,
+          results: [ rootSuite ],
           copyrightYear: new Date().getFullYear()
         };
 

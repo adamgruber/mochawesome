@@ -116,7 +116,7 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
       subSuite.file = 'testfile.js';
       runner.run(failureCount => {
-        mochaReporter.output.suites.suites[0].fullFile.should.equal('testfile.js');
+        mochaReporter.output.results[0].suites[0].fullFile.should.equal('testfile.js');
         done();
       });
     });
@@ -129,7 +129,7 @@ describe('Mochawesome Reporter', () => {
         subSuite[hookType](`${hookType} passing hook`, () => {});
         subSuite.addTest(test);
         runner.run(failureCount => {
-          const testSuite = mochaReporter.output.suites.suites[0];
+          const testSuite = mochaReporter.output.results[0].suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);
@@ -146,7 +146,7 @@ describe('Mochawesome Reporter', () => {
         });
         subSuite.addTest(test);
         runner.run(failureCount => {
-          const testSuite = mochaReporter.output.suites.suites[0];
+          const testSuite = mochaReporter.output.results[0].suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);
