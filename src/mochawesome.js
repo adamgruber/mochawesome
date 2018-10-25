@@ -8,7 +8,6 @@ const utils = require('./utils');
 // Import the utility functions
 const {
   log,
-  getPercentClass,
   mapSuites
 } = utils;
 
@@ -129,8 +128,6 @@ function Mochawesome(runner, options) {
         obj.stats.skipped = testsRegistered - tests;
         obj.stats.hasSkipped = obj.stats.skipped > 0;
         obj.stats.failures -= obj.stats.other;
-        obj.stats.passPercentClass = getPercentClass(passPercentage);
-        obj.stats.pendingPercentClass = getPercentClass(pendingPercentage);
 
         // Save the final output to be used in the done function
         this.output = obj;
