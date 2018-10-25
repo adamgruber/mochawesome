@@ -28,23 +28,6 @@ function log(msg, level, config) {
 }
 
 /**
- * Return a classname based on percentage
- *
- * @param {Integer} pct - percentage
- *
- * @return {String} classname
- */
-function getPercentClass(pct) {
-  if (pct <= 50) {
-    return 'danger';
-  } else if (pct > 50 && pct < 80) {
-    return 'warning';
-  } else {
-    return 'success';
-  }
-}
-
-/**
  * Strip the function definition from `str`,
  * and re-indent for pre whitespace.
  *
@@ -283,7 +266,6 @@ function mapSuites(suite, totalTestsReg, config) {
 
 module.exports = {
   log,
-  getPercentClass,
   cleanCode,
   cleanTest,
   cleanSuite,
