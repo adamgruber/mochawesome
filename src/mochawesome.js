@@ -1,9 +1,12 @@
 const Base = require('mocha/lib/reporters/base');
 const Spec = require('mocha/lib/reporters/spec');
+const mochaPkg = require('mocha/package.json');
 const uuid = require('uuid');
 const marge = require('mochawesome-report-generator');
+const margePkg = require('mochawesome-report-generator/package.json');
 const conf = require('./config');
 const utils = require('./utils');
+const pkg = require('../package.json');
 
 // Import the utility functions
 const {
@@ -111,7 +114,20 @@ function Mochawesome(runner, options) {
 
         const obj = {
           stats: this.stats,
-          results: [ rootSuite ]
+          results: [ rootSuite ],
+          meta: {
+            mocha: {
+              version: mochaPkg.version
+            },
+            mochawesome: {
+              config: this.config,
+              version: pkg.version
+            },
+            marge: {
+              options: options.reporterOptions,
+              version: margePkg.version
+            }
+          }
         };
 
         obj.stats.testsRegistered = totalTestsRegistered.total;
