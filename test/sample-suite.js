@@ -202,7 +202,6 @@ module.exports = {
         context: undefined,
         code: '',
         err: {},
-        isRoot: undefined,
         uuid: 'e061e2eb-e4aa-49e4-b6f3-41bbb23752a9',
         parentUUID: undefined,
         skipped: false,

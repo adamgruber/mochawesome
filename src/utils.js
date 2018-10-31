@@ -169,7 +169,6 @@ function cleanTest(test, config) {
     context: stringify(test.context, null, 2),
     code: code && cleanCode(code),
     err: (test.err && normalizeErr(test.err, config)) || {},
-    isRoot: test.parent && test.parent.root,
     uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
     parentUUID: test.parent && test.parent.uuid,
     isHook: test.type === 'hook'

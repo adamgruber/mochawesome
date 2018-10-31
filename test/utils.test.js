@@ -194,7 +194,6 @@ describe('Mochawesome Utils', () => {
       'context',
       'code',
       'err',
-      'isRoot',
       'uuid',
       'parentUUID',
       'skipped',
