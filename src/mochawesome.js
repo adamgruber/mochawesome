@@ -111,8 +111,7 @@ function Mochawesome(runner, options) {
 
         const obj = {
           stats: this.stats,
-          results: [ rootSuite ],
-          copyrightYear: new Date().getFullYear()
+          results: [ rootSuite ]
         };
 
         obj.stats.testsRegistered = totalTestsRegistered.total;
