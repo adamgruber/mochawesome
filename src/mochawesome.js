@@ -116,7 +116,7 @@ function Mochawesome(runner, options) {
               version: mochaPkg.version
             },
             mochawesome: {
-              config: this.config,
+              options: this.config,
               version: pkg.version
             },
             marge: {
