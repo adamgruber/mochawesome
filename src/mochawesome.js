@@ -134,7 +134,7 @@ function Mochawesome(runner, options) {
 
         obj.stats.passPercent = passPercentage;
         obj.stats.pendingPercent = pendingPercentage;
-        obj.stats.other = (passes + failures + pending) - tests;
+        obj.stats.other = (passes + failures + pending) - tests; // Failed hooks
         obj.stats.hasOther = obj.stats.other > 0;
         obj.stats.skipped = testsRegistered - tests;
         obj.stats.hasSkipped = obj.stats.skipped > 0;
