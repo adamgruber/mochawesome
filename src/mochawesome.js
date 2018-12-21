@@ -90,15 +90,11 @@ function Mochawesome(runner, options) {
 
   let endCalled = false;
 
-  // Add a unique identifier to each test/hook
-  runner.on('test', test => {
-    test.uuid = uuid.v4();
-  });
-  runner.on('hook', hook => {
-    hook.uuid = uuid.v4();
-  });
-  runner.on('pending', test => {
-    test.uuid = uuid.v4();
+  // Add a unique identifier to each suite/test/hook
+  [ 'suite', 'test', 'hook', 'pending' ].forEach(type => {
+    runner.on(type, item => {
+      item.uuid = uuid.v4();
+    });
   });
 
   // Process the full suite

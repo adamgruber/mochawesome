@@ -216,7 +216,7 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   totalTestsRegistered.total += tests.length;
 
   const cleaned = {
-    uuid: uuid.v4(),
+    uuid: suite.uuid || /* istanbul ignore next: default */uuid.v4(),
     title: stripAnsi(suite.title),
     fullFile: suite.file || '',
     file: suite.file ? suite.file.replace(process.cwd(), '') : '',
