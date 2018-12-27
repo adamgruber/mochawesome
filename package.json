@@ -53,7 +53,7 @@
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2",
     "lodash.isstring": "^4.0.1",
-    "mochawesome-report-generator": "^3.1.4",
+    "mochawesome-report-generator": "^4.0.0-alpha.0",
     "strip-ansi": "^5.0.0",
     "uuid": "^3.3.2"
   },
