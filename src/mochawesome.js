@@ -119,9 +119,10 @@ function Mochawesome(runner, options) {
         obj.stats.testsRegistered = totalTestsRegistered.total;
 
         const { passes, failures, pending, tests, testsRegistered } = obj.stats;
-        const passPercentage = Math.round((passes / (testsRegistered - pending)) * 1000) / 10;
-        const pendingPercentage = Math.round((pending / testsRegistered) * 1000) /10;
-
+        const passPercentageUnrounded = (passes/(passes + failures)) * 100;
+        const passPercentage = Math.round(passPercentageUnrounded * 100) / 100; // Rounds to two decimal places        
+        const pendingPercentageUnrounded = (pending/testsRegistered) * 100;
+        const pendingPercentage = Math.round(pendingPercentageUnrounded * 100) / 100; // Rounds to two decimal places
         obj.stats.passPercent = passPercentage;
         obj.stats.pendingPercent = pendingPercentage;
         obj.stats.other = (passes + failures + pending) - tests;
