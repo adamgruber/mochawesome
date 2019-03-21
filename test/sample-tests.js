@@ -196,7 +196,7 @@ module.exports = {
         message: 'AssertionError: { a: 2 } undefined { a: 1 }',
         estack: 'AssertionError: { a: 2 } undefined { a: 1 }',
         diff: [
-          { count: 6, value: '{\n  "a": ' },
+          { count: 7, value: '{\n  "a": ' },
           { count: 1, added: undefined, removed: true, value: '2' },
           { count: 1, added: true, removed: undefined, value: '1' },
           { count: 2, value: '\n}' }
