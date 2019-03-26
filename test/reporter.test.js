@@ -25,6 +25,9 @@ const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
     create: reportStub
   },
+  '../../mochawesome-report-generator': {
+    create: reportStub
+  },
   'mocha/lib/reporters/spec': function Spec() {},
   './utils': utils
 });
@@ -35,7 +38,6 @@ describe('Mochawesome Reporter', () => {
   let subSuite;
   let runner;
   let mochaReporter;
-
 
   beforeEach(() => {
     mocha = new Mocha({ reporter: mochawesome });
