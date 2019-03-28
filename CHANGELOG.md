@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Changed
-- Drop support for Node <6
+- Drop support for Node <8
 - Removed Babel dependency
 - Replace lodash dependency with individual modules
 - Updated codeclimate config to version 2
