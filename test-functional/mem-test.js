@@ -1,9 +1,16 @@
+const assert = require('assert');
+
+const chance = (percent, passValue, failValue = null) => (
+  Math.random() < percent ? passValue : failValue
+);
+
 /* Test courtesy of @adaphi */
 describe('mochawesome hook test', () => {
   // Change this to drastically alter the memory impact
   const numTests = 1000;
 
-  function genTestBody(skip) {
+  function genTestBody(opts) {
+    const { skip, pass } = opts;
     return function (done) {
       // This just needs to contain a lot of stuff.
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -39,6 +46,7 @@ describe('mochawesome hook test', () => {
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
       // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
       if (skip) this.skip();
+      assert(pass);
       done();
     };
   }
@@ -60,10 +68,15 @@ describe('mochawesome hook test', () => {
   after('after hook 1', done => done());
   after('after hook 2', done => done());
 
-  for (let i=1; i <= numTests; i++) {
-    it(`test ${i}`, genTestBody());
-  }
-  for (let i=1; i <= numTests; i++) {
-    it(`skip test ${i}`, genTestBody(true));
+  it(
+    'test failed',
+    genTestBody({ pass: false, skip: false })
+  );
+
+  for (let i = 1; i <= numTests; i++) {
+    it(
+      `test ${i}`,
+      genTestBody({ pass: chance(1, true, false), skip: chance(0, true, false) })
+    );
   }
 });

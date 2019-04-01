@@ -1,3 +1,4 @@
 --stack-trace
 --require should
 --reporter src/mochawesome
+--reporter-options dev=true
