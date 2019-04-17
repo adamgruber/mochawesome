@@ -225,7 +225,7 @@ function cleanSuite(suite, totalTestsRegistered, config) {
     suite.tests,
     test => {
       const cleanedTest = cleanTest(test, config);
-      duration += test.duration;
+      duration += test.duration || 0;
       if (cleanedTest.state === 'passed') passingTests.push(cleanedTest.uuid);
       if (cleanedTest.state === 'failed') failingTests.push(cleanedTest.uuid);
       if (cleanedTest.pending) pendingTests.push(cleanedTest.uuid);

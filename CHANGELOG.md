@@ -1,28 +1,30 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- Issue where a suite with skipped tests reports duration as `0`. [#276](https://github.com/adamgruber/mochawesome/issues/276)
 
-## [3.1.1] / 2018-10-22
+## [3.1.1] - 2018-10-22
 ### Changed
 - Switch from RegExp to state machine for stripping function start in `cleanCode` method. [#257](https://github.com/adamgruber/mochawesome/issues/257)
 
-## [3.1.0] / 2018-10-17
+## [3.1.0] - 2018-10-17
 ### Changed
 - Invert logic for getting test code by checking for `test.body` before `test.fn` inside `cleanTest` method [#252](https://github.com/adamgruber/mochawesome/issues/252)
 
-## [3.0.3] / 2018-07-25
+## [3.0.3] - 2018-07-25
 ### Changed
 - Reworked `cleanCode` regexes to handle more cases [#244](https://github.com/adamgruber/mochawesome/issues/244)
 
-## [3.0.2] / 2018-01-25
+## [3.0.2] - 2018-01-25
 ### Changed
 - Call `stripAnsi` for test/suite titles. [#223](https://github.com/adamgruber/mochawesome/pull/223) (@JoeTheFkingFrypan)
 
-## [3.0.1] / 2017-12-26
+## [3.0.1] - 2017-12-26
 ### Fixed
 - Updated RegExp in `cleanCode` method to handle arrow functions without braces. [#220](https://github.com/adamgruber/mochawesome/issues/220)
 
-## [3.0.0] / 2017-11-30
+## [3.0.0] - 2017-11-30
 This release is in tandem with and requires mochawesome-report-generator >= 3.0.0.
 
 ### Added
