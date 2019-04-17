@@ -1,4 +1,5 @@
 const Mocha = require('mocha');
+const createStatsCollector = require('mocha/lib/stats-collector');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const Assert = require('assert').AssertionError;
@@ -42,6 +43,7 @@ describe('Mochawesome Reporter', () => {
     subSuite = new Suite('Mochawesome Suite', 'root');
     suite.addSuite(subSuite);
     runner = new Runner(suite);
+    createStatsCollector(runner);
     mochaReporter = new mocha._reporter(runner, {
       reporterOptions: {
         quiet: true
