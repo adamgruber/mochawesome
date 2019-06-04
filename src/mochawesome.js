@@ -1,14 +1,16 @@
 const Base = require('mocha/lib/reporters/base');
 const Spec = require('mocha/lib/reporters/spec');
+const mochaPkg = require('mocha/package.json');
 const uuid = require('uuid');
 const marge = require('mochawesome-report-generator');
+const margePkg = require('mochawesome-report-generator/package.json');
 const conf = require('./config');
 const utils = require('./utils');
+const pkg = require('../package.json');
 
 // Import the utility functions
 const {
   log,
-  getPercentClass,
   mapSuites
 } = utils;
 
@@ -88,15 +90,11 @@ function Mochawesome(runner, options) {
 
   let endCalled = false;
 
-  // Add a unique identifier to each test/hook
-  runner.on('test', test => {
-    test.uuid = uuid.v4();
-  });
-  runner.on('hook', hook => {
-    hook.uuid = uuid.v4();
-  });
-  runner.on('pending', test => {
-    test.uuid = uuid.v4();
+  // Add a unique identifier to each suite/test/hook
+  [ 'suite', 'test', 'hook', 'pending' ].forEach(type => {
+    runner.on(type, item => {
+      item.uuid = uuid.v4();
+    });
   });
 
   // Process the full suite
@@ -108,29 +106,39 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const allSuites = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
+        const rootSuite = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
 
         const obj = {
           stats: this.stats,
-          suites: allSuites,
-          copyrightYear: new Date().getFullYear()
+          results: [ rootSuite ],
+          meta: {
+            mocha: {
+              version: mochaPkg.version
+            },
+            mochawesome: {
+              options: this.config,
+              version: pkg.version
+            },
+            marge: {
+              options: options.reporterOptions,
+              version: margePkg.version
+            }
+          }
         };
 
         obj.stats.testsRegistered = totalTestsRegistered.total;
 
         const { passes, failures, pending, tests, testsRegistered } = obj.stats;
-        const passPercentage = Math.round((passes / (testsRegistered - pending)) * 1000) / 10;
-        const pendingPercentage = Math.round((pending / testsRegistered) * 1000) /10;
+        const passPercentage = (passes / (testsRegistered - pending)) * 100;
+        const pendingPercentage = (pending / testsRegistered) * 100;
 
         obj.stats.passPercent = passPercentage;
         obj.stats.pendingPercent = pendingPercentage;
-        obj.stats.other = (passes + failures + pending) - tests;
+        obj.stats.other = (passes + failures + pending) - tests; // Failed hooks
         obj.stats.hasOther = obj.stats.other > 0;
         obj.stats.skipped = testsRegistered - tests;
         obj.stats.hasSkipped = obj.stats.skipped > 0;
         obj.stats.failures -= obj.stats.other;
-        obj.stats.passPercentClass = getPercentClass(passPercentage);
-        obj.stats.pendingPercentClass = getPercentClass(pendingPercentage);
 
         // Save the final output to be used in the done function
         this.output = obj;

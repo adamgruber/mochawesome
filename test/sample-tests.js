@@ -75,7 +75,6 @@ module.exports = {
       context: undefined,
       code: '',
       err: {},
-      isRoot: false,
       uuid: '0e877e24-a28b-4869-bcb4-7c3529d84ef6',
       parentUUID: 'a8a6bd0a-3e18-4aa3-ba36-f660e07ebed8',
       skipped: false,
@@ -176,7 +175,6 @@ module.exports = {
         estack: 'AssertionError: { a: 2 } undefined { a: 1 }',
         diff: ' {\n-   \"a\": 2\n+   \"a\": 1\n }\n'
       },
-      isRoot: false,
       uuid: '2bcbe88c-acd6-4a53-ba3a-61a59188d5b0',
       parentUUID: '56508f44-b4e6-40f0-bae8-b15e0720f120',
       skipped: false,
@@ -198,13 +196,12 @@ module.exports = {
         message: 'AssertionError: { a: 2 } undefined { a: 1 }',
         estack: 'AssertionError: { a: 2 } undefined { a: 1 }',
         diff: [
-          { count: 6, value: '{\n  "a": ' },
+          { count: 7, value: '{\n  "a": ' },
           { count: 1, added: undefined, removed: true, value: '2' },
           { count: 1, added: true, removed: undefined, value: '1' },
           { count: 2, value: '\n}' }
         ]
       },
-      isRoot: false,
       uuid: '2bcbe88c-acd6-4a53-ba3a-61a59188d5b0',
       parentUUID: '56508f44-b4e6-40f0-bae8-b15e0720f120',
       skipped: false,
@@ -278,7 +275,6 @@ module.exports = {
       context: undefined,
       code: '',
       err: {},
-      isRoot: false,
       uuid: '6e8e6fe4-b2a1-4cdf-8f94-099f98b5b472',
       parentUUID: '88d24c3c-9262-4f6f-9419-a9fe259e3c95',
       skipped: false,
@@ -484,7 +480,6 @@ module.exports = {
         diff: undefined,
         estack: 'ReferenceError: a is not defined\n    at Context.<anonymous> (test-functional/test-hooks.js:4:19)'
       },
-      isRoot: false,
       uuid: '51933158-66a0-4b6c-bc04-65d7ce24804b',
       parentUUID: '3303effe-2b74-4156-a141-6cf51324e8f5',
       isHook: true,

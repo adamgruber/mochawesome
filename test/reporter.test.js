@@ -25,7 +25,7 @@ const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
     create: reportStub
   },
-  'mocha/lib/reporters/spec': () => {},
+  'mocha/lib/reporters/spec': function Spec() {},
   './utils': utils
 });
 
@@ -35,7 +35,6 @@ describe('Mochawesome Reporter', () => {
   let subSuite;
   let runner;
   let mochaReporter;
-
 
   beforeEach(() => {
     mocha = new Mocha({ reporter: mochawesome });
@@ -59,7 +58,6 @@ describe('Mochawesome Reporter', () => {
       runner.run(failureCount => {
         failureCount.should.equal(0);
         mochaReporter.stats.passPercent.should.equal(100);
-        mochaReporter.stats.passPercentClass.should.equal('success');
         done();
       });
     });
@@ -72,7 +70,6 @@ describe('Mochawesome Reporter', () => {
       runner.run(failureCount => {
         failureCount.should.equal(1);
         mochaReporter.stats.passPercent.should.equal(0);
-        mochaReporter.stats.passPercentClass.should.equal('danger');
         done();
       });
     });
@@ -101,7 +98,6 @@ describe('Mochawesome Reporter', () => {
         mochaReporter.stats.passes.should.equal(3);
         mochaReporter.stats.failures.should.equal(1);
         mochaReporter.stats.passPercent.should.equal(75);
-        mochaReporter.stats.passPercentClass.should.equal('warning');
         done();
       });
     });
@@ -118,7 +114,7 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
       subSuite.file = 'testfile.js';
       runner.run(failureCount => {
-        mochaReporter.output.suites.suites[0].fullFile.should.equal('testfile.js');
+        mochaReporter.output.results[0].suites[0].fullFile.should.equal('testfile.js');
         done();
       });
     });
@@ -131,7 +127,7 @@ describe('Mochawesome Reporter', () => {
         subSuite[hookType](`${hookType} passing hook`, () => {});
         subSuite.addTest(test);
         runner.run(failureCount => {
-          const testSuite = mochaReporter.output.suites.suites[0];
+          const testSuite = mochaReporter.output.results[0].suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);
@@ -148,7 +144,7 @@ describe('Mochawesome Reporter', () => {
         });
         subSuite.addTest(test);
         runner.run(failureCount => {
-          const testSuite = mochaReporter.output.suites.suites[0];
+          const testSuite = mochaReporter.output.results[0].suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
           beforeHooks.length.should.equal(isBefore ? 1 : 0);

@@ -1,6 +1,20 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Drop support for Node <8
+- Removed Babel dependency
+- Replace lodash dependency with individual modules
+- Updated codeclimate config to version 2
+- Updated various dependencies
+- **Breaking changes to JSON data structure**
+  - Renamed `allSuites` to `results` and made it an array of suites
+  - Removed `isRoot` property from cleaned tests (only suites can be a root)
+  - Removed class-related stats (`passPercentClass`, `pendingPercentClass`)
+  - Added `uuid` to suites
+  - Removed rounding of `passPercent` and `pendingPercent`
+  - Removed `copyrightYear` property
+  - Added new `meta` property to track info about the test run (useful for debugging)
 
 ## [3.1.2] - 2019-04-17
 ### Fixed

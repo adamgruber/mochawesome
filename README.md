@@ -2,7 +2,7 @@ mochawesome
 ===========
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/github/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=4) and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to helps visualize your test runs.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=8) and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to helps visualize your test runs.
 
 
 ## Features
@@ -19,7 +19,6 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 - Filters to display only the tests you want
 - Responsive and mobile-friendly
 - Offline viewing
-- Support for IE9+
 
 ## Usage
 

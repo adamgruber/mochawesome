@@ -3,4 +3,4 @@
  *
  */
 
-module.exports = require('./dist/addContext');
+module.exports = require('./src/addContext');

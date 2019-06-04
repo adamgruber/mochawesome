@@ -2,11 +2,10 @@ const Mocha = require('mocha');
 const fs = require('fs');
 const path = require('path');
 require('should');
-require('babel-register');
 
 // Instantiate a Mocha instance.
 const mocha = new Mocha({
-  reporter: 'mochawesome',
+  reporter: path.resolve(__dirname, '../src/mochawesome'),
   reporterOptions: {
     reportFilename: 'adam',
     timestamp: 'dd yyyy'
@@ -24,6 +23,6 @@ fs.readdirSync(testDir)
 // Run the tests.
 mocha.run(failures => {
   process.on('exit', () => {
-    process.exit(failures);  // exit with non-zero status if there were failures
+    process.exit(failures); // exit with non-zero status if there were failures
   });
 });

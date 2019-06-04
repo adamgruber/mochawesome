@@ -3,6 +3,16 @@ const addContext = require('../src/addContext');
 describe('addContext', () => {
   let testObj;
   let test;
+  let origConsoleError;
+
+  beforeEach(() => {
+    origConsoleError = console.error;
+    console.error = function () {};
+  });
+
+  afterEach(() => {
+    console.error = origConsoleError;
+  });
 
   function contextTests() {
     it('as a string', () => {

@@ -9,7 +9,6 @@ const utils = proxyquire('../src/utils', {
 
 const {
   log,
-  getPercentClass,
   cleanCode,
   cleanTest,
   cleanSuite
@@ -52,20 +51,6 @@ describe('Mochawesome Utils', () => {
       const exp = `[\u001b[90mmochawesome\u001b[39m] {\n  "msg": "${msg}"\n}\n`;
       console.log.called.should.be.true();
       console.log.args[0][0].should.equal(exp);
-    });
-  });
-
-  describe('getPercentClass', () => {
-    it('should return \'danger\'', () => {
-      getPercentClass(50).should.equal('danger');
-    });
-
-    it('should return \'warning\'', () => {
-      getPercentClass(63).should.equal('warning');
-    });
-
-    it('should return \'success\'', () => {
-      getPercentClass(85).should.equal('success');
     });
   });
 
@@ -209,7 +194,6 @@ describe('Mochawesome Utils', () => {
       'context',
       'code',
       'err',
-      'isRoot',
       'uuid',
       'parentUUID',
       'skipped',
