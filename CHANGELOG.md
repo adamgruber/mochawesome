@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Drop support for Node <8
+- Require peer dependency of mocha >5
 - Removed Babel dependency
 - Replace lodash dependency with individual modules
 - Updated codeclimate config to version 2
