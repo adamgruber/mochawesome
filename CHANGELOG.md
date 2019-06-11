@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [4.0.0] - 2019-06-04
 ### Changed
 - Drop support for Node <8
 - Require peer dependency of mocha >5
@@ -188,7 +190,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/3.1.2...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/adamgruber/mochawesome/compare/3.1.2...4.0.0
 [3.1.2]: https://github.com/adamgruber/mochawesome/compare/3.1.1...3.1.2
 [3.1.1]: https://github.com/adamgruber/mochawesome/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/adamgruber/mochawesome/compare/3.0.3...3.1.0
