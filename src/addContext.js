@@ -69,10 +69,11 @@ function _isValidContext(ctx) {
 
 const addContext = function (...args) {
   // Check args to see if we should bother continuing
-  if ((args.length !== 2) || !isObject(args[0])) {
+  /*if ((args.length !== 2) || !isObject(args[0])) {
     log(ERRORS.INVALID_ARGS, 'error');
     return;
-  }
+  }*/
+  const global = args[2] || false;
 
   const ctx = args[1];
 
@@ -86,7 +87,16 @@ const addContext = function (...args) {
    * If `addContext` is called from inside a `beforeEach` or `afterEach`
    * the test object will be `.currentTest`, otherwise just `.test`
    */
-  const test = args[0].currentTest || args[0].test;
+  
+ // args[0].currentTest != undefined?  currentTitle = args[0].currentTest.title : currentTitle = "no currentTest var ";;
+//args[0].test !=undefined?  testTitle = args[0].test.title :  testTitle = "no test var "
+if (global ==  true){
+  test = args[0].test;
+}else{
+  test = args[0].currentTest || args[0].test ;
+}
+  //console.log("global ",global, " currentTest : ",currentTitle , " test : ", testTitle , "-> context in : ", test.title)
+
 
   if (!test) {
     log(ERRORS.INVALID_TEST, 'error');
