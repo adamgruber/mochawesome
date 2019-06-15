@@ -83,10 +83,19 @@ const addContext = function (...args) {
   }
 
   /* Context is valid, now get the test object
-   * If `addContext` is called from inside a `beforeEach` or `afterEach`
-   * the test object will be `.currentTest`, otherwise just `.test`
+   * If `addContext` is called from inside a hook the test object
+   * will be `.currentTest`, and the hook will be `.test`.
+   * Otherwise the test is just `.test` and `.currentTest` is undefined.
    */
-  const test = args[0].currentTest || args[0].test;
+  const currentTest = args[0].currentTest;
+  const activeTest = args[0].test;
+
+  /* For `before` and `after`, add the context to the hook,
+   * otherwise add it to the actual test.
+   */
+  const isEachHook = currentTest
+    && /^"(?:before|after)\seach"/.test(activeTest.title);
+  const test = isEachHook ? currentTest : activeTest;
 
   if (!test) {
     log(ERRORS.INVALID_TEST, 'error');

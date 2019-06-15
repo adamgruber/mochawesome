@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- Issue where using `addContext` inside a `before` or `after` hook would incorrectly apply context to the test [#284](https://github.com/adamgruber/mochawesome/issues/284)
 
 ## [4.0.0] - 2019-06-04
 ### Changed
