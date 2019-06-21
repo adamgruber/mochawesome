@@ -243,12 +243,12 @@ describe('Mochawesome Reporter', () => {
           }
         });
         runner.run(failureCount => {
+          specStub.called.should.equal(true);
           mochaReporter.config.should.deepEqual(expected({
             consoleReporter: 'unknown'
           }));
           done();
         });
-        specStub.called.should.equal(true);
       });
 
       it('should allow overriding the console reporter', done => {
@@ -262,6 +262,38 @@ describe('Mochawesome Reporter', () => {
           nyanStub.called.should.equal(true);
           mochaReporter.config.should.deepEqual(expected({
             consoleReporter: 'nyan'
+          }));
+          done();
+        });
+      });
+
+      it('should disable the console reporter with the none reporter', done => {
+        specStub.reset();
+        mochaReporter = makeReporter({
+          reporterOptions: {
+            consoleReporter: 'none'
+          }
+        });
+        runner.run(failureCount => {
+          specStub.called.should.equal(false);
+          mochaReporter.config.should.deepEqual(expected({
+            consoleReporter: 'none'
+          }));
+          done();
+        });
+      });
+
+      it('should disable the console reporter with quiet option', done => {
+        specStub.reset();
+        mochaReporter = makeReporter({
+          reporterOptions: {
+            quiet: true
+          }
+        });
+        runner.run(failureCount => {
+          specStub.called.should.equal(false);
+          mochaReporter.config.should.deepEqual(expected({
+            quiet: true
           }));
           done();
         });

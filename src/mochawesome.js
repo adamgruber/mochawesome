@@ -105,8 +105,11 @@ function Mochawesome(runner, options) {
   // Call the Base mocha reporter
   Base.call(this, runner);
 
-  const ConsoleReporter = consoleReporter(this.config.consoleReporter);
-  new ConsoleReporter(runner); // eslint-disable-line
+  const reporterName = reporterOptions.consoleReporter;
+  if (!reporterOptions.quiet && reporterName !== 'none') {
+    const ConsoleReporter = consoleReporter(reporterName);
+    new ConsoleReporter(runner); // eslint-disable-line
+  }
 
   let endCalled = false;
 
