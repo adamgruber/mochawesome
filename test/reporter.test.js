@@ -282,22 +282,6 @@ describe('Mochawesome Reporter', () => {
           done();
         });
       });
-
-      it('should disable the console reporter with quiet option', done => {
-        specStub.reset();
-        mochaReporter = makeReporter({
-          reporterOptions: {
-            quiet: true
-          }
-        });
-        runner.run(failureCount => {
-          specStub.called.should.equal(false);
-          mochaReporter.config.should.deepEqual(expected({
-            quiet: true
-          }));
-          done();
-        });
-      });
     });
   });
 

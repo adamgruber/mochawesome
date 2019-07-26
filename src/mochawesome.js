@@ -59,13 +59,16 @@ function done(output, options, config, failures, exit) {
  * @return {Object} Reporter class object
  */
 function consoleReporter(reporter) {
-  try {
-    // eslint-disable-next-line import/no-dynamic-require
-    return require(`mocha/lib/reporters/${reporter}`);
-  } catch (e) {
-    log(`Unknown console reporter '${reporter}', defaulting to spec`);
-    return require('mocha/lib/reporters/spec');
+  if (reporter) {
+    try {
+      // eslint-disable-next-line import/no-dynamic-require
+      return require(`mocha/lib/reporters/${reporter}`);
+    } catch (e) {
+      log(`Unknown console reporter '${reporter}', defaulting to spec`);
+    }
   }
+
+  return require('mocha/lib/reporters/spec');
 }
 
 /**
@@ -106,7 +109,7 @@ function Mochawesome(runner, options) {
   Base.call(this, runner);
 
   const reporterName = reporterOptions.consoleReporter;
-  if (!reporterOptions.quiet && reporterName !== 'none') {
+  if (reporterName !== 'none') {
     const ConsoleReporter = consoleReporter(reporterName);
     new ConsoleReporter(runner); // eslint-disable-line
   }

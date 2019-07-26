@@ -97,7 +97,7 @@ The options below are specific to the reporter. For a list of all available opti
 
 Option Name | Type | Default | Description
 :---------- | :--- | :------ | :----------
-`quiet` | boolean | false | Silence console messages and test report output
+`quiet` | boolean | false | Silence console messages
 `reportFilename` | string | mochawesome | Filename of saved report <br> *Applies to the generated html and json files.*
 `html` | boolean | true | Save the HTML output for the test run
 `json` | boolean | true | Save the JSON output for the test run
