@@ -35,6 +35,7 @@ module.exports = function (opts) {
     reportFilename: _getOption('reportFilename', reporterOpts, false, 'mochawesome'),
     saveHtml: _getOption('html', reporterOpts, true, true),
     saveJson: _getOption('json', reporterOpts, true, true),
+    consoleReporter: _getOption('consoleReporter', reporterOpts, false, 'spec'),
     useInlineDiffs: !!opts.useInlineDiffs
   };
 };

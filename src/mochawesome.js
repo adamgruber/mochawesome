@@ -1,5 +1,4 @@
 const Base = require('mocha/lib/reporters/base');
-const Spec = require('mocha/lib/reporters/spec');
 const mochaPkg = require('mocha/package.json');
 const uuid = require('uuid');
 const marge = require('mochawesome-report-generator');
@@ -49,6 +48,30 @@ function done(output, options, config, failures, exit) {
 }
 
 /**
+ * Get the class of the configured console reporter. This reporter outputs
+ * test results to the console while mocha is running, and before
+ * mochawesome generates its own report.
+ *
+ * Defaults to 'spec'.
+ *
+ * @param {String} reporter   Name of reporter to use for console output
+ *
+ * @return {Object} Reporter class object
+ */
+function consoleReporter(reporter) {
+  if (reporter) {
+    try {
+      // eslint-disable-next-line import/no-dynamic-require
+      return require(`mocha/lib/reporters/${reporter}`);
+    } catch (e) {
+      log(`Unknown console reporter '${reporter}', defaulting to spec`);
+    }
+  }
+
+  return require('mocha/lib/reporters/spec');
+}
+
+/**
  * Initialize a new reporter.
  *
  * @param {Runner} runner
@@ -85,8 +108,11 @@ function Mochawesome(runner, options) {
   // Call the Base mocha reporter
   Base.call(this, runner);
 
-  // Show the Spec Reporter in the console
-  new Spec(runner); // eslint-disable-line
+  const reporterName = reporterOptions.consoleReporter;
+  if (reporterName !== 'none') {
+    const ConsoleReporter = consoleReporter(reporterName);
+    new ConsoleReporter(runner); // eslint-disable-line
+  }
 
   let endCalled = false;
 

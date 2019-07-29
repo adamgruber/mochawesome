@@ -10,6 +10,8 @@ const makeTest = (title, doneFn) => new Test(title, doneFn);
 
 const reportStub = sinon.stub();
 const logStub = sinon.stub();
+const specStub = sinon.stub();
+const nyanStub = sinon.stub();
 
 utils.log = logStub;
 
@@ -18,14 +20,16 @@ const baseConfig = {
   reportFilename: 'mochawesome',
   saveHtml: true,
   saveJson: true,
-  useInlineDiffs: false
+  useInlineDiffs: false,
+  consoleReporter: 'spec'
 };
 
 const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
     create: reportStub
   },
-  'mocha/lib/reporters/spec': function Spec() {},
+  'mocha/lib/reporters/spec': specStub,
+  'mocha/lib/reporters/nyan': nyanStub,
   './utils': utils
 });
 
@@ -224,6 +228,56 @@ describe('Mochawesome Reporter', () => {
         runner.run(failureCount => {
           mochaReporter.config.should.deepEqual(expected({
             useInlineDiffs: true
+          }));
+          done();
+        });
+      });
+    });
+
+    describe('console reporter', () => {
+      it('should default to spec console reporter', done => {
+        specStub.reset();
+        mochaReporter = makeReporter({
+          reporterOptions: {
+            consoleReporter: 'unknown'
+          }
+        });
+        runner.run(failureCount => {
+          specStub.called.should.equal(true);
+          mochaReporter.config.should.deepEqual(expected({
+            consoleReporter: 'unknown'
+          }));
+          done();
+        });
+      });
+
+      it('should allow overriding the console reporter', done => {
+        nyanStub.reset();
+        mochaReporter = makeReporter({
+          reporterOptions: {
+            consoleReporter: 'nyan'
+          }
+        });
+        runner.run(failureCount => {
+          nyanStub.called.should.equal(true);
+          mochaReporter.config.should.deepEqual(expected({
+            consoleReporter: 'nyan'
+          }));
+          done();
+        });
+      });
+
+      it('should disable the console reporter with the none reporter', done => {
+        specStub.reset();
+        mochaReporter = makeReporter({
+          reporterOptions: {
+            consoleReporter: 'none'
+          }
+        });
+        runner.run(failureCount => {
+          specStub.called.should.equal(false);
+          mochaReporter.config.should.deepEqual(expected({
+            consoleReporter: 'none'
           }));
           done();
         });
