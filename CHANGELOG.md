@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.1.0] - 2019-08-06
+### Added
+- New `consoleReporter` option to allow specifying console reporter to use or disabling console reporter entirely [#99](https://github.com/adamgruber/mochawesome/issues/99)
+
 ## [4.0.1] - 2019-06-15
 ### Fixed
 - Issue where using `addContext` inside a `before` or `after` hook would incorrectly apply context to the test [#284](https://github.com/adamgruber/mochawesome/issues/284)
@@ -194,7 +198,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/4.0.1...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/4.1.0...HEAD
+[4.1.0]: https://github.com/adamgruber/mochawesome/compare/4.0.1...4.1.0
 [4.0.1]: https://github.com/adamgruber/mochawesome/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/adamgruber/mochawesome/compare/3.1.2...4.0.0
 [3.1.2]: https://github.com/adamgruber/mochawesome/compare/3.1.1...3.1.2
