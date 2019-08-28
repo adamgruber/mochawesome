@@ -81,6 +81,16 @@ function Mochawesome(runner, options) {
   // Set the config options
   this.config = conf(options);
 
+  // If the runner doesn't have a stats object then we're probably
+  // running under Mocha 6 but were started in a way that didn't
+  // initialize the stats collector.  Attempt to remedy that here.
+  if (!runner.stats) {
+    const createStatsCollector = require('mocha/lib/stats-collector');
+    if (typeof createStatsCollector === 'function') {
+      createStatsCollector(runner);
+    }
+  }
+
   // Reporter options
   const reporterOptions = Object.assign(
     {},
