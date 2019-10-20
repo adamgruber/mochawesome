@@ -156,9 +156,13 @@ function cleanTest(test, config) {
     code = test.fn ? test.fn.toString() : '';
   }
 
+  const fullTitle = isFunction(test.fullTitle)
+    ? stripAnsi(test.fullTitle())
+    : stripAnsi(test.title);
+
   const cleaned = {
     title: stripAnsi(test.title),
-    fullTitle: isFunction(test.fullTitle) ? stripAnsi(test.fullTitle()) : /* istanbul ignore next */ stripAnsi(test.title),
+    fullTitle,
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,
@@ -259,7 +263,7 @@ function mapSuites(suite, totalTestsReg, config) {
     }
     return acc;
   }, []);
-  const toBeCleaned = Object.assign({}, suite, { suites });
+  const toBeCleaned = { ...suite, suites };
   return cleanSuite(toBeCleaned, totalTestsReg, config);
 }
 
