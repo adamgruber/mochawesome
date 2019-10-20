@@ -170,7 +170,7 @@ describe('Mochawesome Reporter', () => {
 
   describe('Options Handling', () => {
     const makeReporter = opts => new mocha._reporter(runner, opts);
-    const expected = opts => Object.assign({}, baseConfig, opts);
+    const expected = opts => ({ ...baseConfig, ...opts });
 
     beforeEach(() => {
       subSuite.addTest(makeTest('test', () => {}));

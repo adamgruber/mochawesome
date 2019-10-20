@@ -82,15 +82,12 @@ function Mochawesome(runner, options) {
   this.config = conf(options);
 
   // Reporter options
-  const reporterOptions = Object.assign(
-    {},
-    (options.reporterOptions || {}),
-    {
-      reportFilename: this.config.reportFilename,
-      saveHtml: this.config.saveHtml,
-      saveJson: this.config.saveJson
-    }
-  );
+  const reporterOptions = {
+    ...options.reporterOptions,
+    reportFilename: this.config.reportFilename,
+    saveHtml: this.config.saveHtml,
+    saveJson: this.config.saveJson
+  };
 
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the HTML report
