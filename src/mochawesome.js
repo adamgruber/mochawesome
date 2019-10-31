@@ -106,7 +106,7 @@ function Mochawesome(runner, options) {
   Base.call(this, runner);
 
   const reporterName = reporterOptions.consoleReporter;
-  if (reporterName !== 'none') {
+  if (reporterName !== 'none' && !reporterOptions.silent) {
     const ConsoleReporter = consoleReporter(reporterName);
     new ConsoleReporter(runner); // eslint-disable-line
   }
