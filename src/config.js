@@ -30,12 +30,16 @@ function _getOption(optToGet, options, isBool, defaultValue) {
 
 module.exports = function (opts) {
   const reporterOpts = (opts && opts.reporterOptions) || {};
+  const code = _getOption('code', reporterOpts, true, true);
+  const noCode = _getOption('no-code', reporterOpts, true, false);
+
   return {
     quiet: _getOption('quiet', reporterOpts, true, false),
     reportFilename: _getOption('reportFilename', reporterOpts, false, 'mochawesome'),
     saveHtml: _getOption('html', reporterOpts, true, true),
     saveJson: _getOption('json', reporterOpts, true, true),
     consoleReporter: _getOption('consoleReporter', reporterOpts, false, 'spec'),
-    useInlineDiffs: !!opts.useInlineDiffs
+    useInlineDiffs: !!opts.useInlineDiffs,
+    code: noCode ? false : code
   };
 };

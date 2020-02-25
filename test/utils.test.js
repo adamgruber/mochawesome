@@ -180,7 +180,7 @@ describe('Mochawesome Utils', () => {
   });
 
   describe('cleanTest', () => {
-    const config = {};
+    const config = { code: true };
     const expectedProps = [
       'title',
       'fullTitle',
@@ -213,7 +213,7 @@ describe('Mochawesome Utils', () => {
     });
 
     it('returns cleaned failing test with inline diff', () => {
-      const cleaned = cleanTest(sampleTests.failing.raw, { useInlineDiffs: true });
+      const cleaned = cleanTest(sampleTests.failing.raw, { code: true, useInlineDiffs: true });
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.failing.cleanedWithInlineDiff);
     });
@@ -229,10 +229,16 @@ describe('Mochawesome Utils', () => {
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.hook.cleaned);
     });
+
+    it('returns cleaned test when `code` is `false`', () => {
+      const cleaned = cleanTest(sampleTests.hook.raw, { code: false });
+      cleaned.should.have.properties(expectedProps);
+      cleaned.code.should.equal('');
+    });
   });
 
   describe('cleanSuite', () => {
-    const config = {};
+    const config = { code: true };
     const totalTestsRegistered = { total: 0 };
     const expectedProps = [
       'title',
