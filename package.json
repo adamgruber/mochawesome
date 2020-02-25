@@ -58,7 +58,7 @@
     "uuid": "^3.3.2"
   },
   "peerDependencies": {
-    "mocha": ">=5"
+    "mocha": ">=7"
   },
   "devDependencies": {
     "cross-env": "^6.0.3",
