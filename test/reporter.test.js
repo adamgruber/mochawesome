@@ -12,6 +12,7 @@ const reportStub = sinon.stub();
 const logStub = sinon.stub();
 const specStub = sinon.stub();
 const nyanStub = sinon.stub();
+const statsCollectorStub = sinon.stub();
 
 utils.log = logStub;
 
@@ -30,6 +31,7 @@ const mochawesome = proxyquire('../src/mochawesome', {
   },
   'mocha/lib/reporters/spec': specStub,
   'mocha/lib/reporters/nyan': nyanStub,
+  'mocha/lib/stats-collector': statsCollectorStub,
   './utils': utils
 });
 
@@ -51,6 +53,21 @@ describe('Mochawesome Reporter', () => {
       reporterOptions: {
         quiet: true
       }
+    });
+  });
+
+  describe('Stats Collector', () => {
+    beforeEach(() => {
+      delete runner.stats;
+      mochaReporter = new mocha._reporter(runner, {
+        reporterOptions: {
+          quiet: true
+        }
+      });
+    });
+
+    it('should initialize stats collector', () => {
+      statsCollectorStub.called.should.equal(true);
     });
   });
 

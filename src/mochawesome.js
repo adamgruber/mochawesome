@@ -81,6 +81,12 @@ function Mochawesome(runner, options) {
   // Set the config options
   this.config = conf(options);
 
+  // Ensure stats collector has been initialized
+  if (!runner.stats) {
+    const createStatsCollector = require('mocha/lib/stats-collector');
+    createStatsCollector(runner);
+  }
+
   // Reporter options
   const reporterOptions = {
     ...options.reporterOptions,
