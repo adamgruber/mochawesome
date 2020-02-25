@@ -17,7 +17,6 @@ const {
 describe('Mochawesome Utils', () => {
   describe('log', () => {
     const msg = 'Dry land is not a myth!';
-    const expected = '[\u001b[90mmochawesome\u001b[39m] Dry land is not a myth!\n';
 
     beforeEach(() => {
       sinon.spy(console, 'log');
@@ -37,20 +36,19 @@ describe('Mochawesome Utils', () => {
     it('logs a message, default level: log', () => {
       log(msg);
       console.log.called.should.be.true();
-      console.log.args[0][0].should.equal(expected);
+      console.log.args[0][0].includes(msg).should.equal(true);
     });
 
     it('logs a message, specified level: error', () => {
       log(msg, 'error');
       console.error.called.should.be.true();
-      console.error.args[0][0].should.equal(expected);
+      console.error.args[0][0].includes(msg).should.equal(true);
     });
 
     it('logs a stringified object, default level: log', () => {
       log({ msg });
-      const exp = `[\u001b[90mmochawesome\u001b[39m] {\n  "msg": "${msg}"\n}\n`;
       console.log.called.should.be.true();
-      console.log.args[0][0].should.equal(exp);
+      console.log.args[0][0].includes(`{\n  "msg": "${msg}"\n}`).should.equal(true);
     });
   });
 
