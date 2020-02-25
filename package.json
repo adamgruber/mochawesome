@@ -55,7 +55,7 @@
     "lodash.isstring": "^4.0.1",
     "mochawesome-report-generator": "^4.0.0",
     "strip-ansi": "^6.0.0",
-    "uuid": "^3.3.2"
+    "uuid": "^7.0.0"
   },
   "peerDependencies": {
     "mocha": ">=7"
