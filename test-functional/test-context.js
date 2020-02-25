@@ -1,27 +1,29 @@
 const addContext = require('../src/addContext');
 
+const sampleObj = {
+  employees: {
+    employee: [
+      {
+        id: '1',
+        firstName: 'Tom',
+        lastName: 'Cruise'
+      },
+      {
+        id: '2',
+        firstName: 'Maria',
+        lastName: 'Sharapova'
+      },
+      {
+        id: '3',
+        firstName: 'James',
+        lastName: 'Bond'
+      }
+    ]
+  }
+};
+
 function retObj() {
-  return {
-    employees: {
-      employee: [
-        {
-          id: '1',
-          firstName: 'Tom',
-          lastName: 'Cruise'
-        },
-        {
-          id: '2',
-          firstName: 'Maria',
-          lastName: 'Sharapova'
-        },
-        {
-          id: '3',
-          firstName: 'James',
-          lastName: 'Bond'
-        }
-      ]
-    }
-  };
+  return sampleObj;
 }
 
 describe('Master Test Suite', () => {
@@ -65,10 +67,10 @@ describe('Master Test Suite', () => {
     it('should have json context', function (done) {
       addContext(this, {
         title: 'sample return object',
-        value: { employees: [] }
+        value: sampleObj
       });
       const o = retObj();
-      o.should.eql({});
+      o.should.eql(sampleObj);
       done();
     });
     it('should have array context', function (done) {

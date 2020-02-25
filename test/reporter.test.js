@@ -22,7 +22,8 @@ const baseConfig = {
   saveHtml: true,
   saveJson: true,
   useInlineDiffs: false,
-  consoleReporter: 'spec'
+  consoleReporter: 'spec',
+  code: true
 };
 
 const mochawesome = proxyquire('../src/mochawesome', {

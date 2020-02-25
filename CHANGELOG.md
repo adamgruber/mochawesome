@@ -1,6 +1,12 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Drop support for node 8
+
+### Fixed
+- Ensure a stats collector is always initialized
+- Omit code snippets from JSON when `code` option is `false`
 
 ## [4.1.0] - 2019-08-06
 ### Added

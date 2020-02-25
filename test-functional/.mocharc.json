@@ -1,0 +1,5 @@
+{
+  "require": ["should"],
+  "reporter": "src/mochawesome",
+  "reporterOption": []
+}
