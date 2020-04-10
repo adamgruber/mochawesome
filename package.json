@@ -46,7 +46,7 @@
     "branches": 90
   },
   "dependencies": {
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "diff": "^4.0.1",
     "json-stringify-safe": "^5.0.1",
     "lodash.isempty": "^4.4.0",
@@ -55,20 +55,20 @@
     "lodash.isstring": "^4.0.1",
     "mochawesome-report-generator": "^5.0.0",
     "strip-ansi": "^6.0.0",
-    "uuid": "^7.0.0"
+    "uuid": "^7.0.3"
   },
   "peerDependencies": {
     "mocha": ">=7"
   },
   "devDependencies": {
-    "cross-env": "^7.0.0",
+    "cross-env": "^7.0.2",
     "eslint": "^6.5.1",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "mocha": ">=5",
-    "nyc": "^15.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
     "proxyquire": "^2.1.0",
     "should": "^13.2.3",
-    "sinon": "^9.0.0"
+    "sinon": "^9.0.2"
   }
 }

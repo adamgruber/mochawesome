@@ -5,6 +5,7 @@
 ## [6.0.0] - 2020-04-10
 ### Changed
 - **BREAKING** Bump mochawesome-report-generator to 5.0.0 (Requires `react` and `react-dom` be installed separately)
+- Update all other dependencies
 
 ## [5.0.0] - 2020-02-25
 ### Changed
