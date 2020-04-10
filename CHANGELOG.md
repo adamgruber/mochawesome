@@ -20,6 +20,15 @@
 - Issue where using `addContext` inside a `before` or `after` hook would incorrectly apply context to the test [#284](https://github.com/adamgruber/mochawesome/issues/284)
 
 ## [4.0.0] - 2019-06-04
+- **Breaking changes to JSON data structure:**
+- Renamed `allSuites` to `results` and made it an array of suites
+- Removed `isRoot` property from cleaned tests (only suites can be a root)
+- Removed class-related stats (`passPercentClass`, `pendingPercentClass`)
+- Added `uuid` to suites
+- Removed rounding of `passPercent` and `pendingPercent`
+- Removed `copyrightYear` property
+- Added new `meta` property to track info about the test run (useful for debugging)
+
 ### Changed
 - Drop support for Node <8
 - Require peer dependency of mocha >5
@@ -27,14 +36,6 @@
 - Replace lodash dependency with individual modules
 - Updated codeclimate config to version 2
 - Updated various dependencies
-- **Breaking changes to JSON data structure**
-  - Renamed `allSuites` to `results` and made it an array of suites
-  - Removed `isRoot` property from cleaned tests (only suites can be a root)
-  - Removed class-related stats (`passPercentClass`, `pendingPercentClass`)
-  - Added `uuid` to suites
-  - Removed rounding of `passPercent` and `pendingPercent`
-  - Removed `copyrightYear` property
-  - Added new `meta` property to track info about the test run (useful for debugging)
 
 ## [3.1.2] - 2019-04-17
 ### Fixed
@@ -62,68 +63,79 @@
 
 ## [3.0.0] - 2017-11-30
 This release is in tandem with and requires mochawesome-report-generator >= 3.0.0.
-
 ### Added
 - New option: `html`. Allows user to specify whether or not to generate the HTML report. Defaults to `true`.
 
 ### Changed
 - **BREAKING:** This release features a trimmed-down data output that removes properties that are not necessary for the report generation. This change will only affect things that consume the JSON output and does not affect usage of the reporter itself.
-
 - Suites are now cleaned by mapping over them instead of a breadth-first traversal
-
 - Options handling was overhauled and greatly simplified. The reporter will only concern itself with options directly related to the reporter. All other options are passed through to the report generator as-is.
-
 - Updated the `done` function to display better output when only one or no files have been generated.
 
 ### Removed
 - `enableTestCode` option was deprecated as of 2.0.3 and has been removed. Use `enableCode` instead.
 
-### [2.3.1]
+## [2.3.1]
+### Fixed
 - Fixes an issue where generator functions were not displayed properly [#188](https://github.com/adamgruber/mochawesome/pull/188) (@APshenkin)
 
-### [2.3.0]
+## [2.3.0]
+### Added
 - Added `showHooks` option [#168](https://github.com/adamgruber/mochawesome/pull/168)
 - Support mocha's `--inline-diffs` option [#167](https://github.com/adamgruber/mochawesome/pull/167)
 - Normalize error objects for consistent display [#166](https://github.com/adamgruber/mochawesome/pull/166)
 - Bumped mochawesome-report-generator dependency to 2.2.0
 
-### [2.2.1]
+## [2.2.1]
+### Changed
 - Separated out before and after hooks
 - Bumped mochawesome-report-generator dependency to 2.1.0
 
-### [2.2.0]
+## [2.2.0]
+### Changed
 - Enable using `addContext` in `beforeEach` and `afterEach` test hooks
 - Fix a bug where you could pass an object with empty title string to `addContext`
 - Allow a context value of `undefined` to be displayed in the report
 
-### [2.1.0]
+## [2.1.0]
+### Added
 - Added new options: `overwrite` and `timestamp`
 
-### [2.0.5]
+## [2.0.5]
+### Fixed
 - Fix `UnhandledPromiseRejectionWarning` error when calling nonexistant `exit` function
 - Limit files included in package
 
-### [2.0.4]
+## [2.0.4]
+### Changed
 - Better handling of different coding styles in test code. [#98](https://github.com/adamgruber/mochawesome/issues/98)
 - Separate utility functions from main reporter code for better test coverage
 - Bump `mochawesome-report-generator` and `fs-extra` packages
 
-### [2.0.3]
-- Fixed [#126](https://github.com/adamgruber/mochawesome/issues/126)
-- Fix default options handling
+## [2.0.3]
+### Added
 - Add `enableCode` option to be consistent with mochawesome-report-generator options
-- Deprecate `enableTestCode` option
 - Add `dev` option for testing
 
-### [2.0.2]
+### Changed
+- Deprecate `enableTestCode` option
+
+### Fixed
+- Fixed [#126](https://github.com/adamgruber/mochawesome/issues/126)
+- Fix default options handling
+
+## [2.0.2]
+### Fixed
 - Fixed [#111](https://github.com/adamgruber/mochawesome/issues/111)
 
-### [2.0.1]
+## [2.0.1]
+### Fixed
 - Fixed an issue where `reportFilename` was not propagated to `config` object
 - Updated handling of `reportDir` option to allow relative paths
 - Bumped mochawesome-report-generator dependency (requires 1.0.3 or higher)
 
 ## [2.0.0]
+### Changed
 - Moved report generation to mochawesome-report package
 - Updated dependencies
 - Switched from jshint to eslint
@@ -133,73 +145,95 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Unit tests!
 - Added diff for test error
 - Added ability to display additional test context
+- **Breaking** `reportName` option changed to `reportFilename`
 
-**Breaking Changes**
-- `reportName` option changed to `reportFilename`
-
-### [1.5.4]
+## [1.5.4]
+### Changed
 - Run pending tests thru `cleanTest` function. Fixes possible scenario where a pending test with a large amount of text could cause node to run out of memory. See [#94](https://github.com/adamgruber/mochawesome/issues/94)
 
-### [1.5.3]
+## [1.5.3]
+### Fixed
 - Fixed build issues on Windows. See [#84](https://github.com/adamgruber/mochawesome/pull/84)
 
-### [1.5.2]
+## [1.5.2]
+### Changed
 - Updated mocha peerDependency to allow any version
 
-### [1.5.1]
+## [1.5.1]
+### Added
 - Added missing LICENSE.md file
 
-### [1.5.0]
+## [1.5.0]
+### Changed
 - Moved mocha to peerDependencies and devDependencies and fixed it to `~2`. See [#69](https://github.com/adamgruber/mochawesome/issues/69)
 
-### [1.4.0]
+## [1.4.0]
+### Added
 - Added slide-over navigation menu for quickly jumping to a test suite. See [#49](https://github.com/adamgruber/mochawesome/issues/49)
 
-### [1.3.5]
+## [1.3.5]
+### Fixed
 - Removed extra slash in `@font-path` LESS variable. See [#53](https://github.com/adamgruber/mochawesome/issues/53)
 
-### [1.3.4]
+## [1.3.4]
+### Added
 - Added option to auto open report. Also fixed an issue with boolean options. See [#44](https://github.com/adamgruber/mochawesome/issues/44)
 
-### [1.3.3]
+## [1.3.3]
+### Added
 - Added support for creating custom dir where the parent dir(s) may not exist yet. See [#40](https://github.com/adamgruber/mochawesome/issues/40)
 
-### [1.3.2]
+## [1.3.2]
+### Fixed
 - Removed `allHooks` array since it was not being used and could lead to an issue where node runs out of memory while rendering the template. See [#33](https://github.com/adamgruber/mochawesome/issues/33)
 
-### [1.3.1]
+## [1.3.1]
+### Changed
 - Update copyright in template
 
-### [1.3.0]
+## [1.3.0]
+### Fixed
 - Changes to support mocha 2.4.0 and later (fixes empty code blocks). See [#29](https://github.com/adamgruber/mochawesome/issues/29)
 
-### [1.2.2]
+## [1.2.2]
+### Added
 - Added option to generate report with all assets inlined. See [#26](https://github.com/adamgruber/mochawesome/issues/26)
 
-### [1.2.1]
+## [1.2.1]
+### Fixed
 - Reset `totalTestsRegistered` when reporter is run. [PR #21](https://github.com/adamgruber/mochawesome/pull/21)
 
-### [1.2.0]
+## [1.2.0]
+### Added
 - Enhancement: custom report title option. Closes [#11](https://github.com/adamgruber/mochawesome/issues/11)
+
+### Fixed
 - Fixed indentation in code block and stack traces
 
-### [1.1.2]
+## [1.1.2]
+### Fixed
 - Fixes [#10](https://github.com/adamgruber/mochawesome/issues/10)
 
-### [1.1.1]
+## [1.1.1]
+### Added
 - Add filter icon in summary for better visibility (Completely new idea and not at all in response to [this](https://github.com/adamgruber/mochawesome/issues/5))
+
+### Changed
 - Change util.print to console.log due to [deprecation](https://github.com/joyent/node/blob/master/doc/api/util.markdown#user-content-utilprint)
 
-### [1.1.0]
+## [1.1.0]
+### Added
 - Add support for options
-  - custom report directory
-  - custom report filename
+- custom report directory
+- custom report filename
 - Enhancements to console output
 
-### 1.0.1 - 1.0.5
+## [1.0.5]
+### Changed
 - Bugfixes
 
-## [1.0.0]
+## 1.0.0
+### Added
 - Redesigned report
 - Mobile friendly
 - Complete refactor of client-side script
@@ -247,5 +281,5 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 [1.2.0]: https://github.com/adamgruber/mochawesome/compare/1.1.2...1.2.0
 [1.1.2]: https://github.com/adamgruber/mochawesome/compare/1.1.1...1.1.2
 [1.1.1]: https://github.com/adamgruber/mochawesome/compare/1.1.0...1.1.1
-[1.1.0]: https://github.com/adamgruber/mochawesome/compare/1.0.0...1.1.0
-[1.0.0]: https://github.com/adamgruber/mochawesome/compare/0.3.3...1.0.0
+[1.1.0]: https://github.com/adamgruber/mochawesome/compare/1.0.5...1.1.0
+[1.0.5]: https://github.com/adamgruber/mochawesome/compare/1.0.0...1.0.5
