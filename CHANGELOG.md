@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Bump mochawesome-report-generator to 5.0.0
 
 ## [5.0.0] - 2020-02-25
 ### Changed
