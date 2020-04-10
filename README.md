@@ -1,6 +1,6 @@
 mochawesome
 ===========
-[![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) [![Build Status](https://img.shields.io/travis/adamgruber/mochawesome/master.svg?style=flat-square)](https://travis-ci.org/adamgruber/mochawesome) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general) [![Code Climate](https://img.shields.io/codeclimate/coverage/adamgruber/mochawesome.svg?style=flat-square)](https://codeclimate.com/github/adamgruber/mochawesome)
+[![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) ![Node.js CI](https://github.com/adamgruber/mochawesome/workflows/Node.js%20CI/badge.svg) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general)
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=10) and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to help visualize your test runs.
 
@@ -22,9 +22,9 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 
 ## Usage
 
-1. Add Mochawesome to your project:
+1. Add Mochawesome and React peer deps to your project:
 
-  `npm install --save-dev mochawesome`
+  `npm install --save-dev mochawesome react react-dom`
 
 2. Tell mocha to use the Mochawesome reporter:
 
