@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- No longer requires react or react-dom as peer deps
 
 ## [6.0.0] - 2020-04-10
 ### Changed

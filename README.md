@@ -22,9 +22,9 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 
 ## Usage
 
-1. Add Mochawesome and React peer deps to your project:
+1. Add Mochawesome to your project:
 
-  `npm install --save-dev mochawesome react react-dom`
+  `npm install --save-dev mochawesome`
 
 2. Tell mocha to use the Mochawesome reporter:
 
