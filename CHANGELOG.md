@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [6.1.1] - 2020-04-27
 ### Fixed
 - Restore inline-diff rendering [#312](https://github.com/adamgruber/mochawesome/issues/312)
 
@@ -252,7 +254,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/6.1.0...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/6.1.1...HEAD
+[6.1.1]: https://github.com/adamgruber/mochawesome/compare/6.1.0...6.1.1
 [6.1.0]: https://github.com/adamgruber/mochawesome/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/adamgruber/mochawesome/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/adamgruber/mochawesome/compare/4.1.0...5.0.0
