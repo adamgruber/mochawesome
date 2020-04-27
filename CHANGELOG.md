@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- Restore inline-diff rendering [#312](https://github.com/adamgruber/mochawesome/issues/312)
 
 ## [6.1.0] - 2020-04-13
 ### Changed

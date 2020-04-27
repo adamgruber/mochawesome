@@ -239,7 +239,7 @@ describe('Mochawesome Reporter', () => {
 
     describe('mocha options', () => {
       beforeEach(() => {
-        mochaReporter = makeReporter({ useInlineDiffs: true });
+        mochaReporter = makeReporter({ inlineDiffs: true });
       });
 
       it('should transfer mocha options', done => {
