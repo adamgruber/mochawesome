@@ -39,7 +39,7 @@ module.exports = function (opts) {
     saveHtml: _getOption('html', reporterOpts, true, true),
     saveJson: _getOption('json', reporterOpts, true, true),
     consoleReporter: _getOption('consoleReporter', reporterOpts, false, 'spec'),
-    useInlineDiffs: !!opts.useInlineDiffs,
+    useInlineDiffs: !!opts.inlineDiffs,
     code: noCode ? false : code
   };
 };
