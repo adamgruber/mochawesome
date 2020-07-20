@@ -49,6 +49,11 @@ describe('Mochawesome Reporter', () => {
     subSuite = new Suite('Mochawesome Suite', 'root');
     suite.addSuite(subSuite);
     runner = new Runner(suite);
+
+    // Overwrite runner's `uncaughtEnd` function to prevent
+    // mocha exiting the run on a test failure
+    runner.uncaughtEnd = () => {};
+
     createStatsCollector(runner);
     mochaReporter = new mocha._reporter(runner, {
       reporterOptions: {
