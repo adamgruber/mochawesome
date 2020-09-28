@@ -7,20 +7,20 @@ function retObj() {
         {
           id: '1',
           firstName: 'Tom',
-          lastName: 'Cruise'
+          lastName: 'Cruise',
         },
         {
           id: '2',
           firstName: 'Maria',
-          lastName: 'Sharapova'
+          lastName: 'Sharapova',
         },
         {
           id: '3',
           firstName: 'James',
-          lastName: 'Bond'
-        }
-      ]
-    }
+          lastName: 'Bond',
+        },
+      ],
+    },
   };
 }
 
@@ -32,7 +32,7 @@ describe('Master Test Suite', () => {
 
   describe('Test Suite - Basic', () => {
     it('should be passing test if true is not false', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
     it('should fail when returned object does not match expected object', done => {
@@ -45,25 +45,25 @@ describe('Master Test Suite', () => {
   describe('Test Suite - Nested Suites', () => {
     describe('Nested Test Suite', () => {
       it('should be a passing test', done => {
-        (1+1).should.equal(2);
+        (1 + 1).should.equal(2);
         done();
       });
     });
     it('passing test', function (done) {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       addContext(this, 'https://github.com/adamgruber');
       done();
     });
     describe('Nested Test Suite', () => {
       it('passing test', done => {
-        (1+1).should.equal(2);
+        (1 + 1).should.equal(2);
         done();
       });
     });
     it('should be a failing test', function (done) {
       addContext(this, {
         title: 'How I Feel When Tests Fail',
-        value: 'http://i.imgur.com/c4jt321.png'
+        value: 'http://i.imgur.com/c4jt321.png',
       });
       false.should.equal(true);
       done();
@@ -76,19 +76,19 @@ describe('Master Test Suite', () => {
     });
     describe('Nested Test Suite', () => {
       it('passing test', done => {
-        (1+1).should.equal(2);
+        (1 + 1).should.equal(2);
         done();
       });
     });
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
   });
 
   describe('Test Suite - Failed After', () => {
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
     xit('pending test', done => {
@@ -99,7 +99,7 @@ describe('Master Test Suite', () => {
       done();
     });
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
     xit('pending test', done => {
@@ -112,7 +112,7 @@ describe('Master Test Suite', () => {
 
   describe('Test Suite - Pass', () => {
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
   });
@@ -126,7 +126,7 @@ describe('Master Test Suite', () => {
 
   describe('Test Suite - Pend', () => {
     xit('pending test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
   });
@@ -136,7 +136,7 @@ describe('Master Test Suite', () => {
       console.log(a); // eslint-disable-line
     });
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
 
@@ -151,7 +151,7 @@ describe('Master Test Suite', () => {
       console.log(a); // eslint-disable-line
     });
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
 
@@ -169,7 +169,7 @@ describe('Master Test Suite', () => {
       console.log(a); // eslint-disable-line
     });
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
 
@@ -181,7 +181,7 @@ describe('Master Test Suite', () => {
 
   describe('Test Suite - Failed After Each', () => {
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
     xit('pending test', done => {
@@ -192,7 +192,7 @@ describe('Master Test Suite', () => {
       done();
     });
     it('passing test', done => {
-      (1+1).should.equal(2);
+      (1 + 1).should.equal(2);
       done();
     });
     xit('pending test', done => {

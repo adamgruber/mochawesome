@@ -4,15 +4,10 @@ const sampleTests = require('./sample-tests');
 const sampleSuite = require('./sample-suite');
 
 const utils = proxyquire('../src/utils', {
-  uuid: { v4: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' }
+  uuid: { v4: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' },
 });
 
-const {
-  log,
-  cleanCode,
-  cleanTest,
-  cleanSuite
-} = utils;
+const { log, cleanCode, cleanTest, cleanSuite } = utils;
 
 describe('Mochawesome Utils', () => {
   describe('log', () => {
@@ -48,7 +43,9 @@ describe('Mochawesome Utils', () => {
     it('logs a stringified object, default level: log', () => {
       log({ msg });
       console.log.called.should.be.true();
-      console.log.args[0][0].includes(`{\n  "msg": "${msg}"\n}`).should.equal(true);
+      console.log.args[0][0]
+        .includes(`{\n  "msg": "${msg}"\n}`)
+        .should.equal(true);
     });
   });
 
@@ -131,8 +128,11 @@ describe('Mochawesome Utils', () => {
     });
 
     it('should clean multi-line code', () => {
-      fnStr = 'function () { var a = 1; return function add(b) { return a + b; }; };';
-      cleanCode(fnStr).should.equal('var a = 1; return function add(b) { return a + b; };');
+      fnStr =
+        'function () { var a = 1; return function add(b) { return a + b; }; };';
+      cleanCode(fnStr).should.equal(
+        'var a = 1; return function add(b) { return a + b; };'
+      );
     });
 
     it('should clean code with comments', () => {
@@ -143,11 +143,11 @@ describe('Mochawesome Utils', () => {
         '  function adamf() {',
         '    return b > 3; // make func',
         '  }',
-        '  console.log(\'test\'); // log the test',
+        "  console.log('test'); // log the test",
         '  var a = b;',
         '  /* return the thing */',
         '  return true;',
-        '};'
+        '};',
       ].join('\n');
       const exp = [
         'var b = 2; // set var',
@@ -155,10 +155,10 @@ describe('Mochawesome Utils', () => {
         'function adamf() {',
         '  return b > 3; // make func',
         '}',
-        'console.log(\'test\'); // log the test',
+        "console.log('test'); // log the test",
         'var a = b;',
         '/* return the thing */',
-        'return true;'
+        'return true;',
       ].join('\n');
       cleanCode(fnStr).should.equal(exp);
     });
@@ -195,7 +195,7 @@ describe('Mochawesome Utils', () => {
       'uuid',
       'parentUUID',
       'skipped',
-      'isHook'
+      'isHook',
     ];
 
     it('returns cleaned passing test', () => {
@@ -211,7 +211,10 @@ describe('Mochawesome Utils', () => {
     });
 
     it('returns cleaned failing test with inline diff', () => {
-      const cleaned = cleanTest(sampleTests.failing.raw, { code: true, useInlineDiffs: true });
+      const cleaned = cleanTest(sampleTests.failing.raw, {
+        code: true,
+        useInlineDiffs: true,
+      });
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.failing.cleanedWithInlineDiff);
     });
@@ -254,23 +257,35 @@ describe('Mochawesome Utils', () => {
       'uuid',
       'duration',
       'rootEmpty',
-      '_timeout'
+      '_timeout',
     ];
 
     it('cleans a root suite', () => {
-      const cleaned = cleanSuite(sampleSuite.one.raw, totalTestsRegistered, config);
+      const cleaned = cleanSuite(
+        sampleSuite.one.raw,
+        totalTestsRegistered,
+        config
+      );
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleSuite.one.cleaned);
     });
 
     it('cleans a non-root suite', () => {
-      const cleaned = cleanSuite(sampleSuite.two.raw, totalTestsRegistered, config);
+      const cleaned = cleanSuite(
+        sampleSuite.two.raw,
+        totalTestsRegistered,
+        config
+      );
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleSuite.two.cleaned);
     });
 
     it('cleans an empty suite', () => {
-      const cleaned = cleanSuite(sampleSuite.three.raw, totalTestsRegistered, config);
+      const cleaned = cleanSuite(
+        sampleSuite.three.raw,
+        totalTestsRegistered,
+        config
+      );
       cleaned.should.equal(sampleSuite.three.cleaned);
     });
   });
