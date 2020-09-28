@@ -1,8 +1,7 @@
 const assert = require('assert');
 
-const chance = (percent, passValue, failValue = null) => (
-  Math.random() < percent ? passValue : failValue
-);
+const chance = (percent, passValue, failValue = null) =>
+  Math.random() < percent ? passValue : failValue;
 
 /* Test courtesy of @adaphi */
 describe('mochawesome hook test', () => {
@@ -68,15 +67,15 @@ describe('mochawesome hook test', () => {
   after('after hook 1', done => done());
   after('after hook 2', done => done());
 
-  it(
-    'test failed',
-    genTestBody({ pass: false, skip: false })
-  );
+  it('test failed', genTestBody({ pass: false, skip: false }));
 
   for (let i = 1; i <= numTests; i++) {
     it(
       `test ${i}`,
-      genTestBody({ pass: chance(1, true, false), skip: chance(0, true, false) })
+      genTestBody({
+        pass: chance(1, true, false),
+        skip: chance(0, true, false),
+      })
     );
   }
 });

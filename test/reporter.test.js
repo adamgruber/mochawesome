@@ -23,17 +23,17 @@ const baseConfig = {
   saveJson: true,
   useInlineDiffs: false,
   consoleReporter: 'spec',
-  code: true
+  code: true,
 };
 
 const mochawesome = proxyquire('../src/mochawesome', {
   'mochawesome-report-generator': {
-    create: reportStub
+    create: reportStub,
   },
   'mocha/lib/reporters/spec': specStub,
   'mocha/lib/reporters/nyan': nyanStub,
   'mocha/lib/stats-collector': statsCollectorStub,
-  './utils': utils
+  './utils': utils,
 });
 
 describe('Mochawesome Reporter', () => {
@@ -57,8 +57,8 @@ describe('Mochawesome Reporter', () => {
     createStatsCollector(runner);
     mochaReporter = new mocha._reporter(runner, {
       reporterOptions: {
-        quiet: true
-      }
+        quiet: true,
+      },
     });
   });
 
@@ -67,8 +67,8 @@ describe('Mochawesome Reporter', () => {
       delete runner.stats;
       mochaReporter = new mocha._reporter(runner, {
         reporterOptions: {
-          quiet: true
-        }
+          quiet: true,
+        },
       });
     });
 
@@ -118,10 +118,14 @@ describe('Mochawesome Reporter', () => {
       const passTest1 = makeTest('pass1', () => {});
       const passTest2 = makeTest('pass2', () => {});
       const passTest3 = makeTest('pass3', () => {});
-      const failTest = makeTest('failing test', tDone => tDone(new Assert(error)));
-      [ passTest1, passTest2, passTest3, failTest ].forEach(test => subSuite.addTest(test));
+      const failTest = makeTest('failing test', tDone =>
+        tDone(new Assert(error))
+      );
+      [passTest1, passTest2, passTest3, failTest].forEach(test =>
+        subSuite.addTest(test)
+      );
 
-      runner.run(failureCount => {
+      runner.run(() => {
         mochaReporter.stats.passes.should.equal(3);
         mochaReporter.stats.failures.should.equal(1);
         mochaReporter.stats.passPercent.should.equal(75);
@@ -140,8 +144,10 @@ describe('Mochawesome Reporter', () => {
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
       subSuite.file = 'testfile.js';
-      runner.run(failureCount => {
-        mochaReporter.output.results[0].suites[0].fullFile.should.equal('testfile.js');
+      runner.run(() => {
+        mochaReporter.output.results[0].suites[0].fullFile.should.equal(
+          'testfile.js'
+        );
         done();
       });
     });
@@ -153,7 +159,7 @@ describe('Mochawesome Reporter', () => {
         const test = makeTest('passing test', () => {});
         subSuite[hookType](`${hookType} passing hook`, () => {});
         subSuite.addTest(test);
-        runner.run(failureCount => {
+        runner.run(() => {
           const testSuite = mochaReporter.output.results[0].suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
@@ -170,7 +176,7 @@ describe('Mochawesome Reporter', () => {
           throw new Error('Dummy hook error');
         });
         subSuite.addTest(test);
-        runner.run(failureCount => {
+        runner.run(() => {
           const testSuite = mochaReporter.output.results[0].suites[0];
           const { beforeHooks, afterHooks } = testSuite;
           afterHooks.length.should.equal(isBefore ? 0 : 1);
@@ -180,12 +186,12 @@ describe('Mochawesome Reporter', () => {
       });
     }
 
-    [ 'beforeAll', 'beforeEach' ].forEach(type => {
+    ['beforeAll', 'beforeEach'].forEach(type => {
       passingHookTest(type, true);
       failingHookTest(type, true);
     });
 
-    [ 'afterAll', 'afterEach' ].forEach(type => {
+    ['afterAll', 'afterEach'].forEach(type => {
       passingHookTest(type, false);
       failingHookTest(type, false);
     });
@@ -210,10 +216,12 @@ describe('Mochawesome Reporter', () => {
       });
 
       it('should apply reporter options via environment variables', done => {
-        runner.run(failureCount => {
-          mochaReporter.config.should.deepEqual(expected({
-            reportFilename: 'test'
-          }));
+        runner.run(() => {
+          mochaReporter.config.should.deepEqual(
+            expected({
+              reportFilename: 'test',
+            })
+          );
           done();
         });
       });
@@ -226,17 +234,19 @@ describe('Mochawesome Reporter', () => {
           reporterOptions: {
             reportFilename: 'testReportFilename',
             json: 'false',
-            margeSpecificOption: 'something'
-          }
+            margeSpecificOption: 'something',
+          },
         });
       });
 
       it('should apply reporter options via passed in object', done => {
-        runner.run(failureCount => {
-          mochaReporter.config.should.deepEqual(expected({
-            reportFilename: 'testReportFilename',
-            saveJson: false
-          }));
+        runner.run(() => {
+          mochaReporter.config.should.deepEqual(
+            expected({
+              reportFilename: 'testReportFilename',
+              saveJson: false,
+            })
+          );
           done();
         });
       });
@@ -248,10 +258,12 @@ describe('Mochawesome Reporter', () => {
       });
 
       it('should transfer mocha options', done => {
-        runner.run(failureCount => {
-          mochaReporter.config.should.deepEqual(expected({
-            useInlineDiffs: true
-          }));
+        runner.run(() => {
+          mochaReporter.config.should.deepEqual(
+            expected({
+              useInlineDiffs: true,
+            })
+          );
           done();
         });
       });
@@ -262,14 +274,16 @@ describe('Mochawesome Reporter', () => {
         specStub.reset();
         mochaReporter = makeReporter({
           reporterOptions: {
-            consoleReporter: 'unknown'
-          }
+            consoleReporter: 'unknown',
+          },
         });
-        runner.run(failureCount => {
+        runner.run(() => {
           specStub.called.should.equal(true);
-          mochaReporter.config.should.deepEqual(expected({
-            consoleReporter: 'unknown'
-          }));
+          mochaReporter.config.should.deepEqual(
+            expected({
+              consoleReporter: 'unknown',
+            })
+          );
           done();
         });
       });
@@ -278,14 +292,16 @@ describe('Mochawesome Reporter', () => {
         nyanStub.reset();
         mochaReporter = makeReporter({
           reporterOptions: {
-            consoleReporter: 'nyan'
-          }
+            consoleReporter: 'nyan',
+          },
         });
-        runner.run(failureCount => {
+        runner.run(() => {
           nyanStub.called.should.equal(true);
-          mochaReporter.config.should.deepEqual(expected({
-            consoleReporter: 'nyan'
-          }));
+          mochaReporter.config.should.deepEqual(
+            expected({
+              consoleReporter: 'nyan',
+            })
+          );
           done();
         });
       });
@@ -294,14 +310,16 @@ describe('Mochawesome Reporter', () => {
         specStub.reset();
         mochaReporter = makeReporter({
           reporterOptions: {
-            consoleReporter: 'none'
-          }
+            consoleReporter: 'none',
+          },
         });
-        runner.run(failureCount => {
+        runner.run(() => {
           specStub.called.should.equal(false);
-          mochaReporter.config.should.deepEqual(expected({
-            consoleReporter: 'none'
-          }));
+          mochaReporter.config.should.deepEqual(
+            expected({
+              consoleReporter: 'none',
+            })
+          );
           done();
         });
       });
@@ -320,8 +338,8 @@ describe('Mochawesome Reporter', () => {
         reporterOptions: {
           reportDir: 'testDir',
           inlineAssets: true,
-          quiet: true
-        }
+          quiet: true,
+        },
       });
     });
 
@@ -344,7 +362,7 @@ describe('Mochawesome Reporter', () => {
     });
 
     it('should log message when only html file generated', () => {
-      reportStub.resolves([ 'html', null ]);
+      reportStub.resolves(['html', null]);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.args[0][0].should.equal(0);
@@ -354,7 +372,7 @@ describe('Mochawesome Reporter', () => {
     });
 
     it('should log message when only json file generated', () => {
-      reportStub.resolves([ null, 'json' ]);
+      reportStub.resolves([null, 'json']);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.args[0][0].should.equal(0);
@@ -364,7 +382,7 @@ describe('Mochawesome Reporter', () => {
     });
 
     it('should log message when html and json files generated', () => {
-      reportStub.resolves([ 'html', 'json' ]);
+      reportStub.resolves(['html', 'json']);
 
       return mochaReporter.done(0, mochaExitFn).then(() => {
         mochaExitFn.args[0][0].should.equal(0);
@@ -382,7 +400,7 @@ describe('Mochawesome Reporter', () => {
           quiet: true,
           reportFilename: 'mochawesome',
           saveHtml: true,
-          saveJson: true
+          saveJson: true,
         });
       });
     });

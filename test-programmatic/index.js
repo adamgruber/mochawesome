@@ -8,8 +8,8 @@ const mocha = new Mocha({
   reporter: path.resolve(__dirname, '../src/mochawesome'),
   reporterOptions: {
     reportFilename: 'adam',
-    timestamp: 'dd yyyy'
-  }
+    timestamp: 'dd yyyy',
+  },
 });
 
 const testDir = path.resolve(__dirname, '../test-functional');

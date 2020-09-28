@@ -8,9 +8,14 @@ const ERRORS = {
   INVALID_ARGS: `${errorPrefix} Invalid arguments.`,
   INVALID_TEST: `${errorPrefix} Invalid test object.`,
   INVALID_CONTEXT: ctx => {
-    const expected = 'Expected a string or an object of shape { title: string, value: any } but saw:';
-    return `${errorPrefix} ${expected}\n${stringify(ctx, (key, val) => (val === undefined ? 'undefined' : val), 2)}`;
-  }
+    const expected =
+      'Expected a string or an object of shape { title: string, value: any } but saw:';
+    return `${errorPrefix} ${expected}\n${stringify(
+      ctx,
+      (key, val) => (val === undefined ? 'undefined' : val),
+      2
+    )}`;
+  },
 };
 
 /**
@@ -34,8 +39,12 @@ function _isValidContext(ctx) {
    * 2. Type is object and it has properties `title` and `value` and `title` is not empty
    */
   if (!ctx) return false;
-  return ((typeof ctx === 'string') && !isEmpty(ctx))
-    || (Object.hasOwnProperty.call(ctx, 'title') && !isEmpty(ctx.title) && Object.hasOwnProperty.call(ctx, 'value'));
+  return (
+    (typeof ctx === 'string' && !isEmpty(ctx)) ||
+    (Object.hasOwnProperty.call(ctx, 'title') &&
+      !isEmpty(ctx.title) &&
+      Object.hasOwnProperty.call(ctx, 'value'))
+  );
 }
 
 /**
@@ -69,7 +78,7 @@ function _isValidContext(ctx) {
 
 const addContext = function (...args) {
   // Check args to see if we should bother continuing
-  if ((args.length !== 2) || !isObject(args[0])) {
+  if (args.length !== 2 || !isObject(args[0])) {
     log(ERRORS.INVALID_ARGS, 'error');
     return;
   }
@@ -93,8 +102,8 @@ const addContext = function (...args) {
   /* For `before` and `after`, add the context to the hook,
    * otherwise add it to the actual test.
    */
-  const isEachHook = currentTest
-    && /^"(?:before|after)\seach"/.test(activeTest.title);
+  const isEachHook =
+    currentTest && /^"(?:before|after)\seach"/.test(activeTest.title);
   const test = isEachHook ? currentTest : activeTest;
 
   if (!test) {
@@ -118,7 +127,7 @@ const addContext = function (...args) {
     test.context.push(ctx);
   } else {
     // Test has context and it is not an array -> make it an array, then push new context
-    test.context = [ test.context ];
+    test.context = [test.context];
     test.context.push(ctx);
   }
 };

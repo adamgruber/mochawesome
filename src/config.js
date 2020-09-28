@@ -16,14 +16,12 @@
 function _getOption(optToGet, options, isBool, defaultValue) {
   const envVar = `MOCHAWESOME_${optToGet.toUpperCase()}`;
   if (options && typeof options[optToGet] !== 'undefined') {
-    return (isBool && typeof options[optToGet] === 'string')
+    return isBool && typeof options[optToGet] === 'string'
       ? options[optToGet] === 'true'
       : options[optToGet];
   }
   if (typeof process.env[envVar] !== 'undefined') {
-    return isBool
-      ? process.env[envVar] === 'true'
-      : process.env[envVar];
+    return isBool ? process.env[envVar] === 'true' : process.env[envVar];
   }
   return defaultValue;
 }
@@ -35,11 +33,16 @@ module.exports = function (opts) {
 
   return {
     quiet: _getOption('quiet', reporterOpts, true, false),
-    reportFilename: _getOption('reportFilename', reporterOpts, false, 'mochawesome'),
+    reportFilename: _getOption(
+      'reportFilename',
+      reporterOpts,
+      false,
+      'mochawesome'
+    ),
     saveHtml: _getOption('html', reporterOpts, true, true),
     saveJson: _getOption('json', reporterOpts, true, true),
     consoleReporter: _getOption('consoleReporter', reporterOpts, false, 'spec'),
     useInlineDiffs: !!opts.inlineDiffs,
-    code: noCode ? false : code
+    code: noCode ? false : code,
   };
 };

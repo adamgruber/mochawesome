@@ -17,7 +17,7 @@ describe('addContext', () => {
     parent: '#<Suite>',
     ctx: '#<Context>',
     file: '/test.js',
-    uuid: '9f4e292c-8668-4008-9dc4-589909f94054'
+    uuid: '9f4e292c-8668-4008-9dc4-589909f94054',
   });
 
   beforeEach(() => {
@@ -26,7 +26,8 @@ describe('addContext', () => {
 
     activeTest = {
       title: 'sample test',
-      body: 'function () {\n    addContext(this, "i\'m in a test");\n    assert(true);\n  }',
+      body:
+        'function () {\n    addContext(this, "i\'m in a test");\n    assert(true);\n  }',
       async: 0,
       sync: true,
       timedOut: false,
@@ -34,7 +35,7 @@ describe('addContext', () => {
       type: 'test',
       file: '/test.js',
       parent: '#<Suite>',
-      ctx: '#<Context>'
+      ctx: '#<Context>',
     };
   });
 
@@ -47,35 +48,35 @@ describe('addContext', () => {
       addContext(testObj, 'test context');
       test.should.eql({
         ...test,
-        context: 'test context'
+        context: 'test context',
       });
     });
 
     it('as an object', () => {
       addContext(testObj, {
         title: 'context title',
-        value: true
+        value: true,
       });
       test.should.eql({
         ...test,
         context: {
           title: 'context title',
-          value: true
-        }
+          value: true,
+        },
       });
     });
 
     it('as an object with undefined value', () => {
       addContext(testObj, {
         title: 'context title',
-        value: undefined
+        value: undefined,
       });
       test.should.eql({
         ...test,
         context: {
           title: 'context title',
-          value: 'undefined'
-        }
+          value: 'undefined',
+        },
       });
     });
 
@@ -88,8 +89,8 @@ describe('addContext', () => {
         context: [
           'test context 1',
           'test context 2',
-          { title: 'test context 3', value: true }
-        ]
+          { title: 'test context 3', value: true },
+        ],
       });
     });
   }
@@ -98,7 +99,7 @@ describe('addContext', () => {
     beforeEach(() => {
       testObj = {
         currentTest: undefined,
-        test: activeTest
+        test: activeTest,
       };
       test = testObj.test;
     });
@@ -109,7 +110,7 @@ describe('addContext', () => {
     beforeEach(() => {
       testObj = {
         currentTest: activeTest,
-        test: makeHook('before all')
+        test: makeHook('before all'),
       };
       test = testObj.test;
     });
@@ -120,7 +121,7 @@ describe('addContext', () => {
     beforeEach(() => {
       testObj = {
         currentTest: activeTest,
-        test: makeHook('before each')
+        test: makeHook('before each'),
       };
       test = testObj.currentTest;
     });
@@ -131,7 +132,7 @@ describe('addContext', () => {
     beforeEach(() => {
       testObj = {
         currentTest: activeTest,
-        test: makeHook('after all')
+        test: makeHook('after all'),
       };
       test = testObj.test;
     });
@@ -142,7 +143,7 @@ describe('addContext', () => {
     beforeEach(() => {
       testObj = {
         currentTest: activeTest,
-        test: makeHook('after each')
+        test: makeHook('after each'),
       };
       test = testObj.currentTest;
     });
@@ -153,8 +154,8 @@ describe('addContext', () => {
     beforeEach(() => {
       testObj = {
         test: {
-          title: 'sample test'
-        }
+          title: 'sample test',
+        },
       };
       test = testObj.test;
     });
