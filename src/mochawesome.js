@@ -8,10 +8,7 @@ const utils = require('./utils');
 const pkg = require('../package.json');
 
 // Import the utility functions
-const {
-  log,
-  mapSuites
-} = utils;
+const { log, mapSuites } = utils;
 
 // Track the total number of tests registered
 const totalTestsRegistered = { total: 0 };
@@ -30,8 +27,9 @@ const totalTestsRegistered = { total: 0 };
  * @return {Promise} Resolves with successful report creation
  */
 function done(output, options, config, failures, exit) {
-  return marge.create(output, options)
-    .then(([ htmlFile, jsonFile ]) => {
+  return marge
+    .create(output, options)
+    .then(([htmlFile, jsonFile]) => {
       if (!htmlFile && !jsonFile) {
         log('No files were generated', 'warn', config);
       } else {
@@ -61,7 +59,6 @@ function done(output, options, config, failures, exit) {
 function consoleReporter(reporter) {
   if (reporter) {
     try {
-      // eslint-disable-next-line import/no-dynamic-require
       return require(`mocha/lib/reporters/${reporter}`);
     } catch (e) {
       log(`Unknown console reporter '${reporter}', defaulting to spec`);
@@ -92,18 +89,13 @@ function Mochawesome(runner, options) {
     ...options.reporterOptions,
     reportFilename: this.config.reportFilename,
     saveHtml: this.config.saveHtml,
-    saveJson: this.config.saveJson
+    saveJson: this.config.saveJson,
   };
 
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the HTML report
-  this.done = (failures, exit) => done(
-    this.output,
-    reporterOptions,
-    this.config,
-    failures,
-    exit
-  );
+  this.done = (failures, exit) =>
+    done(this.output, reporterOptions, this.config, failures, exit);
 
   // Reset total tests counter
   totalTestsRegistered.total = 0;
@@ -120,7 +112,7 @@ function Mochawesome(runner, options) {
   let endCalled = false;
 
   // Add a unique identifier to each suite/test/hook
-  [ 'suite', 'test', 'hook', 'pending' ].forEach(type => {
+  ['suite', 'test', 'hook', 'pending'].forEach(type => {
     runner.on(type, item => {
       item.uuid = uuid.v4();
     });
@@ -135,24 +127,28 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const rootSuite = mapSuites(this.runner.suite, totalTestsRegistered, this.config);
+        const rootSuite = mapSuites(
+          this.runner.suite,
+          totalTestsRegistered,
+          this.config
+        );
 
         const obj = {
           stats: this.stats,
-          results: [ rootSuite ],
+          results: [rootSuite],
           meta: {
             mocha: {
-              version: mochaPkg.version
+              version: mochaPkg.version,
             },
             mochawesome: {
               options: this.config,
-              version: pkg.version
+              version: pkg.version,
             },
             marge: {
               options: options.reporterOptions,
-              version: margePkg.version
-            }
-          }
+              version: margePkg.version,
+            },
+          },
         };
 
         obj.stats.testsRegistered = totalTestsRegistered.total;
@@ -163,7 +159,7 @@ function Mochawesome(runner, options) {
 
         obj.stats.passPercent = passPercentage;
         obj.stats.pendingPercent = pendingPercentage;
-        obj.stats.other = (passes + failures + pending) - tests; // Failed hooks
+        obj.stats.other = passes + failures + pending - tests; // Failed hooks
         obj.stats.hasOther = obj.stats.other > 0;
         obj.stats.skipped = testsRegistered - tests;
         obj.stats.hasSkipped = obj.stats.skipped > 0;
