@@ -3,7 +3,7 @@
   "version": "6.1.1",
   "description": "A gorgeous reporter for Mocha.js",
   "scripts": {
-    "lint": "eslint src test",
+    "lint": "eslint src test*",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha --config test/.mocharc.json",
     "test:fn": "mocha test-functional/test.js --config test-functional/.mocharc.json",
     "test:prog": "node ./test-programmatic",
@@ -64,6 +64,7 @@
     "cross-env": "^7.0.2",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-import": "^2.20.2",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
@@ -82,5 +83,19 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
+    "env": {
+      "es6": true,
+      "mocha": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 9
+    }
   }
 }
