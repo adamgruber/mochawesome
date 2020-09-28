@@ -19,30 +19,36 @@ function stripFunctionStart(input) {
 
   const nextState = (state, c) => {
     switch (state) {
-    case BEGIN:
-      switch (c) {
-      case '{': return LBRACE;
-      case '=': return EQ;
-      default: return BEGIN;
-      }
+      case BEGIN:
+        switch (c) {
+          case '{':
+            return LBRACE;
+          case '=':
+            return EQ;
+          default:
+            return BEGIN;
+        }
 
-    case LBRACE:
-      return c === ' ' ? LBRACE : DONE;
+      case LBRACE:
+        return c === ' ' ? LBRACE : DONE;
 
-    case EQ:
-      return c === '>' ? ARROW : BEGIN;
+      case EQ:
+        return c === '>' ? ARROW : BEGIN;
 
-    case ARROW:
-      if (isWhitespace(c)) return ARROW;
-      switch (c) {
-      case '{': return ARROW_LBRACE;
-      case '(': return ARROW_PAREN;
-      default: return DONE;
-      }
+      case ARROW:
+        if (isWhitespace(c)) return ARROW;
+        switch (c) {
+          case '{':
+            return ARROW_LBRACE;
+          case '(':
+            return ARROW_PAREN;
+          default:
+            return DONE;
+        }
 
-    case ARROW_LBRACE:
-    case ARROW_PAREN:
-      return DONE;
+      case ARROW_LBRACE:
+      case ARROW_PAREN:
+        return DONE;
     }
   };
 

@@ -49,7 +49,10 @@ function cleanCode(str) {
   const spaces = str.match(/^\n?( *)/)[1].length;
   const tabs = str.match(/^\n?(\t*)/)[1].length;
   /* istanbul ignore next */
-  const indentRegex = new RegExp(`^\n?${tabs ? '\t' : ' '}{${tabs || spaces}}`, 'gm');
+  const indentRegex = new RegExp(
+    `^\n?${tabs ? '\t' : ' '}{${tabs || spaces}}`,
+    'gm'
+  );
 
   str = str.replace(indentRegex, '').trim();
   return str;
@@ -65,7 +68,8 @@ function cleanCode(str) {
  * @return {string} diff
  */
 function createUnifiedDiff({ actual, expected }) {
-  return diff.createPatch('string', actual, expected)
+  return diff
+    .createPatch('string', actual, expected)
     .split('\n')
     .splice(4)
     .map(line => {
@@ -115,13 +119,19 @@ function normalizeErr(err, config) {
   }
 
   // Format actual/expected for creating diff
-  if (showDiff !== false && sameType(actual, expected) && expected !== undefined) {
+  if (
+    showDiff !== false &&
+    sameType(actual, expected) &&
+    expected !== undefined
+  ) {
     /* istanbul ignore if */
     if (!(isString(actual) && isString(expected))) {
       err.actual = mochaUtils.stringify(actual);
       err.expected = mochaUtils.stringify(expected);
     }
-    errDiff = config.useInlineDiffs ? createInlineDiff(err) : createUnifiedDiff(err);
+    errDiff = config.useInlineDiffs
+      ? createInlineDiff(err)
+      : createUnifiedDiff(err);
   }
 
   // Assertion libraries do not output consitent error objects so in order to
@@ -135,7 +145,7 @@ function normalizeErr(err, config) {
   return {
     message: errMessage,
     estack: stack && stripAnsi(stack),
-    diff: errDiff
+    diff: errDiff,
   };
 }
 
@@ -148,7 +158,7 @@ function normalizeErr(err, config) {
  * @return {Object} cleaned test
  */
 function cleanTest(test, config) {
-  const code = config.code ? (test.body || '') : '';
+  const code = config.code ? test.body || '' : '';
 
   const fullTitle = isFunction(test.fullTitle)
     ? stripAnsi(test.fullTitle())
@@ -167,12 +177,13 @@ function cleanTest(test, config) {
     context: stringify(test.context, null, 2),
     code: code && cleanCode(code),
     err: (test.err && normalizeErr(test.err, config)) || {},
-    uuid: test.uuid || /* istanbul ignore next: default */uuid.v4(),
+    uuid: test.uuid || /* istanbul ignore next: default */ uuid.v4(),
     parentUUID: test.parent && test.parent.uuid,
-    isHook: test.type === 'hook'
+    isHook: test.type === 'hook',
   };
 
-  cleaned.skipped = (!cleaned.pass && !cleaned.fail && !cleaned.pending && !cleaned.isHook);
+  cleaned.skipped =
+    !cleaned.pass && !cleaned.fail && !cleaned.pending && !cleaned.isHook;
 
   return cleaned;
 }
@@ -193,13 +204,13 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   const pendingTests = [];
   const skippedTests = [];
 
-  const beforeHooks = [].concat(
-    suite._beforeAll, suite._beforeEach
-  ).map(test => cleanTest(test, config));
+  const beforeHooks = []
+    .concat(suite._beforeAll, suite._beforeEach)
+    .map(test => cleanTest(test, config));
 
-  const afterHooks = [].concat(
-    suite._afterAll, suite._afterEach
-  ).map(test => cleanTest(test, config));
+  const afterHooks = []
+    .concat(suite._afterAll, suite._afterEach)
+    .map(test => cleanTest(test, config));
 
   const tests = suite.tests.map(test => {
     const cleanedTest = cleanTest(test, config);
@@ -214,7 +225,7 @@ function cleanSuite(suite, totalTestsRegistered, config) {
   totalTestsRegistered.total += tests.length;
 
   const cleaned = {
-    uuid: suite.uuid || /* istanbul ignore next: default */uuid.v4(),
+    uuid: suite.uuid || /* istanbul ignore next: default */ uuid.v4(),
     title: stripAnsi(suite.title),
     fullFile: suite.file || '',
     file: suite.file ? suite.file.replace(process.cwd(), '') : '',
@@ -229,13 +240,14 @@ function cleanSuite(suite, totalTestsRegistered, config) {
     duration,
     root: suite.root,
     rootEmpty: suite.root && tests.length === 0,
-    _timeout: suite._timeout
+    _timeout: suite._timeout,
   };
 
-  const isEmptySuite = isEmpty(cleaned.suites)
-    && isEmpty(cleaned.tests)
-    && isEmpty(cleaned.beforeHooks)
-    && isEmpty(cleaned.afterHooks);
+  const isEmptySuite =
+    isEmpty(cleaned.suites) &&
+    isEmpty(cleaned.tests) &&
+    isEmpty(cleaned.beforeHooks) &&
+    isEmpty(cleaned.afterHooks);
 
   return !isEmptySuite && cleaned;
 }
@@ -266,5 +278,5 @@ module.exports = {
   cleanCode,
   cleanTest,
   cleanSuite,
-  mapSuites
+  mapSuites,
 };
