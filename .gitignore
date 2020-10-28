@@ -1,8 +1,7 @@
 .DS_Store
 *.log
 node_modules/
-mochawesome-reports/
-mochawesome-report/
+mochawesome-report*/
 _site/
 coverage/
 .nyc_output/
