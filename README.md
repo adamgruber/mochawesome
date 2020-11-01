@@ -24,11 +24,11 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 
 1. Add Mochawesome to your project:
 
-  `npm install --save-dev mochawesome`
+`npm install --save-dev mochawesome`
 
 2. Tell mocha to use the Mochawesome reporter:
 
-  `mocha testfile.js --reporter mochawesome`
+`mocha testfile.js --reporter mochawesome`
 
 3. If using mocha programatically:
 
@@ -37,6 +37,15 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
     reporter: 'mochawesome'
   });
   ```
+
+### Parallel
+if you consider to use mocha@8 with the parallel option you need to register mochawesome as a hook, e.g.
+
+`mocha tests --reporter mochawesome --require mochawesome/register`
+
+**_IMPORTANT:_** Report statistics may differ between sequential and parallel test execution due to the mocha limitations. Mocha does not provide information about skipped tests in parallel mode.
+
+Please use the parallel option reasonably, as spawning worker processes is not free. You can read more about it [here](https://developer.ibm.com/articles/parallel-tests-mocha-v8/#when-to-avoid-parallel-mode).
 
 ### Output
 Mochawesome generates the following inside your project directory:

@@ -5,7 +5,8 @@
   "scripts": {
     "lint": "eslint src test*",
     "test": "npm run lint && cross-env NODE_ENV=test nyc mocha --config test/.mocharc.json",
-    "test:fn": "mocha test-functional/test.js --config test-functional/.mocharc.json",
+    "test:fn": "mocha test-functional --config test-functional/.mocharc.json",
+    "test:par": "mocha test-parallel --config test-parallel/.mocharc.json",
     "test:prog": "node ./test-programmatic",
     "test:mem": "mocha test-functional/mem-test.js --config test-functional/.mocharc.json",
     "test:ctx": "mocha test-functional/test-context.js --config test-functional/.mocharc.json",
