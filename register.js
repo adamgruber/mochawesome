@@ -1,6 +1,5 @@
 /**
- * Re-export `register` from ./src folder in order to register nicely mochawesome as a hook in mocha
- * in the way how it's done in ts-node/register or @babel/register
+ * Export `register` hook
  * @example
  * $ mocha --require mochawesome/register tests
  *

@@ -1,9 +1,8 @@
-mochawesome
-===========
+# mochawesome
+
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) ![Node.js CI](https://github.com/adamgruber/mochawesome/workflows/Node.js%20CI/badge.svg) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general)
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=10) and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to help visualize your test runs.
-
 
 ## Features
 
@@ -19,6 +18,7 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 - Filters to display only the tests you want
 - Responsive and mobile-friendly
 - Offline viewing
+- Supports `parallel` mode
 
 ## Usage
 
@@ -32,23 +32,24 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 
 3. If using mocha programatically:
 
-  ```js
-  var mocha = new Mocha({
-    reporter: 'mochawesome'
-  });
-  ```
+```js
+var mocha = new Mocha({
+  reporter: 'mochawesome',
+});
+```
 
-### Parallel
-if you consider to use mocha@8 with the parallel option you need to register mochawesome as a hook, e.g.
+### Parallel Mode
+
+Since `mocha@8` test files can be run in parallel using the `--parallel` flag. In order for mochawesome to work properly it needs to be registered as a hook.
 
 `mocha tests --reporter mochawesome --require mochawesome/register`
 
-**_IMPORTANT:_** Report statistics may differ between sequential and parallel test execution due to the mocha limitations. Mocha does not provide information about skipped tests in parallel mode.
-
-Please use the parallel option reasonably, as spawning worker processes is not free. You can read more about it [here](https://developer.ibm.com/articles/parallel-tests-mocha-v8/#when-to-avoid-parallel-mode).
+> Due to differences in how parallel tests are processed, statistics may differ between sequential and parallel test runs. Mocha does not provide information about skipped tests in parallel mode. For more information, see https://mochajs.org/#parallel-tests.
 
 ### Output
+
 Mochawesome generates the following inside your project directory:
+
 ```
 mochawesome-report/
 ├── assets
@@ -72,22 +73,28 @@ The two main files to be aware of are:
 
 **mochawesome.json** - The raw json output used to render the report
 
-
 ### Options
+
 Options can be passed to the reporter in two ways.
 
 #### Environment variables
+
 The reporter will try to read environment variables that begin with `MOCHAWESOME_`.
+
 ```bash
 $ export MOCHAWESOME_REPORTFILENAME=customReportFilename
 ```
-*Note that environment variables must be in uppercase.*
+
+_Note that environment variables must be in uppercase._
 
 #### Mocha reporter-options
+
 You can pass comma-separated options to the reporter via mocha's `--reporter-options` flag. Options passed this way will take precedence over environment variables.
+
 ```bash
 $ mocha test.js --reporter mochawesome --reporter-options reportDir=customReportDir,reportFilename=customReportFilename
 ```
+
 Alternately, `reporter-options` can be passed in programatically:
 
 ```js
@@ -95,8 +102,8 @@ var mocha = new Mocha({
   reporter: 'mochawesome',
   reporterOptions: {
     reportFilename: 'customReportFilename',
-    quiet: true
-  }
+    quiet: true,
+  },
 });
 ```
 
@@ -104,26 +111,26 @@ var mocha = new Mocha({
 
 The options below are specific to the reporter. For a list of all available options see [mochawesome-report-generator options][marge-options].
 
-Option Name | Type | Default | Description
-:---------- | :--- | :------ | :----------
-`quiet` | boolean | false | Silence console messages
-`reportFilename` | string | mochawesome | Filename of saved report <br> *Applies to the generated html and json files.*
-`html` | boolean | true | Save the HTML output for the test run
-`json` | boolean | true | Save the JSON output for the test run
-`consoleReporter` | string | spec | Name of mocha reporter to use for console output, or `none` to disable console report output entirely
-
+| Option Name       | Type    | Default     | Description                                                                                           |
+| :---------------- | :------ | :---------- | :---------------------------------------------------------------------------------------------------- |
+| `quiet`           | boolean | false       | Silence console messages                                                                              |
+| `reportFilename`  | string  | mochawesome | Filename of saved report <br> _Applies to the generated html and json files._                         |
+| `html`            | boolean | true        | Save the HTML output for the test run                                                                 |
+| `json`            | boolean | true        | Save the JSON output for the test run                                                                 |
+| `consoleReporter` | string  | spec        | Name of mocha reporter to use for console output, or `none` to disable console report output entirely |
 
 ### Adding Test Context
+
 Mochawesome ships with an `addContext` helper method that can be used to associate additional information with a test. This information will then be displayed inside the report.
 
 **Please note: arrow functions will not work with `addContext`.** See the [example](#example).
 
 ### `addContext(testObj, context)`
 
-param | type | description
-:---- | :--- | :----------
-testObj | object | The test object
-context | string\|object | The context to be added to the test
+| param   | type           | description                         |
+| :------ | :------------- | :---------------------------------- |
+| testObj | object         | The test object                     |
+| context | string\|object | The context to be added to the test |
 
 **Context as a string**
 
@@ -132,16 +139,19 @@ Simple strings will be displayed as is. If you pass a URL, the reporter will att
 **Context as an object**
 
 Context passed as an object must adhere to the following shape:
+
 ```js
 {
-  title: 'some title' // must be a string
-  value: {} // can be anything
+  title: 'some title'; // must be a string
+  value: {
+  } // can be anything
 }
 ```
 
 #### Example
 
 Be sure to use ES5 functions and not ES6 arrow functions when using `addContext` to ensure `this` references the test object.
+
 ```js
 const addContext = require('mochawesome/addContext');
 
@@ -162,24 +172,25 @@ describe('test suite', function () {
       value: {
         a: 1,
         b: '2',
-        c: 'd'
-      }
+        c: 'd',
+      },
     });
-  })
+  });
 });
 ```
 
 It is also possible to use `addContext` from within a `beforeEach` or `afterEach` test hook.
+
 ```js
 describe('test suite', () => {
   beforeEach(function () {
-    addContext(this, 'some context')
+    addContext(this, 'some context');
   });
 
   afterEach(function () {
     addContext(this, {
       title: 'afterEach context',
-      value: { a: 1 }
+      value: { a: 1 },
     });
   });
 
@@ -200,5 +211,5 @@ mochawesome is [MIT licensed][license].
 [mocha]: https://mochajs.org/
 [marge]: https://github.com/adamgruber/mochawesome-report-generator
 [marge-options]: https://github.com/adamgruber/mochawesome-report-generator#options
-[CHANGELOG]: CHANGELOG.md
+[changelog]: CHANGELOG.md
 [license]: LICENSE.md
