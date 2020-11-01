@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Support mocha `--parallel` mode
+
 ### Changed
 
 - Update dev dependencies
