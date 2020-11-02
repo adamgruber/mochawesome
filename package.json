@@ -28,6 +28,7 @@
   "main": "src/mochawesome.js",
   "files": [
     "addContext.js",
+    "register.js",
     "src"
   ],
   "nyc": {
