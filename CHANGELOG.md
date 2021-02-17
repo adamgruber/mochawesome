@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [6.2.2] - 2021-02-16
 ### Changed
 - Greenkeep dependencies
 
