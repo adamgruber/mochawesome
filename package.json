@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.0",
-    "diff": "^4.0.1",
+    "diff": "^5.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash.isempty": "^4.4.0",
     "lodash.isfunction": "^3.0.9",
