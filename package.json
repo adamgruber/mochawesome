@@ -48,37 +48,32 @@
     "branches": 90
   },
   "dependencies": {
-    "chalk": "^4.0.0",
-    "diff": "^4.0.1",
+    "chalk": "^4.1.0",
+    "diff": "^5.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash.isempty": "^4.4.0",
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2",
     "lodash.isstring": "^4.0.1",
-    "mochawesome-report-generator": "^5.1.0",
+    "mochawesome-report-generator": "^5.2.0",
     "strip-ansi": "^6.0.0",
-    "uuid": "^7.0.3"
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "mocha": ">=7"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
-    "eslint": "^7.10.0",
-    "eslint-config-prettier": "^6.12.0",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.4.0",
-    "mocha": "^8.1.3",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^7.2.0",
+    "husky": "^5.0.9",
+    "lint-staged": "^10.5.4",
+    "mocha": "^8.3.0",
     "nyc": "^15.1.0",
-    "prettier": "^2.1.2",
+    "prettier": "^2.2.1",
     "proxyquire": "^2.1.0",
     "should": "^13.2.3",
-    "sinon": "^9.0.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "sinon": "^9.2.4"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",

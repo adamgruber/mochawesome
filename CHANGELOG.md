@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Greenkeep dependencies
 
 ## [6.2.1] - 2020-11-02
 ### Fixed
