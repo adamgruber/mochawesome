@@ -200,6 +200,12 @@ describe('test suite', () => {
 });
 ```
 
+## Typescript
+This project does not maintain its own type definitions, however they are available on npm from [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mochawesome).
+```
+$ npm install --save-dev @types/mochawesome
+```
+
 ## Related
 
 [mochawesome-report-generator][marge]
