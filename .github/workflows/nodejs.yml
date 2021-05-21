@@ -20,7 +20,6 @@ jobs:
     - run: |
         npm install
         npm install react react-dom
-        npm test
         npm run build --if-present
         npm test
       env:
