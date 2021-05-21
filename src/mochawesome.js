@@ -20,8 +20,11 @@ const {
 // Import the utility functions
 const { log, mapSuites } = utils;
 
-// Track the total number of tests registered
-const totalTestsRegistered = { total: 0 };
+// Track the total number of tests registered/skipped
+const testTotals = {
+  registered: 0,
+  skipped: 0
+}
 
 /**
  * Done function gets called before mocha exits
@@ -107,8 +110,9 @@ function Mochawesome(runner, options) {
   this.done = (failures, exit) =>
     done(this.output, reporterOptions, this.config, failures, exit);
 
-  // Reset total tests counter
-  totalTestsRegistered.total = 0;
+  // Reset total tests counters
+  testTotals.registered = 0;
+  testTotals.skipped = 0;
 
   // Call the Base mocha reporter
   Base.call(this, runner);
@@ -202,7 +206,7 @@ function Mochawesome(runner, options) {
 
         const rootSuite = mapSuites(
           this.runner.suite,
-          totalTestsRegistered,
+          testTotals,
           this.config
         );
 
@@ -224,7 +228,7 @@ function Mochawesome(runner, options) {
           },
         };
 
-        obj.stats.testsRegistered = totalTestsRegistered.total;
+        obj.stats.testsRegistered = testTotals.registered;
 
         const { passes, failures, pending, tests, testsRegistered } = obj.stats;
         const passPercentage = (passes / (testsRegistered - pending)) * 100;
@@ -234,7 +238,7 @@ function Mochawesome(runner, options) {
         obj.stats.pendingPercent = pendingPercentage;
         obj.stats.other = passes + failures + pending - tests; // Failed hooks
         obj.stats.hasOther = obj.stats.other > 0;
-        obj.stats.skipped = testsRegistered - tests;
+        obj.stats.skipped = testTotals.skipped;
         obj.stats.hasSkipped = obj.stats.skipped > 0;
         obj.stats.failures -= obj.stats.other;
 
