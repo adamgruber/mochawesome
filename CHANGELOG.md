@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Update how the total number of skipped tests is calculated [#317](https://github.com/adamgruber/mochawesome/issues/317)
 
 ## [6.2.2] - 2021-02-16
 ### Changed
@@ -273,7 +275,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/6.2.1...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/6.2.2...HEAD
+[6.2.2]: https://github.com/adamgruber/mochawesome/compare/6.2.1...6.2.2
 [6.2.1]: https://github.com/adamgruber/mochawesome/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/adamgruber/mochawesome/compare/6.1.1...6.2.0
 [6.1.1]: https://github.com/adamgruber/mochawesome/compare/6.1.0...6.1.1

@@ -192,12 +192,13 @@ function cleanTest(test, config) {
  * Return a plain-object representation of `suite` with additional properties for rendering.
  *
  * @param {Object} suite
- * @param {Object} totalTestsRegistered
- * @param {Integer} totalTestsRegistered.total
+ * @param {Object} testTotals  Cumulative count of tests registered/skipped
+ * @param {Integer} testTotals.registered
+ * @param {Integer} testTotals.skipped
  *
  * @return {Object|boolean} cleaned suite or false if suite is empty
  */
-function cleanSuite(suite, totalTestsRegistered, config) {
+function cleanSuite(suite, testTotals, config) {
   let duration = 0;
   const passingTests = [];
   const failingTests = [];
@@ -222,7 +223,8 @@ function cleanSuite(suite, totalTestsRegistered, config) {
     return cleanedTest;
   });
 
-  totalTestsRegistered.total += tests.length;
+  testTotals.registered += tests.length;
+  testTotals.skipped += skippedTests.length;
 
   const cleaned = {
     uuid: suite.uuid || /* istanbul ignore next: default */ uuid.v4(),
@@ -257,20 +259,21 @@ function cleanSuite(suite, totalTestsRegistered, config) {
  * and recursively cleaning any nested suites.
  *
  * @param {Object} suite          Suite to map over
- * @param {Object} totalTestsReg  Cumulative count of total tests registered
- * @param {Integer} totalTestsReg.total
+ * @param {Object} testTotals  Cumulative count of tests registered/skipped
+ * @param {Integer} testTotals.registered
+ * @param {Integer} testTotals.skipped
  * @param {Object} config         Reporter configuration
  */
-function mapSuites(suite, totalTestsReg, config) {
+function mapSuites(suite, testTotals, config) {
   const suites = suite.suites.reduce((acc, subSuite) => {
-    const mappedSuites = mapSuites(subSuite, totalTestsReg, config);
+    const mappedSuites = mapSuites(subSuite, testTotals, config);
     if (mappedSuites) {
       acc.push(mappedSuites);
     }
     return acc;
   }, []);
   const toBeCleaned = { ...suite, suites };
-  return cleanSuite(toBeCleaned, totalTestsReg, config);
+  return cleanSuite(toBeCleaned, testTotals, config);
 }
 
 module.exports = {
