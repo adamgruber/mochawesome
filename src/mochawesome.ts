@@ -23,8 +23,8 @@ const { log, mapSuites } = utils;
 // Track the total number of tests registered/skipped
 const testTotals = {
   registered: 0,
-  skipped: 0
-}
+  skipped: 0,
+};
 
 /**
  * Done function gets called before mocha exits
@@ -204,11 +204,7 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const rootSuite = mapSuites(
-          this.runner.suite,
-          testTotals,
-          this.config
-        );
+        const rootSuite = mapSuites(this.runner.suite, testTotals, this.config);
 
         const obj = {
           stats: this.stats,
