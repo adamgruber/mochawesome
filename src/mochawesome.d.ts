@@ -42,7 +42,18 @@ declare namespace Mochawesome {
     };
   }
 
-  interface MargeOptions extends Options {
+  interface Stats {
+    suites: number;
+    tests: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+    failedHooks: number;
+  }
+
+  type Results = [];
+
+  interface MargeOptions {
     reportFilename: string;
     saveHtml: boolean;
     saveJson: boolean;

@@ -26,8 +26,12 @@ const { log, mapSuites } = utils;
 class Mochawesome {
   config: Mochawesome.Config;
   margeOptions: Mochawesome.MargeOptions;
-  totals: { registered: number; skipped: number };
   meta: Mochawesome.OutputMeta;
+  options: Mochawesome.Options;
+  reporterStats: Mochawesome.Stats | null;
+  results: Mochawesome.Results;
+  totals: { registered: number; skipped: number };
+
   constructor(runner: Mocha.Runner, options: Mochawesome.Options) {
     // Call the Base mocha reporter
     Base.call(this, runner, options);
@@ -48,6 +52,9 @@ class Mochawesome {
         version: margePkg.version,
       },
     };
+
+    this.reporterStats = null;
+    this.results = [];
 
     // Ensure stats collector has been initialized
     if (!runner.stats) {
@@ -72,7 +79,16 @@ class Mochawesome {
     this.initConsoleReporter(runner, options);
 
     // Attach listener for run end event
-    runner.on(EVENT_RUN_END, () => this.handleEndEvent(runner, options));
+    runner.on(EVENT_RUN_END, () => {
+      try {
+        this.handleEndEvent();
+      } catch (e) {
+        // required because thrown errors are not handled directly in the
+        // event emitter pattern and mocha does not have an "on error"
+        /* istanbul ignore next */
+        log(`Problem with mochawesome: ${e.stack}`, 'error');
+      }
+    });
 
     // Handle events from workers in parallel mode
     if (runner.constructor.name === 'ParallelBufferedRunner') {
@@ -161,38 +177,20 @@ class Mochawesome {
     });
   }
 
-  handleEndEvent(runner: Mocha.Runner, options: Mochawesome.Options) {
-    try {
-      const rootSuite = mapSuites(runner.suite, this.totals, this.config);
+  handleEndEvent() {
+    this.results = mapSuites(this.runner.suite, this.totals, this.config);
 
-      const obj = {
-        stats: runner.stats,
-        results: [rootSuite],
-        meta: this.meta,
-      };
-
-      obj.stats.testsRegistered = this.totals.registered;
-
-      const { passes, failures, pending, tests, testsRegistered } = obj.stats;
-      const passPercentage = (passes / (testsRegistered - pending)) * 100;
-      const pendingPercentage = (pending / testsRegistered) * 100;
-
-      obj.stats.passPercent = passPercentage;
-      obj.stats.pendingPercent = pendingPercentage;
-      obj.stats.other = passes + failures + pending - tests; // Failed hooks
-      obj.stats.hasOther = obj.stats.other > 0;
-      obj.stats.skipped = this.totals.skipped;
-      obj.stats.hasSkipped = obj.stats.skipped > 0;
-      obj.stats.failures -= obj.stats.other;
-
-      // Save the final output to be used in the done function
-      this.output = obj;
-    } catch (e) {
-      // required because thrown errors are not handled directly in the
-      // event emitter pattern and mocha does not have an "on error"
-      /* istanbul ignore next */
-      log(`Problem with mochawesome: ${e.stack}`, 'error');
-    }
+    const { suites = 0, passes = 0, failures = 0, pending = 0, tests = 0 } =
+      this.runner?.stats || {};
+    const failedHooks = passes + failures + pending - tests;
+    this.reporterStats = {
+      suites,
+      tests: this.totals.registered,
+      passed: passes,
+      failed: failures - failedHooks,
+      skipped: pending,
+      failedHooks,
+    };
   }
 
   // Done function will be called before mocha exits
@@ -200,7 +198,11 @@ class Mochawesome {
   async done(failures: number, exit: (failures: number) => void) {
     try {
       const [htmlFile, jsonFile] = await marge.create(
-        this.output,
+        {
+          meta: this.meta,
+          results: this.results,
+          stats: this.stats,
+        },
         this.margeOptions
       );
       if (!htmlFile && !jsonFile) {
