@@ -221,4 +221,4 @@ class Mochawesome extends Mocha.reporters.Base {
   }
 }
 
-module.exports = Mochawesome;
+export default Mochawesome;
