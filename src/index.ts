@@ -1,11 +1,10 @@
-import Base from 'mocha/lib/reporters/base';
+import Mocha from 'mocha';
 import mochaPkg from 'mocha/package.json';
 import marge from 'mochawesome-report-generator';
 import margePkg from 'mochawesome-report-generator/package.json';
 import conf from './config';
 import utils from './utils';
 import pkg from '../package.json';
-import Mocha from 'mocha';
 const {
   EVENT_RUN_BEGIN,
   EVENT_HOOK_END,
@@ -23,7 +22,7 @@ const { log, mapSuites } = utils;
 /**
  * Mochawesome Reporter
  */
-class Mochawesome {
+class Mochawesome extends Mocha.reporters.Base {
   config: Mochawesome.Config;
   margeOptions: Mochawesome.MargeOptions;
   meta: Mochawesome.OutputMeta;
@@ -34,11 +33,13 @@ class Mochawesome {
 
   constructor(runner: Mocha.Runner, options: Mochawesome.Options) {
     // Call the Base mocha reporter
-    Base.call(this, runner, options);
+    super(runner, options);
 
-    // Set the config options
+    // Save the options and get the reporter config
+    this.options = options;
     this.config = conf(options);
 
+    // Save metadata about the run
     this.meta = {
       mocha: {
         version: mochaPkg.version,
@@ -76,7 +77,7 @@ class Mochawesome {
       skipped: 0,
     };
 
-    this.initConsoleReporter(runner, options);
+    this.initConsoleReporter();
 
     // Attach listener for run end event
     runner.on(EVENT_RUN_END, () => {
@@ -92,7 +93,7 @@ class Mochawesome {
 
     // Handle events from workers in parallel mode
     if (runner.constructor.name === 'ParallelBufferedRunner') {
-      this.attatchEventsForParallelMode(runner);
+      this.attatchEventsForParallelMode();
     }
   }
 
@@ -100,7 +101,7 @@ class Mochawesome {
    * Initialize a reporter to output to the console while mocha is running
    * and before mochawesome generates its own report.
    */
-  initConsoleReporter(runner: Mocha.Runner, options: Mochawesome.Options) {
+  initConsoleReporter() {
     const { consoleReporter } = this.config;
     if (consoleReporter !== 'none') {
       let ConsoleReporter;
@@ -110,12 +111,12 @@ class Mochawesome {
         log(`Unknown console reporter '${consoleReporter}'`);
       }
       if (ConsoleReporter) {
-        new ConsoleReporter(runner, options); // eslint-disable-line
+        new ConsoleReporter(this.runner, this.options); // eslint-disable-line
       }
     }
   }
 
-  attatchEventsForParallelMode(runner: Mocha.Runner) {
+  attatchEventsForParallelMode() {
     let currentSuite;
 
     const HookMap = {
@@ -125,11 +126,11 @@ class Mochawesome {
       ['"after all" ']: '_afterAll',
     };
 
-    runner.on(EVENT_RUN_BEGIN, function () {
+    this.runner.on(EVENT_RUN_BEGIN, function () {
       currentSuite = undefined;
     });
 
-    runner.on(EVENT_SUITE_BEGIN, function (suite) {
+    this.runner.on(EVENT_SUITE_BEGIN, function (suite) {
       suite._beforeAll = suite._beforeAll || [];
       suite._beforeEach = suite._beforeEach || [];
       suite.suites = suite.suites || [];
@@ -145,13 +146,13 @@ class Mochawesome {
       currentSuite = suite;
     });
 
-    runner.on(EVENT_SUITE_END, function () {
+    this.runner.on(EVENT_SUITE_END, function () {
       if (currentSuite) {
         currentSuite = currentSuite.parent;
       }
     });
 
-    runner.on(EVENT_HOOK_END, function (hook) {
+    this.runner.on(EVENT_HOOK_END, function (hook) {
       if (currentSuite) {
         const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
         // add only once, since it is attached to the Suite
@@ -163,7 +164,7 @@ class Mochawesome {
     });
 
     [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
-      runner.on(type, function (test) {
+      this.runner.on(type, function (test) {
         if (currentSuite) {
           test.parent = currentSuite;
           if (test.type === 'hook') {
