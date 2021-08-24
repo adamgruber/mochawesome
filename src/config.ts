@@ -5,44 +5,40 @@
  *  1. User-supplied option
  *  2. Environment variable
  *  3. Default value
- *
- * @param {string} optToGet  Option name
- * @param {object} options  User supplied options object
- * @param {boolean} isBool  Treat option as Boolean
- * @param {string|boolean} defaultValue  Fallback value
- *
- * @return {string|boolean}  Option value
  */
-function _getOption(optToGet, options, isBool, defaultValue) {
+function get(optToGet: string, options: any, defaultValue: string | boolean) {
+  const optionValue = options && options[optToGet];
   const envVar = `MOCHAWESOME_${optToGet.toUpperCase()}`;
-  if (options && typeof options[optToGet] !== 'undefined') {
-    return isBool && typeof options[optToGet] === 'string'
-      ? options[optToGet] === 'true'
-      : options[optToGet];
+  const envValue = process.env[envVar];
+  const isBool = typeof defaultValue === 'boolean';
+
+  if (optionValue !== undefined) {
+    return isBool && typeof optionValue === 'string'
+      ? optionValue === 'true'
+      : optionValue;
   }
-  if (typeof process.env[envVar] !== 'undefined') {
-    return isBool ? process.env[envVar] === 'true' : process.env[envVar];
+
+  if (envValue !== undefined) {
+    return isBool ? envValue === 'true' : envValue;
   }
+
   return defaultValue;
 }
 
-module.exports = function (opts) {
-  const reporterOpts = (opts && opts.reporterOptions) || {};
-  const code = _getOption('code', reporterOpts, true, true);
-  const noCode = _getOption('no-code', reporterOpts, true, false);
+function getMochawesomeConfig(opts: Mochawesome.Options): Mochawesome.Config {
+  const { reporterOptions } = opts || {};
+  const code = get('code', reporterOptions, true);
+  const noCode = get('no-code', reporterOptions, false);
 
   return {
-    quiet: _getOption('quiet', reporterOpts, true, false),
-    reportFilename: _getOption(
-      'reportFilename',
-      reporterOpts,
-      false,
-      'mochawesome'
-    ),
-    saveHtml: _getOption('html', reporterOpts, true, true),
-    saveJson: _getOption('json', reporterOpts, true, true),
-    consoleReporter: _getOption('consoleReporter', reporterOpts, false, 'spec'),
+    quiet: get('quiet', reporterOptions, false),
+    reportFilename: get('reportFilename', reporterOptions, 'mochawesome'),
+    saveHtml: get('html', reporterOptions, true),
+    saveJson: get('json', reporterOptions, true),
+    consoleReporter: get('consoleReporter', reporterOptions, 'spec'),
     useInlineDiffs: !!opts.inlineDiffs,
     code: noCode ? false : code,
   };
-};
+}
+
+export default getMochawesomeConfig;
