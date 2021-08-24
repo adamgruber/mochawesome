@@ -1,12 +1,12 @@
-const Base = require('mocha/lib/reporters/base');
-const mochaPkg = require('mocha/package.json');
-const uuid = require('uuid');
-const marge = require('mochawesome-report-generator');
-const margePkg = require('mochawesome-report-generator/package.json');
-const conf = require('./config');
-const utils = require('./utils');
-const pkg = require('../package.json');
-const Mocha = require('mocha');
+import Base from 'mocha/lib/reporters/base';
+import mochaPkg from 'mocha/package.json';
+import uuid from 'uuid';
+import marge from 'mochawesome-report-generator';
+import margePkg from 'mochawesome-report-generator/package.json';
+import conf from './config';
+import utils from './utils';
+import pkg from '../package.json';
+import Mocha from 'mocha';
 const {
   EVENT_RUN_BEGIN,
   EVENT_HOOK_END,
