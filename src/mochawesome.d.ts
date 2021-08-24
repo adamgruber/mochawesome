@@ -58,4 +58,8 @@ declare namespace Mochawesome {
     saveHtml: boolean;
     saveJson: boolean;
   }
+
+  interface Suite extends Mocha.Suite {
+    [key: string]: Mocha.Hook[];
+  }
 }

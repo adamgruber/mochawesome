@@ -24,6 +24,7 @@ const { log, mapSuites } = utils;
  */
 class Mochawesome extends Mocha.reporters.Base {
   config: Mochawesome.Config;
+  currentSuite: Mochawesome.Suite | undefined;
   margeOptions: Mochawesome.MargeOptions;
   meta: Mochawesome.OutputMeta;
   options: Mochawesome.Options;
@@ -117,61 +118,61 @@ class Mochawesome extends Mocha.reporters.Base {
   }
 
   attatchEventsForParallelMode() {
-    let currentSuite;
-
-    const HookMap = {
-      ['"before all" ']: '_beforeAll',
-      ['"before each" ']: '_beforeEach',
-      ['"after each" ']: '_afterEach',
-      ['"after all" ']: '_afterAll',
+    const HookMap: { [key: string]: string } = {
+      '"before all" ': '_beforeAll',
+      '"before each" ': '_beforeEach',
+      '"after each" ': '_afterEach',
+      '"after all" ': '_afterAll',
     };
 
-    this.runner.on(EVENT_RUN_BEGIN, function () {
-      currentSuite = undefined;
+    this.runner.on(EVENT_RUN_BEGIN, () => {
+      this.currentSuite = undefined;
     });
 
-    this.runner.on(EVENT_SUITE_BEGIN, function (suite) {
-      suite._beforeAll = suite._beforeAll || [];
-      suite._beforeEach = suite._beforeEach || [];
+    this.runner.on(EVENT_SUITE_BEGIN, suite => {
+      suite['_beforeAll'] = suite['_beforeAll'] || [];
+      suite['_beforeEach'] = suite['_beforeEach'] || [];
       suite.suites = suite.suites || [];
       suite.tests = suite.tests || [];
-      suite._afterEach = suite._afterEach || [];
-      suite._afterAll = suite._afterAll || [];
+      suite['_afterEach'] = suite['_afterEach'] || [];
+      suite['_afterAll'] = suite['_afterAll'] || [];
       if (suite.root) {
-        suite = runner.suite;
-      } else if (currentSuite) {
-        currentSuite.suites.push(suite);
-        suite.parent = currentSuite;
+        suite = this.runner.suite;
+      } else if (this.currentSuite) {
+        this.currentSuite.suites.push(suite);
+        suite.parent = this.currentSuite;
       }
-      currentSuite = suite;
+      this.currentSuite = suite as Mochawesome.Suite;
     });
 
-    this.runner.on(EVENT_SUITE_END, function () {
-      if (currentSuite) {
-        currentSuite = currentSuite.parent;
+    this.runner.on(EVENT_SUITE_END, () => {
+      if (this.currentSuite) {
+        this.currentSuite = this.currentSuite.parent as Mochawesome.Suite;
       }
     });
 
-    this.runner.on(EVENT_HOOK_END, function (hook) {
-      if (currentSuite) {
-        const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
+    this.runner.on(EVENT_HOOK_END, hook => {
+      if (this.currentSuite) {
+        const hookType = HookMap[hook.title.split('hook')[0]];
+        const hooks = this.currentSuite[hookType];
         // add only once, since it is attached to the Suite
-        if (hooks && hooks.every(it => it.title !== hook.title)) {
-          hook.parent = currentSuite;
+        if (hooks && hooks.every((it: Mocha.Hook) => it.title !== hook.title)) {
+          hook.parent = this.currentSuite;
           hooks.push(hook);
         }
       }
     });
 
     [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
-      this.runner.on(type, function (test) {
-        if (currentSuite) {
-          test.parent = currentSuite;
+      this.runner.on(type, test => {
+        if (this.currentSuite) {
+          test.parent = this.currentSuite;
           if (test.type === 'hook') {
-            const hooks = currentSuite[HookMap[test.title.split('hook')[0]]];
+            const hookType = HookMap[test.title.split('hook')[0]];
+            const hooks = this.currentSuite[hookType];
             hooks && hooks.push(test);
           } else {
-            currentSuite.tests.push(test);
+            this.currentSuite.tests.push(test);
           }
         }
       });
