@@ -59,29 +59,6 @@ function done(output, options, config, failures, exit) {
 }
 
 /**
- * Get the class of the configured console reporter. This reporter outputs
- * test results to the console while mocha is running, and before
- * mochawesome generates its own report.
- *
- * Defaults to 'spec'.
- *
- * @param {String} reporter   Name of reporter to use for console output
- *
- * @return {Object} Reporter class object
- */
-function consoleReporter(reporter) {
-  if (reporter) {
-    try {
-      return require(`mocha/lib/reporters/${reporter}`);
-    } catch (e) {
-      log(`Unknown console reporter '${reporter}', defaulting to spec`);
-    }
-  }
-
-  return require('mocha/lib/reporters/spec');
-}
-
-/**
  * Mochawesome Reporter
  */
 class Mochawesome {
@@ -111,7 +88,7 @@ class Mochawesome {
     testTotals.registered = 0;
     testTotals.skipped = 0;
 
-    this.initConsoleReporter(runner);
+    this.initConsoleReporter(runner, options);
     this.attachEvents(runner);
 
     // Handle events from workers in parallel mode
@@ -120,11 +97,22 @@ class Mochawesome {
     }
   }
 
-  initConsoleReporter(runner: Mocha.Runner) {
-    const reporterName = this.config.consoleReporter;
-    if (reporterName !== 'none') {
-      const ConsoleReporter = consoleReporter(reporterName);
-      new ConsoleReporter(runner); // eslint-disable-line
+  /**
+   * Initialize a reporter to output to the console while mocha is running
+   * and before mochawesome generates its own report.
+   */
+  initConsoleReporter(runner: Mocha.Runner, options: Mochawesome.Options) {
+    const { consoleReporter } = this.config;
+    if (consoleReporter !== 'none') {
+      let ConsoleReporter;
+      try {
+        ConsoleReporter = require(`mocha/lib/reporters/${consoleReporter}`);
+      } catch (e) {
+        log(`Unknown console reporter '${consoleReporter}'`);
+      }
+      if (ConsoleReporter) {
+        new ConsoleReporter(runner, options); // eslint-disable-line
+      }
     }
   }
 
