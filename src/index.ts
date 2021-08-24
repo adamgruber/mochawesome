@@ -27,12 +27,27 @@ class Mochawesome {
   config: Mochawesome.Config;
   margeOptions: Mochawesome.MargeOptions;
   totals: { registered: number; skipped: number };
+  meta: Mochawesome.OutputMeta;
   constructor(runner: Mocha.Runner, options: Mochawesome.Options) {
     // Call the Base mocha reporter
     Base.call(this, runner, options);
 
     // Set the config options
     this.config = conf(options);
+
+    this.meta = {
+      mocha: {
+        version: mochaPkg.version,
+      },
+      mochawesome: {
+        options: this.config,
+        version: pkg.version,
+      },
+      marge: {
+        options: options.reporterOptions,
+        version: margePkg.version,
+      },
+    };
 
     // Ensure stats collector has been initialized
     if (!runner.stats) {
@@ -153,19 +168,7 @@ class Mochawesome {
       const obj = {
         stats: runner.stats,
         results: [rootSuite],
-        meta: {
-          mocha: {
-            version: mochaPkg.version,
-          },
-          mochawesome: {
-            options: this.config,
-            version: pkg.version,
-          },
-          marge: {
-            options: options.reporterOptions,
-            version: margePkg.version,
-          },
-        },
+        meta: this.meta,
       };
 
       obj.stats.testsRegistered = this.totals.registered;

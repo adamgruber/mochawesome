@@ -15,7 +15,7 @@ declare namespace Mochawesome {
 
   interface Options {
     inlineDiffs?: boolean;
-    reporterOptions?: Partial<ReporterOptions>;
+    reporterOptions: Partial<ReporterOptions>;
   }
 
   interface Config {
@@ -26,6 +26,20 @@ declare namespace Mochawesome {
     saveHtml: boolean;
     saveJson: boolean;
     useInlineDiffs: boolean;
+  }
+
+  interface OutputMeta {
+    mocha: {
+      version: string;
+    };
+    mochawesome: {
+      options: Config;
+      version: string;
+    };
+    marge: {
+      options: Partial<ReporterOptions>;
+      version: string;
+    };
   }
 
   interface MargeOptions extends Options {
