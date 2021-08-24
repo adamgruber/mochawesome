@@ -48,6 +48,8 @@
     "branches": 90
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
     "chalk": "^4.1.0",
     "diff": "^5.0.0",
     "json-stringify-safe": "^5.0.1",
@@ -70,7 +72,8 @@
     "prettier": "^2.2.1",
     "proxyquire": "^2.1.0",
     "should": "^13.2.3",
-    "sinon": "^9.2.4"
+    "sinon": "^9.2.4",
+    "typescript": "^4.3.5"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
