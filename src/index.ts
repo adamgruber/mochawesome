@@ -27,42 +27,11 @@ const testTotals = {
 };
 
 /**
- * Done function gets called before mocha exits
- *
- * Creates and saves the report HTML and JSON files
- *
- * @param {Object} output    Final report object
- * @param {Object} options   Options to pass to report generator
- * @param {Object} config    Reporter config object
- * @param {Number} failures  Number of reported failures
- * @param {Function} exit
- *
- * @return {Promise} Resolves with successful report creation
- */
-function done(output, options, config, failures, exit) {
-  return marge
-    .create(output, options)
-    .then(([htmlFile, jsonFile]) => {
-      if (!htmlFile && !jsonFile) {
-        log('No files were generated', 'warn', config);
-      } else {
-        jsonFile && log(`Report JSON saved to ${jsonFile}`, null, config);
-        htmlFile && log(`Report HTML saved to ${htmlFile}`, null, config);
-      }
-    })
-    .catch(err => {
-      log(err, 'error', config);
-    })
-    .then(() => {
-      exit && exit(failures > 0 ? 1 : 0);
-    });
-}
-
-/**
  * Mochawesome Reporter
  */
 class Mochawesome {
   config: Mochawesome.Config;
+  margeOptions: Mochawesome.MargeOptions;
   constructor(runner: Mocha.Runner, options: Mochawesome.Options) {
     // Call the Base mocha reporter
     Base.call(this, runner, options);
@@ -77,7 +46,7 @@ class Mochawesome {
     }
 
     // Reporter options
-    this.reporterOptions = {
+    this.margeOptions = {
       ...options.reporterOptions,
       reportFilename: this.config.reportFilename,
       saveHtml: this.config.saveHtml,
@@ -255,8 +224,23 @@ class Mochawesome {
 
   // Done function will be called before mocha exits
   // This is where we will save JSON and generate the HTML report
-  done(failures: number, exit: (failures: number) => void) {
-    done(this.output, this.reporterOptions, this.config, failures, exit);
+  async done(failures: number, exit: (failures: number) => void) {
+    try {
+      const [htmlFile, jsonFile] = await marge.create(
+        this.output,
+        this.margeOptions
+      );
+      if (!htmlFile && !jsonFile) {
+        log('No files were generated', 'warn', this.config);
+      } else {
+        jsonFile && log(`Report JSON saved to ${jsonFile}`, null, this.config);
+        htmlFile && log(`Report HTML saved to ${htmlFile}`, null, this.config);
+      }
+    } catch (err) {
+      log(err, 'error', this.config);
+    }
+
+    exit && exit(failures > 0 ? 1 : 0);
   }
 }
 

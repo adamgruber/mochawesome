@@ -27,4 +27,10 @@ declare namespace Mochawesome {
     saveJson: boolean;
     useInlineDiffs: boolean;
   }
+
+  interface MargeOptions extends Options {
+    reportFilename: string;
+    saveHtml: boolean;
+    saveJson: boolean;
+  }
 }
