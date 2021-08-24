@@ -1,6 +1,5 @@
 import Base from 'mocha/lib/reporters/base';
 import mochaPkg from 'mocha/package.json';
-import uuid from 'uuid';
 import marge from 'mochawesome-report-generator';
 import margePkg from 'mochawesome-report-generator/package.json';
 import conf from './config';
@@ -60,8 +59,6 @@ class Mochawesome {
     // Attach listener for run end event
     runner.on(EVENT_RUN_END, () => this.handleEndEvent(runner, options));
 
-    this.attachEvents(runner);
-
     // Handle events from workers in parallel mode
     if (runner.constructor.name === 'ParallelBufferedRunner') {
       this.attatchEventsForParallelMode(runner);
@@ -85,17 +82,6 @@ class Mochawesome {
         new ConsoleReporter(runner, options); // eslint-disable-line
       }
     }
-  }
-
-  attachEvents(runner: Mocha.Runner) {
-    let endCalled = false;
-
-    // Add a unique identifier to each suite/test/hook
-    ['suite', 'test', 'hook', 'pending'].forEach(type => {
-      runner.on(type, item => {
-        item.uuid = uuid.v4();
-      });
-    });
   }
 
   attatchEventsForParallelMode(runner: Mocha.Runner) {
