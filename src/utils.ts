@@ -1,13 +1,13 @@
-const isString = require('lodash.isstring');
-const isFunction = require('lodash.isfunction');
-const isEmpty = require('lodash.isempty');
-const chalk = require('chalk');
-const uuid = require('uuid');
-const mochaUtils = require('mocha/lib/utils');
-const stringify = require('json-stringify-safe');
-const diff = require('diff');
-const stripAnsi = require('strip-ansi');
-const stripFnStart = require('./stripFnStart');
+import isString from 'lodash/isstring';
+import isFunction from 'lodash/isfunction';
+import isEmpty from 'lodash/isempty';
+import chalk from 'chalk';
+import uuid from 'uuid';
+import mochaUtils from 'mocha/lib/utils';
+import stringify from 'json-stringify-safe';
+import diff from 'diff';
+import stripAnsi from 'strip-ansi';
+import stripFnStart from './stripFnStart';
 
 /**
  * Return a classname based on percentage

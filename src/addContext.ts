@@ -1,7 +1,7 @@
-const isObject = require('lodash.isobject');
-const isEmpty = require('lodash.isempty');
-const chalk = require('chalk');
-const stringify = require('json-stringify-safe');
+import isObject from 'lodash/isobject';
+import isEmpty from 'lodash/isempty';
+import chalk from 'chalk';
+import stringify from 'json-stringify-safe';
 
 const errorPrefix = 'Error adding context:';
 const ERRORS = {
