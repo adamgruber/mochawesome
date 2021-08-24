@@ -82,13 +82,14 @@ function consoleReporter(reporter) {
 }
 
 /**
- * Initialize a new reporter.
- *
- * @param {Runner} runner
- * @api public
+ * Mochawesome Reporter
  */
 class Mochawesome {
-  constructor(runner, options) {
+  config: Mochawesome.Config;
+  constructor(runner: Mocha.Runner, options: Mochawesome.Options) {
+    // Call the Base mocha reporter
+    Base.call(this, runner, options);
+
     // Set the config options
     this.config = conf(options);
 
@@ -99,31 +100,35 @@ class Mochawesome {
     }
 
     // Reporter options
-    const reporterOptions = {
+    this.reporterOptions = {
       ...options.reporterOptions,
       reportFilename: this.config.reportFilename,
       saveHtml: this.config.saveHtml,
       saveJson: this.config.saveJson,
     };
 
-    // Done function will be called before mocha exits
-    // This is where we will save JSON and generate the HTML report
-    this.done = (failures, exit) =>
-      done(this.output, reporterOptions, this.config, failures, exit);
-
     // Reset total tests counters
     testTotals.registered = 0;
     testTotals.skipped = 0;
 
-    // Call the Base mocha reporter
-    Base.call(this, runner);
+    this.initConsoleReporter(runner);
+    this.attachEvents(runner);
 
-    const reporterName = reporterOptions.consoleReporter;
+    // Handle events from workers in parallel mode
+    if (runner.constructor.name === 'ParallelBufferedRunner') {
+      this.attatchEventsForParallelMode(runner);
+    }
+  }
+
+  initConsoleReporter(runner: Mocha.Runner) {
+    const reporterName = this.config.consoleReporter;
     if (reporterName !== 'none') {
       const ConsoleReporter = consoleReporter(reporterName);
       new ConsoleReporter(runner); // eslint-disable-line
     }
+  }
 
+  attachEvents(runner: Mocha.Runner) {
     let endCalled = false;
 
     // Add a unique identifier to each suite/test/hook
@@ -132,69 +137,6 @@ class Mochawesome {
         item.uuid = uuid.v4();
       });
     });
-
-    // Handle events from workers in parallel mode
-    if (runner.constructor.name === 'ParallelBufferedRunner') {
-      let currentSuite;
-
-      const HookMap = {
-        ['"before all" ']: '_beforeAll',
-        ['"before each" ']: '_beforeEach',
-        ['"after each" ']: '_afterEach',
-        ['"after all" ']: '_afterAll',
-      };
-
-      runner.on(EVENT_RUN_BEGIN, function () {
-        currentSuite = undefined;
-      });
-
-      runner.on(EVENT_SUITE_BEGIN, function (suite) {
-        suite._beforeAll = suite._beforeAll || [];
-        suite._beforeEach = suite._beforeEach || [];
-        suite.suites = suite.suites || [];
-        suite.tests = suite.tests || [];
-        suite._afterEach = suite._afterEach || [];
-        suite._afterAll = suite._afterAll || [];
-        if (suite.root) {
-          suite = runner.suite;
-        } else if (currentSuite) {
-          currentSuite.suites.push(suite);
-          suite.parent = currentSuite;
-        }
-        currentSuite = suite;
-      });
-
-      runner.on(EVENT_SUITE_END, function () {
-        if (currentSuite) {
-          currentSuite = currentSuite.parent;
-        }
-      });
-
-      runner.on(EVENT_HOOK_END, function (hook) {
-        if (currentSuite) {
-          const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
-          // add only once, since it is attached to the Suite
-          if (hooks && hooks.every(it => it.title !== hook.title)) {
-            hook.parent = currentSuite;
-            hooks.push(hook);
-          }
-        }
-      });
-
-      [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
-        runner.on(type, function (test) {
-          if (currentSuite) {
-            test.parent = currentSuite;
-            if (test.type === 'hook') {
-              const hooks = currentSuite[HookMap[test.title.split('hook')[0]]];
-              hooks && hooks.push(test);
-            } else {
-              currentSuite.tests.push(test);
-            }
-          }
-        });
-      });
-    }
 
     // Process the full suite
     runner.on('end', () => {
@@ -259,6 +201,74 @@ class Mochawesome {
         log(`Problem with mochawesome: ${e.stack}`, 'error');
       }
     });
+  }
+
+  attatchEventsForParallelMode(runner: Mocha.Runner) {
+    let currentSuite;
+
+    const HookMap = {
+      ['"before all" ']: '_beforeAll',
+      ['"before each" ']: '_beforeEach',
+      ['"after each" ']: '_afterEach',
+      ['"after all" ']: '_afterAll',
+    };
+
+    runner.on(EVENT_RUN_BEGIN, function () {
+      currentSuite = undefined;
+    });
+
+    runner.on(EVENT_SUITE_BEGIN, function (suite) {
+      suite._beforeAll = suite._beforeAll || [];
+      suite._beforeEach = suite._beforeEach || [];
+      suite.suites = suite.suites || [];
+      suite.tests = suite.tests || [];
+      suite._afterEach = suite._afterEach || [];
+      suite._afterAll = suite._afterAll || [];
+      if (suite.root) {
+        suite = runner.suite;
+      } else if (currentSuite) {
+        currentSuite.suites.push(suite);
+        suite.parent = currentSuite;
+      }
+      currentSuite = suite;
+    });
+
+    runner.on(EVENT_SUITE_END, function () {
+      if (currentSuite) {
+        currentSuite = currentSuite.parent;
+      }
+    });
+
+    runner.on(EVENT_HOOK_END, function (hook) {
+      if (currentSuite) {
+        const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
+        // add only once, since it is attached to the Suite
+        if (hooks && hooks.every(it => it.title !== hook.title)) {
+          hook.parent = currentSuite;
+          hooks.push(hook);
+        }
+      }
+    });
+
+    [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
+      runner.on(type, function (test) {
+        if (currentSuite) {
+          test.parent = currentSuite;
+          if (test.type === 'hook') {
+            const hooks = currentSuite[HookMap[test.title.split('hook')[0]]];
+            hooks && hooks.push(test);
+          } else {
+            currentSuite.tests.push(test);
+          }
+        }
+      });
+    });
+  }
+
+  // Done function will be called before mocha exits
+  // This is where we will save JSON and generate the HTML report
+  done(failures: number, exit: (failures: number) => void) {
+    done(this.output, this.reporterOptions, this.config, failures, exit);
   }
 }
 
