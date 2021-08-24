@@ -87,167 +87,179 @@ function consoleReporter(reporter) {
  * @param {Runner} runner
  * @api public
  */
-function Mochawesome(runner, options) {
-  // Set the config options
-  this.config = conf(options);
+class Mochawesome {
+  constructor(runner, options) {
+    // Set the config options
+    this.config = conf(options);
 
-  // Ensure stats collector has been initialized
-  if (!runner.stats) {
-    const createStatsCollector = require('mocha/lib/stats-collector');
-    createStatsCollector(runner);
-  }
+    // Ensure stats collector has been initialized
+    if (!runner.stats) {
+      const createStatsCollector = require('mocha/lib/stats-collector');
+      createStatsCollector(runner);
+    }
 
-  // Reporter options
-  const reporterOptions = {
-    ...options.reporterOptions,
-    reportFilename: this.config.reportFilename,
-    saveHtml: this.config.saveHtml,
-    saveJson: this.config.saveJson,
-  };
-
-  // Done function will be called before mocha exits
-  // This is where we will save JSON and generate the HTML report
-  this.done = (failures, exit) =>
-    done(this.output, reporterOptions, this.config, failures, exit);
-
-  // Reset total tests counters
-  testTotals.registered = 0;
-  testTotals.skipped = 0;
-
-  // Call the Base mocha reporter
-  Base.call(this, runner);
-
-  const reporterName = reporterOptions.consoleReporter;
-  if (reporterName !== 'none') {
-    const ConsoleReporter = consoleReporter(reporterName);
-    new ConsoleReporter(runner); // eslint-disable-line
-  }
-
-  let endCalled = false;
-
-  // Add a unique identifier to each suite/test/hook
-  ['suite', 'test', 'hook', 'pending'].forEach(type => {
-    runner.on(type, item => {
-      item.uuid = uuid.v4();
-    });
-  });
-
-  // Handle events from workers in parallel mode
-  if (runner.constructor.name === 'ParallelBufferedRunner') {
-    let currentSuite;
-
-    const HookMap = {
-      ['"before all" ']: '_beforeAll',
-      ['"before each" ']: '_beforeEach',
-      ['"after each" ']: '_afterEach',
-      ['"after all" ']: '_afterAll',
+    // Reporter options
+    const reporterOptions = {
+      ...options.reporterOptions,
+      reportFilename: this.config.reportFilename,
+      saveHtml: this.config.saveHtml,
+      saveJson: this.config.saveJson,
     };
 
-    runner.on(EVENT_RUN_BEGIN, function () {
-      currentSuite = undefined;
+    // Done function will be called before mocha exits
+    // This is where we will save JSON and generate the HTML report
+    this.done = (failures, exit) =>
+      done(this.output, reporterOptions, this.config, failures, exit);
+
+    // Reset total tests counters
+    testTotals.registered = 0;
+    testTotals.skipped = 0;
+
+    // Call the Base mocha reporter
+    Base.call(this, runner);
+
+    const reporterName = reporterOptions.consoleReporter;
+    if (reporterName !== 'none') {
+      const ConsoleReporter = consoleReporter(reporterName);
+      new ConsoleReporter(runner); // eslint-disable-line
+    }
+
+    let endCalled = false;
+
+    // Add a unique identifier to each suite/test/hook
+    ['suite', 'test', 'hook', 'pending'].forEach(type => {
+      runner.on(type, item => {
+        item.uuid = uuid.v4();
+      });
     });
 
-    runner.on(EVENT_SUITE_BEGIN, function (suite) {
-      suite._beforeAll = suite._beforeAll || [];
-      suite._beforeEach = suite._beforeEach || [];
-      suite.suites = suite.suites || [];
-      suite.tests = suite.tests || [];
-      suite._afterEach = suite._afterEach || [];
-      suite._afterAll = suite._afterAll || [];
-      if (suite.root) {
-        suite = runner.suite;
-      } else if (currentSuite) {
-        currentSuite.suites.push(suite);
-        suite.parent = currentSuite;
-      }
-      currentSuite = suite;
-    });
+    // Handle events from workers in parallel mode
+    if (runner.constructor.name === 'ParallelBufferedRunner') {
+      let currentSuite;
 
-    runner.on(EVENT_SUITE_END, function () {
-      if (currentSuite) {
-        currentSuite = currentSuite.parent;
-      }
-    });
+      const HookMap = {
+        ['"before all" ']: '_beforeAll',
+        ['"before each" ']: '_beforeEach',
+        ['"after each" ']: '_afterEach',
+        ['"after all" ']: '_afterAll',
+      };
 
-    runner.on(EVENT_HOOK_END, function (hook) {
-      if (currentSuite) {
-        const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
-        // add only once, since it is attached to the Suite
-        if (hooks && hooks.every(it => it.title !== hook.title)) {
-          hook.parent = currentSuite;
-          hooks.push(hook);
+      runner.on(EVENT_RUN_BEGIN, function () {
+        currentSuite = undefined;
+      });
+
+      runner.on(EVENT_SUITE_BEGIN, function (suite) {
+        suite._beforeAll = suite._beforeAll || [];
+        suite._beforeEach = suite._beforeEach || [];
+        suite.suites = suite.suites || [];
+        suite.tests = suite.tests || [];
+        suite._afterEach = suite._afterEach || [];
+        suite._afterAll = suite._afterAll || [];
+        if (suite.root) {
+          suite = runner.suite;
+        } else if (currentSuite) {
+          currentSuite.suites.push(suite);
+          suite.parent = currentSuite;
         }
-      }
-    });
+        currentSuite = suite;
+      });
 
-    [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
-      runner.on(type, function (test) {
+      runner.on(EVENT_SUITE_END, function () {
         if (currentSuite) {
-          test.parent = currentSuite;
-          if (test.type === 'hook') {
-            const hooks = currentSuite[HookMap[test.title.split('hook')[0]]];
-            hooks && hooks.push(test);
-          } else {
-            currentSuite.tests.push(test);
+          currentSuite = currentSuite.parent;
+        }
+      });
+
+      runner.on(EVENT_HOOK_END, function (hook) {
+        if (currentSuite) {
+          const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
+          // add only once, since it is attached to the Suite
+          if (hooks && hooks.every(it => it.title !== hook.title)) {
+            hook.parent = currentSuite;
+            hooks.push(hook);
           }
         }
       });
+
+      [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
+        runner.on(type, function (test) {
+          if (currentSuite) {
+            test.parent = currentSuite;
+            if (test.type === 'hook') {
+              const hooks = currentSuite[HookMap[test.title.split('hook')[0]]];
+              hooks && hooks.push(test);
+            } else {
+              currentSuite.tests.push(test);
+            }
+          }
+        });
+      });
+    }
+
+    // Process the full suite
+    runner.on('end', () => {
+      try {
+        /* istanbul ignore else */
+        if (!endCalled) {
+          // end gets called more than once for some reason
+          // so we ensure the suite is processed only once
+          endCalled = true;
+
+          const rootSuite = mapSuites(
+            this.runner.suite,
+            testTotals,
+            this.config
+          );
+
+          const obj = {
+            stats: this.stats,
+            results: [rootSuite],
+            meta: {
+              mocha: {
+                version: mochaPkg.version,
+              },
+              mochawesome: {
+                options: this.config,
+                version: pkg.version,
+              },
+              marge: {
+                options: options.reporterOptions,
+                version: margePkg.version,
+              },
+            },
+          };
+
+          obj.stats.testsRegistered = testTotals.registered;
+
+          const {
+            passes,
+            failures,
+            pending,
+            tests,
+            testsRegistered,
+          } = obj.stats;
+          const passPercentage = (passes / (testsRegistered - pending)) * 100;
+          const pendingPercentage = (pending / testsRegistered) * 100;
+
+          obj.stats.passPercent = passPercentage;
+          obj.stats.pendingPercent = pendingPercentage;
+          obj.stats.other = passes + failures + pending - tests; // Failed hooks
+          obj.stats.hasOther = obj.stats.other > 0;
+          obj.stats.skipped = testTotals.skipped;
+          obj.stats.hasSkipped = obj.stats.skipped > 0;
+          obj.stats.failures -= obj.stats.other;
+
+          // Save the final output to be used in the done function
+          this.output = obj;
+        }
+      } catch (e) {
+        // required because thrown errors are not handled directly in the
+        // event emitter pattern and mocha does not have an "on error"
+        /* istanbul ignore next */
+        log(`Problem with mochawesome: ${e.stack}`, 'error');
+      }
     });
   }
-
-  // Process the full suite
-  runner.on('end', () => {
-    try {
-      /* istanbul ignore else */
-      if (!endCalled) {
-        // end gets called more than once for some reason
-        // so we ensure the suite is processed only once
-        endCalled = true;
-
-        const rootSuite = mapSuites(this.runner.suite, testTotals, this.config);
-
-        const obj = {
-          stats: this.stats,
-          results: [rootSuite],
-          meta: {
-            mocha: {
-              version: mochaPkg.version,
-            },
-            mochawesome: {
-              options: this.config,
-              version: pkg.version,
-            },
-            marge: {
-              options: options.reporterOptions,
-              version: margePkg.version,
-            },
-          },
-        };
-
-        obj.stats.testsRegistered = testTotals.registered;
-
-        const { passes, failures, pending, tests, testsRegistered } = obj.stats;
-        const passPercentage = (passes / (testsRegistered - pending)) * 100;
-        const pendingPercentage = (pending / testsRegistered) * 100;
-
-        obj.stats.passPercent = passPercentage;
-        obj.stats.pendingPercent = pendingPercentage;
-        obj.stats.other = passes + failures + pending - tests; // Failed hooks
-        obj.stats.hasOther = obj.stats.other > 0;
-        obj.stats.skipped = testTotals.skipped;
-        obj.stats.hasSkipped = obj.stats.skipped > 0;
-        obj.stats.failures -= obj.stats.other;
-
-        // Save the final output to be used in the done function
-        this.output = obj;
-      }
-    } catch (e) {
-      // required because thrown errors are not handled directly in the
-      // event emitter pattern and mocha does not have an "on error"
-      /* istanbul ignore next */
-      log(`Problem with mochawesome: ${e.stack}`, 'error');
-    }
-  });
 }
 
 module.exports = Mochawesome;
