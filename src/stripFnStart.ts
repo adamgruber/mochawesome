@@ -1,12 +1,7 @@
-/* eslint-disable consistent-return */
 /**
  * Strip start of function
- *
- * @param {string} input
- *
- * @return {string}
  */
-function stripFunctionStart(input) {
+function stripFunctionStart(input: string): string {
   const BEGIN = 1;
   const LBRACE = 2;
   const EQ = 4;
@@ -15,9 +10,9 @@ function stripFunctionStart(input) {
   const ARROW_PAREN = 32;
   const DONE = 64;
 
-  const isWhitespace = ch => ch === ' ' || ch === '\t' || ch === '\n';
+  const isWhitespace = (ch: string) => ch === ' ' || ch === '\t' || ch === '\n';
 
-  const nextState = (state, c) => {
+  const nextState = (state: number, c: string) => {
     switch (state) {
       case BEGIN:
         switch (c) {
@@ -49,6 +44,9 @@ function stripFunctionStart(input) {
       case ARROW_LBRACE:
       case ARROW_PAREN:
         return DONE;
+
+      default:
+        return DONE;
     }
   };
 
@@ -61,4 +59,4 @@ function stripFunctionStart(input) {
   return state === DONE ? input.slice(pos - 1) : input;
 }
 
-module.exports = stripFunctionStart;
+export default stripFunctionStart;
