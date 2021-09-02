@@ -4,7 +4,7 @@ const extendSerialize = (target, fields) => {
   const serialize = target.serialize;
   target.serialize = function (...args) {
     const result = serialize.call(this, ...args);
-    for (let field of fields) {
+    for (const field of fields) {
       result[field] = this[field];
     }
     return result;
@@ -14,5 +14,3 @@ const extendSerialize = (target, fields) => {
 extendSerialize(Mocha.Suite.prototype, ['file']);
 extendSerialize(Mocha.Hook.prototype, ['body', 'state']);
 extendSerialize(Mocha.Test.prototype, ['pending', 'context']);
-
-module.exports = {};
