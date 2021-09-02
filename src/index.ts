@@ -3,6 +3,7 @@ import mochaPkg from 'mocha/package.json';
 import marge from 'mochawesome-report-generator';
 import margePkg from 'mochawesome-report-generator/package.json';
 import conf from './config';
+import RunProcessor from './processor';
 import Logger from './logger';
 import pkg from '../package.json';
 const {
@@ -55,7 +56,10 @@ class Mochawesome extends Mocha.reporters.Base {
     };
 
     this.reporterStats = null;
-    this.results = [];
+    this.results = {
+      suites: [],
+      tests: [],
+    };
 
     // Ensure stats collector has been initialized
     if (!runner.stats) {
@@ -179,7 +183,8 @@ class Mochawesome extends Mocha.reporters.Base {
   }
 
   handleEndEvent() {
-    this.results = mapSuites(this.runner.suite, this.totals, this.config);
+    const processor = new RunProcessor(this.runner.suite, this.config);
+    this.results = processor.run();
 
     const { suites = 0, passes = 0, failures = 0, pending = 0, tests = 0 } =
       this.runner?.stats || {};
@@ -220,4 +225,4 @@ class Mochawesome extends Mocha.reporters.Base {
   }
 }
 
-export default Mochawesome;
+export = Mochawesome;
