@@ -3,7 +3,7 @@ import mochaPkg from 'mocha/package.json';
 import marge from 'mochawesome-report-generator';
 import margePkg from 'mochawesome-report-generator/package.json';
 import conf from './config';
-import utils from './utils';
+import Logger from './logger';
 import pkg from '../package.json';
 const {
   EVENT_RUN_BEGIN,
@@ -16,15 +16,13 @@ const {
   EVENT_RUN_END,
 } = Mocha.Runner.constants;
 
-// Import the utility functions
-const { log, mapSuites } = utils;
-
 /**
  * Mochawesome Reporter
  */
 class Mochawesome extends Mocha.reporters.Base {
   config: Mochawesome.Config;
   currentSuite: Mochawesome.Suite | undefined;
+  logger: Logger;
   margeOptions: Mochawesome.MargeOptions;
   meta: Mochawesome.OutputMeta;
   options: Mochawesome.Options;
@@ -39,6 +37,7 @@ class Mochawesome extends Mocha.reporters.Base {
     // Save the options and get the reporter config
     this.options = options;
     this.config = conf(options);
+    this.logger = new Logger(console, this.config);
 
     // Save metadata about the run
     this.meta = {
@@ -88,7 +87,7 @@ class Mochawesome extends Mocha.reporters.Base {
         // required because thrown errors are not handled directly in the
         // event emitter pattern and mocha does not have an "on error"
         /* istanbul ignore next */
-        log(`Problem with mochawesome: ${e.stack}`, 'error');
+        this.logger.error(`Problem with mochawesome: ${e.stack}`);
       }
     });
 
@@ -109,7 +108,7 @@ class Mochawesome extends Mocha.reporters.Base {
       try {
         ConsoleReporter = require(`mocha/lib/reporters/${consoleReporter}`);
       } catch (e) {
-        log(`Unknown console reporter '${consoleReporter}'`);
+        this.logger.warn(`Unknown console reporter '${consoleReporter}'`);
       }
       if (ConsoleReporter) {
         new ConsoleReporter(this.runner, this.options); // eslint-disable-line
@@ -208,13 +207,13 @@ class Mochawesome extends Mocha.reporters.Base {
         this.margeOptions
       );
       if (!htmlFile && !jsonFile) {
-        log('No files were generated', 'warn', this.config);
+        this.logger.warn('No files were generated');
       } else {
-        jsonFile && log(`Report JSON saved to ${jsonFile}`, null, this.config);
-        htmlFile && log(`Report HTML saved to ${htmlFile}`, null, this.config);
+        jsonFile && this.logger.log(`Report JSON saved to ${jsonFile}`);
+        htmlFile && this.logger.log(`Report HTML saved to ${htmlFile}`);
       }
     } catch (err) {
-      log(err, 'error', this.config);
+      this.logger.error(err);
     }
 
     exit && exit(failures > 0 ? 1 : 0);
