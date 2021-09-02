@@ -51,7 +51,10 @@ declare namespace Mochawesome {
     failedHooks: number;
   }
 
-  type Results = [];
+  type Results = {
+    suites: ProcessedSuite[];
+    tests: ProcessedTest[];
+  };
 
   interface MargeOptions {
     reportFilename: string;
@@ -61,5 +64,41 @@ declare namespace Mochawesome {
 
   interface Suite extends Mocha.Suite {
     [key: string]: Mocha.Hook[];
+  }
+
+  interface ProcessedSuite {
+    id: string;
+    title: string;
+    fullFile: string | undefined;
+    file: string | undefined;
+    duration: number;
+    isRoot: boolean;
+    parent?: string;
+  }
+
+  interface Context {}
+
+  type TestType =
+    | 'test'
+    | 'beforeEach'
+    | 'beforeAll'
+    | 'afterEach'
+    | 'afterAll';
+
+  interface ProcessedTest {
+    id: string;
+    title: string;
+    fullTitle: string;
+    duration: number;
+    timeout: number;
+    timedOut: boolean;
+    retries?: number;
+    state?: 'failed' | 'passed' | 'pending' | 'didNotRun';
+    speed?: 'slow' | 'medium' | 'fast';
+    context?: string | Context;
+    code?: string;
+    err?: NormalizedError;
+    parent?: string;
+    type: TestType;
   }
 }
