@@ -25,12 +25,14 @@ type MochaSuite = Omit<
   _afterEach: MochaHook[];
   _afterAll: MochaHook[];
 };
+
 type MochaTest = Omit<Mocha.Test, 'parent'> & {
   id: string;
   context?: Mochawesome.Context;
   parent?: MochaSuite;
   type: 'test';
 };
+
 type MochaHook = Omit<Mocha.Hook, 'parent'> & {
   id: string;
   context?: Mochawesome.Context;
@@ -45,10 +47,7 @@ type MochaError = Partial<AssertionError> & {
 
 class RunProcessor {
   config: Mochawesome.Config;
-  processed: {
-    suites: Mochawesome.ProcessedSuite[];
-    tests: Mochawesome.ProcessedTest[];
-  };
+  processed: Mochawesome.Results;
   rootSuite: MochaSuite;
 
   constructor(rootSuite: Mocha.Suite, config: Mochawesome.Config) {
