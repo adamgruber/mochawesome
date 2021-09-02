@@ -2,7 +2,9 @@ import isObject from 'lodash/isobject';
 import isEmpty from 'lodash/isempty';
 import chalk from 'chalk';
 import stringify from 'json-stringify-safe';
+import Logger from './logger';
 
+const logger = new Logger(console);
 const errorPrefix = 'Error adding context:';
 const ERRORS = {
   INVALID_ARGS: `${errorPrefix} Invalid arguments.`,
@@ -21,17 +23,6 @@ const ERRORS = {
 /**
  * HELPER FUNCTIONS
  */
-
-/* istanbul ignore next */
-function log(msg, level) {
-  const logMethod = console[level] || console.log;
-  let out = msg;
-  if (typeof msg === 'object') {
-    out = stringify(msg, null, 2);
-  }
-  logMethod(`[${chalk.gray('mochawesome')}] ${out}\n`);
-}
-
 function _isValidContext(ctx) {
   /*
    * Context is valid if any of the following are true:
@@ -79,7 +70,7 @@ function _isValidContext(ctx) {
 const addContext = function (...args) {
   // Check args to see if we should bother continuing
   if (args.length !== 2 || !isObject(args[0])) {
-    log(ERRORS.INVALID_ARGS, 'error');
+    logger.error(ERRORS.INVALID_ARGS);
     return;
   }
 
@@ -87,7 +78,7 @@ const addContext = function (...args) {
 
   // Ensure that context meets the requirements
   if (!_isValidContext(ctx)) {
-    log(ERRORS.INVALID_CONTEXT(ctx), 'error');
+    logger.error(ERRORS.INVALID_CONTEXT(ctx));
     return;
   }
 
@@ -107,7 +98,7 @@ const addContext = function (...args) {
   const test = isEachHook ? currentTest : activeTest;
 
   if (!test) {
-    log(ERRORS.INVALID_TEST, 'error');
+    logger.error(ERRORS.INVALID_TEST);
     return;
   }
 
