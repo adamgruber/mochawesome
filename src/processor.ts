@@ -4,46 +4,6 @@ import jsonStringify from 'json-stringify-safe';
 import { Change, createPatch, diffWordsWithSpace } from 'diff';
 import stripAnsi from 'strip-ansi';
 import stripFnStart from './stripFnStart';
-import { AssertionError } from 'assert';
-
-type MochaSuite = Omit<
-  Mocha.Suite,
-  | 'tests'
-  | 'suites'
-  | '_beforeEach'
-  | '_beforeAll'
-  | '_afterEach'
-  | '_afterAll'
-  | 'parent'
-> & {
-  id: string;
-  tests: MochaTest[];
-  suites: MochaSuite[];
-  parent: MochaSuite | undefined;
-  _beforeEach: MochaHook[];
-  _beforeAll: MochaHook[];
-  _afterEach: MochaHook[];
-  _afterAll: MochaHook[];
-};
-
-type MochaTest = Omit<Mocha.Test, 'parent'> & {
-  id: string;
-  context?: Mochawesome.Context;
-  parent?: MochaSuite;
-  type: 'test';
-};
-
-type MochaHook = Omit<Mocha.Hook, 'parent'> & {
-  id: string;
-  context?: Mochawesome.Context;
-  parent?: MochaSuite;
-  err?: Error | undefined;
-  type: 'hook';
-};
-
-type MochaError = Partial<AssertionError> & {
-  showDiff?: boolean;
-};
 
 class RunProcessor {
   config: Mochawesome.Config;
