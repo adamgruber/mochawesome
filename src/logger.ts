@@ -5,10 +5,10 @@ type LogMessage = string | object;
 
 class Logger {
   logger: Console;
-  config: Mochawesome.Config;
+  config: Mochawesome.Config | undefined;
   prefix: string;
 
-  constructor(logger: Console, config: Mochawesome.Config) {
+  constructor(logger: Console, config?: Mochawesome.Config) {
     this.logger = logger;
     this.config = config;
     this.prefix = `[${chalk.gray('mochawesome')}] `; //${out}\n`
@@ -21,19 +21,19 @@ class Logger {
   }
 
   log(message: LogMessage) {
-    if (!this.config.quiet) {
+    if (!this.config?.quiet) {
       this.logger.log(this.getMessage(message));
     }
   }
 
   error(message: LogMessage) {
-    if (!this.config.quiet) {
+    if (!this.config?.quiet) {
       this.logger.error(this.getMessage(message));
     }
   }
 
   warn(message: LogMessage) {
-    if (!this.config.quiet) {
+    if (!this.config?.quiet) {
       this.logger.warn(this.getMessage(message));
     }
   }
