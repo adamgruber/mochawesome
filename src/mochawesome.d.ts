@@ -76,7 +76,12 @@ declare namespace Mochawesome {
     parent?: string;
   }
 
-  interface Context {}
+  type Context = {
+    title: string;
+    value: string | number;
+  };
+
+  type ContextArg = string | Context;
 
   type TestType =
     | 'test'
@@ -137,6 +142,11 @@ type MochaHook = Omit<Mocha.Hook, 'parent'> & {
   parent?: MochaSuite;
   err?: Error | undefined;
   type: 'hook';
+};
+
+type MochaRunnable = {
+  currentTest?: MochaTest | MochaHook;
+  test?: MochaTest | MochaHook;
 };
 
 type AssertionError = import('assert').AssertionError;
