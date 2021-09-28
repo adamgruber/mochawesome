@@ -1,4 +1,4 @@
-require('../src/register');
+const { serializeSuite, serializeHook, serializeTest, serializeError } = require('../src/register');
 const Mochawesome = require('../src/mochawesome');
 const { EventEmitter } = require('events');
 const Mocha = require('mocha');
@@ -9,60 +9,246 @@ describe('Parallel Mode', () => {
   const noop = () => {};
 
   describe("Mocha's worker", () => {
-    [['file', '/test/test.js']].forEach(([field, expected]) => {
-      it(`should serialize the suite's ${field}`, () => {
+    describe("Mocha.Suite.serialize()", () => {
+      const createSuite = function (name, isRoot) {
+        const suite = new Suite(name, {}, isRoot);
+        suite.beforeAll(() => console.log("beforeAll"));
+        suite.beforeEach(() => console.log("beforeEach"));
+        suite.addTest(new Test(name + ": FAKE TEST"))
+        suite.afterEach(() => console.log("afterEach"));
+        suite.afterAll(() => console.log("afterAll"));
+        return suite;
+      };
+
+      it(`should serialize the root suite's fully with all sub suites`, () => {
         // arrange
-        const given = { suiteName: 'FAKE TEST' };
-        const suite = new Suite(given.suiteName);
-        suite[field] = expected;
+        const given = { suiteName: 'FAKE ROOT SUITE', subSuiteName: 'FAKE SUB SUITE' };
+        const suite = createSuite(given.suiteName, true);
+        suite.addSuite(createSuite(given.subSuiteName, false));
 
         // act
         const actual = suite.serialize();
 
         // assert
-        actual.title.should.equal(given.suiteName);
-        actual[field].should.equal(expected);
+        actual.should.be.ok();
+        const dumpSuite = (suite) => ({
+          title: suite.title,
+          suites: suite.suites.map(it => dumpSuite(it)),
+          tests: suite.tests.map(it => ({ title: it.title })),
+          _beforeAll: suite._beforeAll.map(it => ({ title: it.title })),
+          _beforeEach: suite._beforeEach.map(it => ({ title: it.title })),
+          _afterEach: suite._afterEach.map(it => ({ title: it.title })),
+          _afterAll: suite._afterAll.map(it => ({ title: it.title })),
+        });
+        actual.should.containDeep(dumpSuite(suite));
+      });
+
+      it(`should serialize the suite's shallowly`, () => {
+        // arrange
+        const given = { suiteName: 'FAKE SUITE', subSuiteName: 'FAKE SUB SUITE' };
+        const suite = createSuite(given.suiteName, false);
+        suite.addSuite(createSuite(given.subSuiteName, false));
+
+        // act
+        const actual = suite.serialize();
+
+        // assert
+        actual.should.be.ok();
+        actual.should.containDeep({
+          root: false,
+          title: suite.title,
+          suites: undefined,
+          tests: undefined,
+          _beforeAll: undefined,
+          _beforeEach: undefined,
+          _afterEach: undefined,
+          _afterAll: undefined,
+        });
       });
     });
 
-    [
-      ['body', '() => console.log(a)'],
-      ['state', 'failed'],
-    ].forEach(([field, expected]) => {
-      it(`should serialize the hook's ${field}`, () => {
+    describe("serializeSuite()", () => {
+      [ true, false ].forEach(isRoot => {
+        [
+          isRoot ? [] : ['file', '/test/test.js'],
+          ['suites', [new Suite('FAKE SUB-SUITE')]],
+          ['tests', [new Test('FAKE TEST')]],
+          ['_beforeAll', [new Hook('FAKE BEFORE_ALL HOOK')]],
+          ['_beforeEach', [new Hook('FAKE BEFORE_EACH HOOK')]],
+          ['_afterEach', [new Hook('FAKE AFTER_EACH HOOK')]],
+          ['_afterAll', [new Hook('FAKE AFTER_ALL HOOK')]],
+        ].forEach(([field, expected]) => {
+          if (!field) return;
+
+          const withParent = (parent, item) => {
+            return Array.isArray(item)
+              ? item.map(it => {
+                  it.parent = parent;
+                  return it;
+                })
+              : item;
+          };
+          const pick = (name, source) => source.map(it => it[name]);
+
+          it(`should serialize the suite's ${field}`, () => {
+            // arrange
+            const given = { suiteName: 'FAKE SUITE' };
+            const suite = new Suite(given.suiteName, {}, isRoot);
+            suite[field] = withParent(suite, expected);
+
+            // act
+            const actual = serializeSuite(suite)[field];
+
+            // assert
+            if (Array.isArray(expected)) {
+              pick('title', actual).should.deepEqual(pick('title', expected));
+            } else {
+              actual.should.equal(expected);
+            }
+          });
+        });
+      });
+    });
+
+    describe("serializeHook()", () => {
+      [
+        ['body', '() => console.log(a)'],
+        ['state', 'failed'],
+        ['context', 'https://example.com'],
+      ].forEach(([field, expected]) => {
+        it(`should serialize the hook's ${field}`, () => {
+          // arrange
+          const given = { hookName: 'FAKE HOOK' };
+          const hook = new Hook(given.hookName, noop);
+          hook.parent = new Suite('FAKE SUITE');
+          hook[field] = expected;
+
+          // act
+          const actual = serializeHook(hook);
+
+          // assert
+          actual.title.should.equal(given.hookName);
+          actual[field].should.equal(expected);
+        });
+      });
+
+      it(`should serialize the hook's full title`, () => {
         // arrange
-        const given = { hookName: 'FAKE HOOK' };
+        const given = { hookName: 'FAKE HOOK', suiteName: 'FAKE SUITE' };
         const hook = new Hook(given.hookName, noop);
-        hook.parent = new Suite('FAKE SUITE');
-        hook[field] = expected;
+        hook.parent = new Suite(given.suiteName);
 
         // act
-        const actual = hook.serialize();
+        const actual = serializeHook(hook)["$$fullTitle"];
 
         // assert
-        actual.title.should.equal(given.hookName);
-        actual[field].should.equal(expected);
+        actual.should.equal(hook.fullTitle());
+        actual.should.equal([ given.suiteName, given.hookName ].join(' '));
+      });
+
+      it(`should serialize the hook's err`, () => {
+        // arrange
+        const given = {
+          hookName: 'FAKE HOOK',
+          suiteName: 'FAKE SUITE',
+          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+        };
+        const hook = new Hook(given.hookName, noop);
+        hook.parent = new Suite(given.suiteName);
+        hook.err = given.error;
+
+        // act
+        const actual = serializeHook(hook)["err"];
+
+        // assert
+        actual.should.not.equal(given.error);
+        actual.should.deepEqual({
+          name: given.error.name,
+          message: given.error.message,
+          stack: given.error.stack,
+          fake: true
+        });
       });
     });
 
-    [
-      ['context', 'FAKE CONTEXT'],
-      ['pending', Math.random() > 0.5],
-    ].forEach(([field, expected]) => {
-      it(`should serialize the test's ${field}`, () => {
+    describe("serializeTest()", () => {
+      [
+        ['context', 'FAKE CONTEXT'],
+        ['pending', Math.random() > 0.5],
+      ].forEach(([field, expected]) => {
+        it(`should serialize the test's ${field}`, () => {
+          // arrange
+          const given = { testName: 'FAKE TEST' };
+          const test = new Test(given.testName, noop);
+          test.parent = new Suite('FAKE SUITE');
+          test[field] = expected;
+
+          // act
+          const actual = serializeTest(test);
+
+          // assert
+          actual.type.should.equal('test');
+          actual.title.should.equal(given.testName);
+          actual[field].should.equal(expected);
+        });
+      });
+
+      it(`should serialize the test's err`, () => {
         // arrange
-        const given = { testName: 'FAKE TEST' };
+        const given = {
+          testName: 'FAKE TEST',
+          suiteName: 'FAKE SUITE',
+          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+        };
         const test = new Test(given.testName, noop);
-        test.parent = new Suite('FAKE SUITE');
-        test[field] = expected;
+        test.parent = new Suite(given.suiteName);
+        test.err = given.error;
 
         // act
-        const actual = test.serialize();
+        const actual = serializeTest(test)["err"];
 
         // assert
-        actual.type.should.equal('test');
-        actual.title.should.equal(given.testName);
-        actual[field].should.equal(expected);
+        actual.should.not.equal(given.error);
+        actual.should.deepEqual({
+          name: given.error.name,
+          message: given.error.message,
+          stack: given.error.stack,
+          fake: true
+        });
+      });
+    });
+
+    describe("serializeError()", () => {
+      it(`should serialize the instance of Error`, () => {
+        // arrange
+        const given = {
+          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+        };
+
+        // act
+        const actual = serializeError(given.error);
+
+        // assert
+        actual.should.not.equal(given.error);
+        actual.should.deepEqual({
+          name: given.error.name,
+          message: given.error.message,
+          stack: given.error.stack,
+          fake: true
+        });
+      });
+
+      it(`should return the same object if it isn't the instance of Error`, () => {
+        // arrange
+        const given = {
+          error: { message: "FAKE ERROR", fake: true }
+        };
+
+        // act
+        const actual = serializeError(given.error);
+
+        // assert
+        actual.should.equal(given.error);
       });
     });
   });
@@ -107,102 +293,51 @@ describe('Parallel Mode', () => {
 
     it('should collect events from workers and build the suite', async () => {
       // arrange
-      const rootSuite = { title: '', root: true };
+      const rootSuite = new Suite('', {}, true);
+
       const sub1Suite = new Suite('Sub #1 Suite');
-      const sub1BeforeAll = new Hook(
-        `"before all" hook: before hook in "${sub1Suite.title}"`,
-        noop
-      );
-      const sub1BeforeEach = new Hook(
-        `"before each" hook: before hook in "${sub1Suite.title}"`,
-        noop
-      );
-      const sub1TestPass = new Test('Sub #1 Suite Test Pass', noop);
-      const sub1TestFail = new Test('Sub #1 Suite Test Fail', noop);
-      const sub1TestPending = new Test('Sub #1 Suite Test Pending', noop);
-      const sub1AfterEach = new Hook(
-        `"after each" hook: before hook in "${sub1Suite.title}"`,
-        noop
-      );
-      const sub1AfterAll = new Hook(
-        `"after all" hook: before hook in "${sub1Suite.title}"`,
-        noop
-      );
+      sub1Suite.beforeAll(sub1Suite.title, noop);
+      sub1Suite.beforeEach(sub1Suite.title, noop);
+      sub1Suite.addTest(new Test('Test Pass', noop));
+      sub1Suite.addTest(new Test('Test Fail', noop));
+      sub1Suite.addTest(new Test('Test Pending', noop));
+      sub1Suite.afterEach(sub1Suite.title, noop);
+      sub1Suite.afterAll(sub1Suite.title, noop);
+      rootSuite.addSuite(sub1Suite);
+
       const sub2Suite = new Suite('Sub #2 Suite');
-      const sub2TestPass = new Test('Sub #2 Suite Test Pass', noop);
-      const sub2TestFail = new Test('Sub #2 Suite Test Fail', noop);
-      const sub2TestPending = new Test('Sub #2 Suite Test Pending', noop);
-      const sub2AfterEach = new Hook(
-        `"after each" hook: before hook in "${sub2Suite.title}"`,
-        noop
-      );
+      sub2Suite.beforeAll(sub2Suite.title, noop);
+      sub2Suite.beforeEach(sub2Suite.title, noop);
+      sub2Suite.addTest(new Test('Test Pass', noop));
+      sub2Suite.addTest(new Test('Test Fail', noop));
+      sub2Suite.addTest(new Test('Test Pending', noop));
+      sub2Suite.afterEach(sub2Suite.title, noop);
+      sub2Suite.afterAll(sub2Suite.title, noop);
+      rootSuite.addSuite(sub2Suite);
 
       // act
       runner.emit(constants.EVENT_RUN_BEGIN);
-      runner.emit(constants.EVENT_SUITE_BEGIN, rootSuite);
-      runner.emit(constants.EVENT_SUITE_BEGIN, sub1Suite);
-      runner.emit(constants.EVENT_HOOK_END, sub1BeforeAll);
-      runner.emit(constants.EVENT_HOOK_END, sub1BeforeEach);
-      runner.emit(constants.EVENT_TEST_BEGIN, sub1TestPass);
-      runner.emit(constants.EVENT_TEST_PASS, sub1TestPass);
-      runner.emit(constants.EVENT_HOOK_END, sub1AfterEach);
-      runner.emit(constants.EVENT_TEST_BEGIN, sub1TestFail);
-      runner.emit(constants.EVENT_TEST_FAIL, sub1TestFail);
-      runner.emit(constants.EVENT_HOOK_END, sub1AfterEach);
-      runner.emit(constants.EVENT_TEST_BEGIN, sub1TestPending);
-      runner.emit(constants.EVENT_TEST_PENDING, sub1TestPending);
-      runner.emit(constants.EVENT_HOOK_END, sub1AfterEach);
-      runner.emit(constants.EVENT_HOOK_END, sub1AfterAll);
-      runner.emit(constants.EVENT_SUITE_END, { title: sub1Suite.title });
-      runner.emit(constants.EVENT_SUITE_BEGIN, sub2Suite);
-      runner.emit(constants.EVENT_TEST_BEGIN, sub2TestPass);
-      runner.emit(constants.EVENT_TEST_PASS, sub2TestPass);
-      runner.emit(constants.EVENT_TEST_FAIL, sub2AfterEach);
-      runner.emit(constants.EVENT_TEST_BEGIN, sub2TestFail);
-      runner.emit(constants.EVENT_TEST_FAIL, sub2TestFail);
-      runner.emit(constants.EVENT_TEST_FAIL, sub2AfterEach);
-      runner.emit(constants.EVENT_TEST_BEGIN, sub2TestPending);
-      runner.emit(constants.EVENT_TEST_PENDING, sub2TestPending);
-      runner.emit(constants.EVENT_TEST_FAIL, sub2AfterEach);
-      runner.emit(constants.EVENT_SUITE_END, { title: sub2Suite.title });
-      runner.emit(constants.EVENT_SUITE_END, { title: rootSuite.title });
+      runner.emit(constants.EVENT_SUITE_END, rootSuite);
       runner.emit(constants.EVENT_RUN_END);
 
       // assert
       mochaReporter.output.should.be.ok();
+
+      const dumpSuite = (suite) => ({
+        title: suite.title,
+        suites: suite.suites.map(it => dumpSuite(it)),
+        tests: suite.tests.map(it => ({ title: it.title })),
+        beforeHooks: [
+          ...suite._beforeAll.map(it => ({ title: it.title })),
+          ...suite._beforeEach.map(it => ({ title: it.title })),
+        ],
+        afterHooks: [
+          ...suite._afterAll.map(it => ({ title: it.title })),
+          ...suite._afterEach.map(it => ({ title: it.title })),
+        ],
+      });
       mochaReporter.output.results.should.containDeep([
-        {
-          suites: [
-            {
-              uuid: sub1Suite.uuid,
-              suites: [],
-              beforeHooks: [
-                { title: sub1BeforeAll.title },
-                { title: sub1BeforeEach.title },
-              ],
-              tests: [
-                { uuid: sub1TestPass.uuid },
-                { uuid: sub1TestFail.uuid },
-                { uuid: sub1TestPending.uuid },
-              ],
-              afterHooks: [
-                { title: sub1AfterAll.title },
-                { title: sub1AfterEach.title },
-              ],
-            },
-            {
-              uuid: sub2Suite.uuid,
-              suites: [],
-              tests: [
-                { uuid: sub2TestPass.uuid },
-                { uuid: sub2TestFail.uuid },
-                { uuid: sub2TestPending.uuid },
-              ],
-              afterHooks: [{ title: sub2AfterEach.title }],
-            },
-          ],
-          tests: [],
-        },
+        dumpSuite(rootSuite)
       ]);
     });
   });

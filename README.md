@@ -44,8 +44,6 @@ Since `mocha@8` test files can be run in parallel using the `--parallel` flag. I
 
 `mocha tests --reporter mochawesome --require mochawesome/register`
 
-> Due to differences in how parallel tests are processed, statistics may differ between sequential and parallel test runs. Mocha does not provide information about skipped tests in parallel mode. For more information, see https://mochajs.org/#parallel-tests.
-
 ### Output
 
 Mochawesome generates the following inside your project directory:

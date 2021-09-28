@@ -7,15 +7,7 @@ const conf = require('./config');
 const utils = require('./utils');
 const pkg = require('../package.json');
 const Mocha = require('mocha');
-const {
-  EVENT_RUN_BEGIN,
-  EVENT_HOOK_END,
-  EVENT_SUITE_BEGIN,
-  EVENT_TEST_PASS,
-  EVENT_TEST_FAIL,
-  EVENT_TEST_PENDING,
-  EVENT_SUITE_END,
-} = Mocha.Runner.constants;
+const { EVENT_SUITE_END } = Mocha.Runner.constants;
 
 // Import the utility functions
 const { log, mapSuites } = utils;
@@ -134,64 +126,25 @@ function Mochawesome(runner, options) {
 
   // Handle events from workers in parallel mode
   if (runner.constructor.name === 'ParallelBufferedRunner') {
-    let currentSuite;
-
-    const HookMap = {
-      ['"before all" ']: '_beforeAll',
-      ['"before each" ']: '_beforeEach',
-      ['"after each" ']: '_afterEach',
-      ['"after all" ']: '_afterAll',
+    const setSuiteDefaults = suite => {
+      [
+        'suites',
+        'tests',
+        '_beforeAll',
+        '_beforeEach',
+        '_afterEach',
+        '_afterAll',
+      ].forEach(field => {
+        suite[field] = suite[field] || [];
+      });
+      suite.suites.forEach(it => setSuiteDefaults(it));
     };
 
-    runner.on(EVENT_RUN_BEGIN, function () {
-      currentSuite = undefined;
-    });
-
-    runner.on(EVENT_SUITE_BEGIN, function (suite) {
-      suite._beforeAll = suite._beforeAll || [];
-      suite._beforeEach = suite._beforeEach || [];
-      suite.suites = suite.suites || [];
-      suite.tests = suite.tests || [];
-      suite._afterEach = suite._afterEach || [];
-      suite._afterAll = suite._afterAll || [];
+    runner.on(EVENT_SUITE_END, function (suite) {
       if (suite.root) {
-        suite = runner.suite;
-      } else if (currentSuite) {
-        currentSuite.suites.push(suite);
-        suite.parent = currentSuite;
+        setSuiteDefaults(suite);
+        runner.suite.suites.push(...suite.suites)
       }
-      currentSuite = suite;
-    });
-
-    runner.on(EVENT_SUITE_END, function () {
-      if (currentSuite) {
-        currentSuite = currentSuite.parent;
-      }
-    });
-
-    runner.on(EVENT_HOOK_END, function (hook) {
-      if (currentSuite) {
-        const hooks = currentSuite[HookMap[hook.title.split('hook')[0]]];
-        // add only once, since it is attached to the Suite
-        if (hooks && hooks.every(it => it.title !== hook.title)) {
-          hook.parent = currentSuite;
-          hooks.push(hook);
-        }
-      }
-    });
-
-    [EVENT_TEST_PASS, EVENT_TEST_FAIL, EVENT_TEST_PENDING].forEach(type => {
-      runner.on(type, function (test) {
-        if (currentSuite) {
-          test.parent = currentSuite;
-          if (test.type === 'hook') {
-            const hooks = currentSuite[HookMap[test.title.split('hook')[0]]];
-            hooks && hooks.push(test);
-          } else {
-            currentSuite.tests.push(test);
-          }
-        }
-      });
     });
   }
 
