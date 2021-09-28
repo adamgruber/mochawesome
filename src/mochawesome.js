@@ -7,7 +7,7 @@ const conf = require('./config');
 const utils = require('./utils');
 const pkg = require('../package.json');
 const Mocha = require('mocha');
-const { EVENT_SUITE_BEGIN } = Mocha.Runner.constants;
+const { EVENT_SUITE_END } = Mocha.Runner.constants;
 
 // Import the utility functions
 const { log, mapSuites } = utils;
@@ -140,10 +140,10 @@ function Mochawesome(runner, options) {
       suite.suites.forEach(it => setSuiteDefaults(it));
     };
 
-    runner.on(EVENT_SUITE_BEGIN, function (suite) {
+    runner.on(EVENT_SUITE_END, function (suite) {
       if (suite.root) {
         setSuiteDefaults(suite);
-        suite.suites.forEach(it => runner.suite.suites.push(it));
+        runner.suite.suites.push(...suite.suites)
       }
     });
   }

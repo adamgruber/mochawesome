@@ -1,32 +1,44 @@
 const Mocha = require('mocha');
 
-const extendSerialize = (target, fields) => {
-  const serialize = target.serialize;
-  target.serialize = function (...args) {
-    /* The full state is required only once during the EVENT_SUITE_BEGIN event.
-      So, we have to restore the original method to minimize the transmission over IPC.
-      The original method is used to provide the necessary data to mocha reporters.
-      Otherwise, the serialized data will be twice as large.
-      The trick here is to restore method in the instance, not in the prototype. */
-    this.serialize = serialize;
-    const result = serialize.call(this, ...args);
-    for (let field of fields) {
-      // The field's started with `$$` are results of methods
-      let value = field.startsWith('$$') ? this[field.slice(2)]() : this[field];
-      if (value != null) {
-        if (Array.isArray(value)) {
-          value = value.map(it =>
-            typeof it.serialize === 'function' ? it.serialize(...args) : it
-          );
-        }
-        result[field] = value;
-      }
-    }
-    if (result.err instanceof Error) {
-      result.err = serializeError(result.err);
-    }
-    return result;
-  };
+const mochaSerializeSuite = Mocha.Suite.prototype.serialize;
+
+// Serialize the full root suite state to count `Skipped` tests.
+Mocha.Suite.prototype.serialize = function (...args) {
+  if (this.root) {
+    // Skipping the EVENT_SUITE_BEGIN serialization can reduce data transfer via IPC by 25%
+    return serializeSuite(this);
+  }
+  return mochaSerializeSuite.apply(this, args)
+}
+
+const serializeSuite = (suite) => {
+  const result = suite.root ? mochaSerializeSuite.call(suite) : serializeObject(suite, ['file']);
+  result.suites = suite.suites.map(it => serializeSuite(it));
+  result.tests = suite.tests.map(it => serializeTest(it));
+  ['_beforeAll', '_beforeEach', '_afterEach', '_afterAll'].forEach(hookName => {
+    result[hookName] = suite[hookName].map(it => serializeHook(it))
+  });
+  return result;
+}
+
+const serializeHook = hook => {
+  return serializeObject(hook, ['body', 'state', 'err', 'context', '$$fullTitle']);
+}
+
+const serializeTest = test => {
+  return serializeObject(test, ['pending', 'context']);
+}
+
+const serializeObject = (obj, fields) => {
+  const result = obj.serialize();
+  for (let field of fields) {
+    // The field's started with `$$` are results of methods
+    result[field] = field.startsWith('$$') ? obj[field.slice(2)]() : obj[field];
+  }
+  if (result.err instanceof Error) {
+    result.err = serializeError(result.err);
+  }
+  return result;
 };
 
 const serializeError = error => {
@@ -44,23 +56,4 @@ const serializeError = error => {
   return error;
 };
 
-// Serialize the full root suite state to count `Skipped` tests.
-extendSerialize(Mocha.Suite.prototype, [
-  'file',
-  'suites',
-  'tests',
-  '_beforeAll',
-  '_beforeEach',
-  '_afterEach',
-  '_afterAll',
-]);
-extendSerialize(Mocha.Hook.prototype, [
-  'body',
-  'state',
-  'err',
-  'context',
-  '$$fullTitle',
-]);
-extendSerialize(Mocha.Test.prototype, ['pending', 'context']);
-
-module.exports = {};
+module.exports = { serializeSuite, serializeHook, serializeTest, serializeObject, serializeError };
