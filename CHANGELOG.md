@@ -1,7 +1,10 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [6.3.0] - 2021-09-29
 ### Changed
+- Update parallel processing so output JSON matches sync runs   [#353](https://github.com/adamgruber/mochawesome/pull/353)
 - Update how the total number of skipped tests is calculated [#317](https://github.com/adamgruber/mochawesome/issues/317)
 
 ## [6.2.2] - 2021-02-16
