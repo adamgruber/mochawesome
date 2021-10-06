@@ -216,6 +216,27 @@ describe('Parallel Mode', () => {
           fake: true
         });
       });
+
+      it(`should ignore the retriedTest to avoid circular serialization issue`, () => {
+        // arrange
+        const given = {
+          testName: 'FAKE TEST',
+          retriedName: 'RETRIED TEST',
+          suiteName: 'FAKE SUITE',
+          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+        };
+        const test = new Test(given.testName, noop);
+        test.parent = new Suite(given.suiteName);
+        test.retriedTest(new Test(given.retriedName, noop))
+
+        // act
+        const actual = serializeTest(test);
+
+        // assert
+        actual.should.containDeep({
+          "$$retriedTest": null
+        });
+      });
     });
 
     describe("serializeError()", () => {

@@ -26,7 +26,10 @@ const serializeHook = hook => {
 }
 
 const serializeTest = test => {
-  return serializeObject(test, ['pending', 'context']);
+  const result = serializeObject(test, ['pending', 'context']);
+  // to remove a circular dependency: https://github.com/adamgruber/mochawesome/issues/356
+  result["$$retriedTest"] = null;
+  return result;
 }
 
 const serializeObject = (obj, fields) => {
