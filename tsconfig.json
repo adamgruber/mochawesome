@@ -1,0 +1,15 @@
+{
+  "include": ["src/**/*"],
+  "exclude": ["package.json"],
+  "compilerOptions": {
+    "lib": ["es6"],
+    "module": "commonjs",
+    "target": "es6",
+    "strict": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "outDir": "dist"
+  }
+}
