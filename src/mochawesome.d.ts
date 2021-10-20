@@ -52,8 +52,15 @@ declare namespace Mochawesome {
   }
 
   type Results = {
-    suites: ProcessedSuite[];
-    tests: ProcessedTest[];
+    suites: {
+      [key: string]: ProcessedSuite;
+    };
+    tests: {
+      [key: string]: ProcessedTest;
+    };
+    hooks: {
+      [key: string]: ProcessedTest;
+    };
   };
 
   interface MargeOptions {

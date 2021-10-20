@@ -58,8 +58,9 @@ class Mochawesome extends Mocha.reporters.Base {
 
     this.reporterStats = null;
     this.results = {
-      suites: [],
-      tests: [],
+      suites: {},
+      tests: {},
+      hooks: {},
     };
 
     // Ensure stats collector has been initialized

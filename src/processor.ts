@@ -14,8 +14,9 @@ class RunProcessor {
     this.config = config;
     this.rootSuite = (rootSuite as unknown) as MochaSuite;
     this.processed = {
-      suites: [],
-      tests: [],
+      suites: {},
+      tests: {},
+      hooks: {},
     };
 
     this.processTest = this.processTest.bind(this);
@@ -128,14 +129,16 @@ class RunProcessor {
     let duration = 0;
 
     suite.tests?.forEach(test => {
-      const processedTest = this.processTest(test);
-      this.processed.tests.push(processedTest);
-      duration += processedTest.duration;
+      const processed = this.processTest(test);
+      this.processed.tests[processed.id] = processed;
+      duration += processed.duration;
     });
 
     const processHook = (hook: MochaHook) => {
-      this.processed.tests.push(this.processTest(hook));
+      const processed = this.processTest(hook);
+      this.processed.hooks[processed.id] = processed;
     };
+
     suite._beforeAll?.forEach(processHook);
     suite._beforeEach?.forEach(processHook);
     suite._afterAll?.forEach(processHook);
@@ -196,7 +199,8 @@ class RunProcessor {
     if (suite.suites.length) {
       suite.suites.forEach(subSuite => this.walkRunPostorder(subSuite));
     }
-    this.processed.suites.push(this.processSuite(suite));
+    const processed = this.processSuite(suite);
+    this.processed.suites[processed.id] = processed;
   }
 }
 
