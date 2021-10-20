@@ -6,6 +6,7 @@ import conf from './config';
 import RunProcessor from './processor';
 import Logger from './logger';
 import pkg from '../package.json';
+
 const {
   EVENT_RUN_BEGIN,
   EVENT_HOOK_END,
@@ -87,11 +88,11 @@ class Mochawesome extends Mocha.reporters.Base {
     runner.on(EVENT_RUN_END, () => {
       try {
         this.handleEndEvent();
-      } catch (e) {
+      } catch (err) {
         // required because thrown errors are not handled directly in the
         // event emitter pattern and mocha does not have an "on error"
         /* istanbul ignore next */
-        this.logger.error(`Problem with mochawesome: ${e.stack}`);
+        this.logger.error(`Problem with mochawesome: ${(err as Error).stack}`);
       }
     });
 
@@ -218,7 +219,7 @@ class Mochawesome extends Mocha.reporters.Base {
         htmlFile && this.logger.log(`Report HTML saved to ${htmlFile}`);
       }
     } catch (err) {
-      this.logger.error(err);
+      this.logger.error(err as Error);
     }
 
     exit && exit(failures > 0 ? 1 : 0);
