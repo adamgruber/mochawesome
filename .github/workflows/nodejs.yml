@@ -1,5 +1,19 @@
 name: Node.js CI
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs'
+      - '**.yml'
+      - '**.md'
+      - '.*'
+  pull_request:
+    paths-ignore:
+      - 'docs'
+      - '**.yml'
+      - '**.md'
+      - '.*'
 jobs:
   test:
     runs-on: ubuntu-latest
