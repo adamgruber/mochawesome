@@ -1,6 +1,10 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- **BREAKING** Update `mochawesome-report-generator` to 6.0.0 (Drops support for Node<12)
+- Update `strip-ansi` dependency to latest non-ESM version
+- Update `chalk` dependency
 
 ## [6.3.1] - 2021-10-06
 ### Fixed
@@ -282,7 +286,9 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/6.2.2...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/6.3.1...HEAD
+[6.3.1]: https://github.com/adamgruber/mochawesome/compare/6.3.0...6.3.1
+[6.3.0]: https://github.com/adamgruber/mochawesome/compare/6.2.2...6.3.0
 [6.2.2]: https://github.com/adamgruber/mochawesome/compare/6.2.1...6.2.2
 [6.2.1]: https://github.com/adamgruber/mochawesome/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/adamgruber/mochawesome/compare/6.1.1...6.2.0

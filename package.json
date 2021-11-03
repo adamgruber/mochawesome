@@ -48,15 +48,15 @@
     "branches": 90
   },
   "dependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.2",
     "diff": "^5.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash.isempty": "^4.4.0",
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2",
     "lodash.isstring": "^4.0.1",
-    "mochawesome-report-generator": "^5.2.0",
-    "strip-ansi": "^6.0.0",
+    "mochawesome-report-generator": "^6.0.0",
+    "strip-ansi": "^6.0.1",
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
