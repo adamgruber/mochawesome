@@ -48,7 +48,7 @@
     "branches": 90
   },
   "dependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.2",
     "diff": "^5.0.0",
     "json-stringify-safe": "^5.0.1",
     "lodash.isempty": "^4.4.0",
