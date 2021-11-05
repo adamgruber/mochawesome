@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- Bump marge to 6.0.1 to fix [#363](https://github.com/adamgruber/mochawesome/issues/363)
 
 ## [7.0.0] - 2021-11-03
 ### Changed
