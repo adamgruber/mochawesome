@@ -15,8 +15,8 @@ const { log, mapSuites } = utils;
 // Track the total number of tests registered/skipped
 const testTotals = {
   registered: 0,
-  skipped: 0
-}
+  skipped: 0,
+};
 
 /**
  * Done function gets called before mocha exits
@@ -143,7 +143,7 @@ function Mochawesome(runner, options) {
     runner.on(EVENT_SUITE_END, function (suite) {
       if (suite.root) {
         setSuiteDefaults(suite);
-        runner.suite.suites.push(...suite.suites)
+        runner.suite.suites.push(...suite.suites);
       }
     });
   }
@@ -157,11 +157,19 @@ function Mochawesome(runner, options) {
         // so we ensure the suite is processed only once
         endCalled = true;
 
-        const rootSuite = mapSuites(
-          this.runner.suite,
-          testTotals,
-          this.config
-        );
+        const rootSuite = mapSuites(this.runner.suite, testTotals, this.config);
+
+        // Attempt to set a filename for the root suite to
+        // support `reportFilename` [name] replacement token
+        if (rootSuite.suites.length === 1) {
+          const firstSuite = rootSuite.suites[0];
+          rootSuite.file = firstSuite.file;
+          rootSuite.fullFile = firstSuite.fullFile;
+        } else if (!rootSuite.suites.length && rootSuite.tests.length) {
+          const firstTest = this.runner.suite.tests[0];
+          rootSuite.file = firstTest.file;
+          rootSuite.fullFile = firstTest.fullFile;
+        }
 
         const obj = {
           stats: this.stats,
