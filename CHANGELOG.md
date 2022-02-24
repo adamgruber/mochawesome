@@ -1,6 +1,11 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Added
+- Support for `[name]` replacement token in `reportFilename` option
+
+### Changed
+- Bump mochawesome-report-generator to 6.1.0
 
 ## [7.0.1] - 2021-11-05
 ### Changed
