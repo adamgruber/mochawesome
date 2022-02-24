@@ -109,13 +109,37 @@ var mocha = new Mocha({
 
 The options below are specific to the reporter. For a list of all available options see [mochawesome-report-generator options][marge-options].
 
-| Option Name       | Type    | Default     | Description                                                                                           |
-| :---------------- | :------ | :---------- | :---------------------------------------------------------------------------------------------------- |
-| `quiet`           | boolean | false       | Silence console messages                                                                              |
-| `reportFilename`  | string  | mochawesome | Filename of saved report <br> _Applies to the generated html and json files._                         |
-| `html`            | boolean | true        | Save the HTML output for the test run                                                                 |
-| `json`            | boolean | true        | Save the JSON output for the test run                                                                 |
-| `consoleReporter` | string  | spec        | Name of mocha reporter to use for console output, or `none` to disable console report output entirely |
+| Option Name       | Type    | Default     | Description                                                                                                                       |
+| :---------------- | :------ | :---------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `quiet`           | boolean | false       | Silence console messages                                                                                                          |
+| `reportFilename`  | string  | mochawesome | Filename of saved report (html and json) <br> _See [notes](#reportfilename-replacement-tokens) for available token replacements._ |
+| `html`            | boolean | true        | Save the HTML output for the test run                                                                                             |
+| `json`            | boolean | true        | Save the JSON output for the test run                                                                                             |
+| `consoleReporter` | string  | spec        | Name of mocha reporter to use for console output, or `none` to disable console report output entirely                             |
+
+#### reportFilename replacement tokens
+
+Using the following tokens it is possible to dynamically alter the filename of the generated report.
+
+- **[name]** will be replaced with the spec filename when possible.
+- **[status]** will be replaced with the status (pass/fail) of the test run.
+- **[datetime]** will be replaced with a timestamp. The format can be - specified using the `timestamp` option.
+
+For example, given the spec `cypress/integration/sample.spec.js` and the following config:
+
+```
+{
+  reporter: "mochawesome",
+  reporterOptions: {
+    reportFilename: "[status]_[datetime]-[name]-report",
+    timestamp: "longDate"
+  }
+}
+```
+
+The resulting report file will be named `pass_February_23_2022-sample-report.html`
+
+**Note:** The `[name]` replacement only occurs when mocha is running one spec file per process and outputting a separate report for each spec. The most common use-case is with Cypress.
 
 ### Adding Test Context
 
@@ -199,7 +223,9 @@ describe('test suite', () => {
 ```
 
 ## Typescript
+
 This project does not maintain its own type definitions, however they are available on npm from [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mochawesome).
+
 ```
 $ npm install --save-dev @types/mochawesome
 ```

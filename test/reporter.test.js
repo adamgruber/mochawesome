@@ -140,6 +140,18 @@ describe('Mochawesome Reporter', () => {
       });
     });
 
+    it('should handle root suite with file', done => {
+      const test = makeTest('test', () => {});
+      test.file = 'testfile.js';
+      test.fullFile = 'testfile.js';
+      suite.addTest(test);
+      suite.suites = [];
+      runner.run(() => {
+        mochaReporter.output.results[0].fullFile.should.equal('testfile.js');
+        done();
+      });
+    });
+
     it('should handle suite with file', done => {
       const test = makeTest('test', () => {});
       subSuite.addTest(test);
