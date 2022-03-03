@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- Add fallback when attempting to set `file` and `fullFile` on root suite. [#371](https://github.com/adamgruber/mochawesome/issues/371)
 
 ## [7.1.0] - 2022-02-24
 ### Added

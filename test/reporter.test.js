@@ -157,9 +157,34 @@ describe('Mochawesome Reporter', () => {
       subSuite.addTest(test);
       subSuite.file = 'testfile.js';
       runner.run(() => {
-        mochaReporter.output.results[0].suites[0].fullFile.should.equal(
-          'testfile.js'
-        );
+        mochaReporter.output.results[0].fullFile.should.equal('testfile.js');
+        done();
+      });
+    });
+
+    it('should handle root suite with file and test without', done => {
+      const test = makeTest('test', () => {});
+      suite.file = 'testfile.js';
+      suite.fullFile = 'testfile.js';
+      test.file = '';
+      test.fullFile = '';
+      suite.addTest(test);
+      suite.suites = [];
+      runner.run(() => {
+        mochaReporter.output.results[0].fullFile.should.equal('testfile.js');
+        done();
+      });
+    });
+
+    it('should handle root suite with file and subsuite without', done => {
+      const test = makeTest('test', () => {});
+      subSuite.addTest(test);
+      suite.file = 'testfile.js';
+      suite.fullFile = 'testfile.js';
+      subSuite.file = '';
+      subSuite.fullFile = '';
+      runner.run(() => {
+        mochaReporter.output.results[0].fullFile.should.equal('testfile.js');
         done();
       });
     });

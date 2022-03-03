@@ -163,12 +163,12 @@ function Mochawesome(runner, options) {
         // support `reportFilename` [name] replacement token
         if (rootSuite.suites.length === 1) {
           const firstSuite = rootSuite.suites[0];
-          rootSuite.file = firstSuite.file;
-          rootSuite.fullFile = firstSuite.fullFile;
+          rootSuite.file = firstSuite.file || rootSuite.file;
+          rootSuite.fullFile = firstSuite.fullFile || rootSuite.fullFile;
         } else if (!rootSuite.suites.length && rootSuite.tests.length) {
           const firstTest = this.runner.suite.tests[0];
-          rootSuite.file = firstTest.file;
-          rootSuite.fullFile = firstTest.fullFile;
+          rootSuite.file = firstTest.file || rootSuite.file;
+          rootSuite.fullFile = firstTest.fullFile || rootSuite.fullFile;
         }
 
         const obj = {
