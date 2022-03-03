@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [7.1.1] - 2022-03-03
 ### Fixed
 - Add fallback when attempting to set `file` and `fullFile` on root suite. [#371](https://github.com/adamgruber/mochawesome/issues/371)
 
@@ -301,7 +303,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.0...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.1...HEAD
+[7.1.1]: https://github.com/adamgruber/mochawesome/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/adamgruber/mochawesome/compare/7.0.1...7.1.0
 [7.0.1]: https://github.com/adamgruber/mochawesome/compare/7.0.0...7.0.1
 [7.0.0]: https://github.com/adamgruber/mochawesome/compare/6.3.1...7.0.0
