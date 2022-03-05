@@ -1,7 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
-
+### Changed
+- Bump marge to 6.1.1 to fix [#195](https://github.com/adamgruber/mochawesome-report-generator/issues/195)
 ## [7.1.1] - 2022-03-03
 ### Fixed
 - Add fallback when attempting to set `file` and `fullFile` on root suite. [#371](https://github.com/adamgruber/mochawesome/issues/371)
