@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [7.1.3] - 2022-03-25
+### Changed
+- Bump marge to 6.2.0 [#372](https://github.com/adamgruber/mochawesome/issues/372)
+
+### Fixed
+- Unhandled TypeError attempting to set filename of empty suite [#373](https://github.com/adamgruber/mochawesome/issues/373)
+
 ## [7.1.2] - 2022-03-05
 ### Changed
 - Bump marge to 6.1.1 to fix [#195](https://github.com/adamgruber/mochawesome-report-generator/issues/195)
@@ -306,7 +313,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.2...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.3...HEAD
+[7.1.3]: https://github.com/adamgruber/mochawesome/compare/7.1.2...7.1.3
 [7.1.2]: https://github.com/adamgruber/mochawesome/compare/7.1.1...7.1.2
 [7.1.1]: https://github.com/adamgruber/mochawesome/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/adamgruber/mochawesome/compare/7.0.1...7.1.0
