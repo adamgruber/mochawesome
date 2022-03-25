@@ -136,6 +136,7 @@ describe('Mochawesome Reporter', () => {
     it('should handle empty suite', done => {
       runner.run(failureCount => {
         failureCount.should.equal(0);
+        logStub.notCalled.should.equal(true);
         done();
       });
     });
