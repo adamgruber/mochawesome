@@ -10,7 +10,7 @@ const stripAnsi = require('strip-ansi');
 const stripFnStart = require('./stripFnStart');
 
 /**
- * Return a classname based on percentage
+ * Logger utility
  *
  * @param {String} msg - message to log
  * @param {String} level - log level [log, info, warn, error]
