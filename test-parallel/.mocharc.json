@@ -1,5 +1,0 @@
-{
-  "require": ["should", "./register"],
-  "reporter": "./src/mochawesome",
-  "reporterOption": ["reportFilename=mochawesome-parallel"]
-}

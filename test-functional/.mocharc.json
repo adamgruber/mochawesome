@@ -1,6 +1,0 @@
-{
-  "require": ["should", "./register"],
-  "reporter": "./src/mochawesome",
-  "reporterOption": [],
-  "retries": 1
-}
