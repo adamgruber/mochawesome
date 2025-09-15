@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [7.1.4] - 2022-03-25
+### Changed
+- Bump marge to 6.3.0 [#140](https://github.com/adamgruber/mochawesome-report-generator/issues/140)
+
 ## [7.1.3] - 2022-03-25
 ### Changed
 - Bump marge to 6.2.0 [#372](https://github.com/adamgruber/mochawesome/issues/372)
@@ -313,7 +317,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.3...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.4...HEAD
+[7.1.4]: https://github.com/adamgruber/mochawesome/compare/7.1.3...7.1.4
 [7.1.3]: https://github.com/adamgruber/mochawesome/compare/7.1.2...7.1.3
 [7.1.2]: https://github.com/adamgruber/mochawesome/compare/7.1.1...7.1.2
 [7.1.1]: https://github.com/adamgruber/mochawesome/compare/7.1.0...7.1.1
