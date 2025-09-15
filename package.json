@@ -1,6 +1,6 @@
 {
   "name": "mochawesome",
-  "version": "7.1.3",
+  "version": "7.1.4",
   "description": "A gorgeous reporter for Mocha.js",
   "scripts": {
     "lint": "eslint src test*",
