@@ -66,7 +66,11 @@ function consoleReporter(reporter) {
     try {
       return require(`mocha/lib/reporters/${reporter}`);
     } catch (e) {
-      log(`Unknown console reporter '${reporter}', defaulting to spec`);
+      try {
+        return require(reporter);
+      } catch (e) {
+        log(`Unknown console reporter '${reporter}', defaulting to spec`);
+      }
     }
   }
 
