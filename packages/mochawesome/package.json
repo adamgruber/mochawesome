@@ -1,0 +1,16 @@
+{
+  "name": "mochawesome",
+  "version": "8.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "vitest": "^4.0.16"
+  }
+}

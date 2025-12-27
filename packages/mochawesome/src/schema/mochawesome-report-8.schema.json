@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mochawesome-report-8.schema.json",
+  "title": "Mochawesome Report Schema v8",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "meta", "stats", "rootSuite"],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "mochawesome-report" },
+        "version": { "type": "string" }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generatedAt", "durationMs", "runner", "reporter", "output"],
+      "properties": {
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "runner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        },
+        "reporter": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "const": "mochawesome" },
+            "version": { "type": "string" }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reportDir",
+            "htmlFile",
+            "jsonFile",
+            "assetsDir",
+            "assetMode",
+            "attachmentMode"
+          ],
+          "properties": {
+            "reportDir": { "type": "string" },
+            "htmlFile": { "type": "string" },
+            "jsonFile": { "type": "string" },
+            "assetsDir": { "type": "string" },
+            "assetMode": { "type": "string", "enum": ["inline", "folder"] },
+            "attachmentMode": { "type": "string", "enum": ["link", "embed"] }
+          }
+        },
+        "ci": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "platform": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "files": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "stats": { "$ref": "#/$defs/stats" },
+    "rootSuite": { "$ref": "#/$defs/suite" }
+  },
+  "$defs": {
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end", "durationMs"],
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" },
+        "durationMs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suites",
+        "tests",
+        "passes",
+        "failures",
+        "pending",
+        "skipped",
+        "start",
+        "end",
+        "durationMs"
+      ],
+      "properties": {
+        "suites": { "type": "integer", "minimum": 0 },
+        "tests": { "type": "integer", "minimum": 0 },
+        "passes": { "type": "integer", "minimum": 0 },
+        "failures": { "type": "integer", "minimum": 0 },
+        "pending": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" },
+        "durationMs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "fullTitle",
+        "timing",
+        "suites",
+        "tests",
+        "hooks"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "stableKey": { "type": "string" },
+        "title": { "type": "string" },
+        "fullTitle": { "type": "string" },
+        "file": { "type": "string" },
+        "timing": { "$ref": "#/$defs/timing" },
+        "stats": { "$ref": "#/$defs/stats" },
+        "suites": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/suite" }
+        },
+        "tests": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/test" }
+        },
+        "hooks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/hook" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "extra": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "fullTitle", "state", "timing"],
+      "properties": {
+        "id": { "type": "string" },
+        "stableKey": { "type": "string" },
+        "title": { "type": "string" },
+        "fullTitle": { "type": "string" },
+        "file": { "type": "string" },
+        "state": {
+          "type": "string",
+          "enum": ["passed", "failed", "pending", "skipped"]
+        },
+        "timing": { "$ref": "#/$defs/timing" },
+        "speed": { "type": "string", "enum": ["fast", "medium", "slow"] },
+        "attempt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["current"],
+          "properties": {
+            "current": { "type": "integer", "minimum": 1 },
+            "total": { "type": "integer", "minimum": 1 },
+            "retry": { "type": "boolean" }
+          }
+        },
+        "error": { "$ref": "#/$defs/error" },
+        "attachments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/attachment" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "extra": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "hook": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "state", "timing"],
+      "properties": {
+        "id": { "type": "string" },
+        "stableKey": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["beforeAll", "beforeEach", "afterEach", "afterAll"]
+        },
+        "title": { "type": "string" },
+        "state": {
+          "type": "string",
+          "enum": ["passed", "failed", "pending", "skipped"]
+        },
+        "timing": { "$ref": "#/$defs/timing" },
+        "error": { "$ref": "#/$defs/error" },
+        "attachments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/attachment" }
+        },
+        "extra": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["message"],
+      "properties": {
+        "name": { "type": "string" },
+        "message": { "type": "string" },
+        "stack": { "type": "string" },
+        "actual": {},
+        "expected": {},
+        "operator": { "type": "string" }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["screenshot", "video", "log", "link", "file", "text"]
+        },
+        "name": { "type": "string" },
+        "path": { "type": "string" },
+        "url": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "content": { "type": "string" },
+        "encoding": { "type": "string", "enum": ["utf8", "base64"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": ["file", "screenshot", "video", "log"]
+              }
+            }
+          },
+          "then": {
+            "anyOf": [{ "required": ["path"] }, { "required": ["url"] }]
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "text" } }
+          },
+          "then": {
+            "required": ["content"]
+          }
+        }
+      ]
+    }
+  }
+}
