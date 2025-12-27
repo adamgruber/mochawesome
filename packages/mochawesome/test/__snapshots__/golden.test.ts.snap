@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`golden report fixtures > basic.mochawesome.json matches schema 1`] = `
+{
+  "meta": {
+    "durationMs": 0,
+    "generatedAt": "2025-01-01T00:00:00.000Z",
+    "output": {
+      "assetMode": "inline",
+      "assetsDir": "assets",
+      "attachmentMode": "link",
+      "htmlFile": "mochawesome.html",
+      "jsonFile": "mochawesome.json",
+      "reportDir": "mochawesome-report",
+    },
+    "reporter": {
+      "name": "mochawesome",
+      "version": "8.0.0-alpha.0",
+    },
+    "runner": {
+      "name": "mocha",
+      "version": "0.0.0",
+    },
+  },
+  "rootSuite": {
+    "fullTitle": "",
+    "hooks": [],
+    "id": "s0",
+    "suites": [],
+    "tests": [],
+    "timing": {
+      "durationMs": 0,
+      "end": "2025-01-01T00:00:00.000Z",
+      "start": "2025-01-01T00:00:00.000Z",
+    },
+    "title": "",
+  },
+  "schema": {
+    "name": "mochawesome-report",
+    "version": "8.0.0-alpha.0",
+  },
+  "stats": {
+    "durationMs": 0,
+    "end": "2025-01-01T00:00:00.000Z",
+    "failures": 0,
+    "passes": 0,
+    "pending": 0,
+    "skipped": 0,
+    "start": "2025-01-01T00:00:00.000Z",
+    "suites": 0,
+    "tests": 0,
+  },
+}
+`;
