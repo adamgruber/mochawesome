@@ -1,10 +1,15 @@
 {
   "name": "mochawesome",
+  "private": true,
   "version": "7.1.4",
   "description": "A gorgeous reporter for Mocha.js",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "lint": "eslint src test*",
-    "test": "npm run lint && cross-env NODE_ENV=test nyc mocha --config test/.mocharc.json",
+    "test": "npm --workspace packages/mochawesome test",
+    "lint": "npm --workspace packages/mochawesome lint --if-present",
+    "typecheck": "npm --workspace packages/mochawesome run typecheck --if-present",
     "test:fn": "mocha test-functional --config test-functional/.mocharc.json",
     "test:par": "mocha test-parallel --parallel --config test-parallel/.mocharc.json",
     "test:prog": "node ./test-programmatic",
