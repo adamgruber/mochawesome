@@ -1,0 +1,42 @@
+# Agent Guidance (mochawesome)
+
+This repo contains two codebases:
+
+## v7 (legacy)
+
+- Lives at repo root: /src, /test, register.js, etc.
+- Must NOT be modified as part of v8 work.
+- Consider it frozen except for critical maintenance.
+
+## v8 (rewrite)
+
+- All new work lives under: /packages/mochawesome
+- Language: TypeScript
+- Tests: vitest
+- Validation: AJV 2020-12
+- CI runs workspace tests only
+
+## Current v8 principles
+
+- JSON schema is the contract. Do not change it lightly.
+- Deterministic behavior over convenience.
+- No randomness (IDs, timestamps, ordering).
+- Prefer small, test-backed commits.
+- Internal modularity is for maintainers, not users.
+
+## ID strategy (v8)
+
+- Path-based, deterministic:
+  - suites: s0, s0.1, s0.1.2
+  - tests: t0.1.2.1
+  - hooks: h0.1.2.1
+- Assigned by traversal/build order.
+
+## Non-goals (for now)
+
+- No Mocha integration yet
+- No renderer work unless explicitly requested
+- No CLI changes
+- No refactors of v7 code
+
+When unsure, ask before expanding scope.
