@@ -7,6 +7,9 @@
   "devDependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "mocha": "^8.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   }
 }
