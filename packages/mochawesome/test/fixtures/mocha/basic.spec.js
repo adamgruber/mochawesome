@@ -1,3 +1,5 @@
-describe('basic', () => {
-  it('passes', () => {});
+describe('outer', () => {
+  describe('inner', () => {
+    it('passes', () => {});
+  });
 });

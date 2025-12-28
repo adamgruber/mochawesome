@@ -72,6 +72,15 @@ describe('mocha integration', () => {
       const report = JSON.parse(fs.readFileSync(outPath, 'utf8'));
       const ok = validate(report);
       if (!ok) throw new Error(JSON.stringify(validate.errors, null, 2));
+
+      // Suite tree assertions (suites-only wiring)
+      expect(report.rootSuite.suites.length).toBe(1);
+      expect(report.rootSuite.suites[0].id).toBe('s0.1');
+      expect(report.rootSuite.suites[0].title).toBe('outer');
+
+      expect(report.rootSuite.suites[0].suites.length).toBe(1);
+      expect(report.rootSuite.suites[0].suites[0].id).toBe('s0.1.1');
+      expect(report.rootSuite.suites[0].suites[0].title).toBe('inner');
     } finally {
       // best-effort cleanup
       fs.rmSync(reportDir, { recursive: true, force: true });
