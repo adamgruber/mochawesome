@@ -115,6 +115,15 @@
         "tests": { "type": "integer", "minimum": 0 },
         "passes": { "type": "integer", "minimum": 0 },
         "failures": { "type": "integer", "minimum": 0 },
+        "failuresByType": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tests": { "type": "integer", "minimum": 0 },
+            "hooks": { "type": "integer", "minimum": 0 }
+          },
+          "required": ["tests", "hooks"]
+        },
         "pending": { "type": "integer", "minimum": 0 },
         "skipped": { "type": "integer", "minimum": 0 },
         "start": { "type": "string", "format": "date-time" },
@@ -214,7 +223,7 @@
         "stableKey": { "type": "string" },
         "type": {
           "type": "string",
-          "enum": ["beforeAll", "beforeEach", "afterEach", "afterAll"]
+          "enum": ["before", "beforeEach", "afterEach", "after"]
         },
         "title": { "type": "string" },
         "state": {

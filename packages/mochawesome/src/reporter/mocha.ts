@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createReport } from '../core/model';
-
+// TODO: Extract types to a separate file or reuse types from ../core/model.ts
 type Timing = { start: string; end: string; durationMs: number };
 
 type SuiteNode = {
@@ -41,6 +41,20 @@ type TestNode = {
   extra?: Record<string, unknown>;
 };
 
+type HookNode = {
+  id: string;
+  title: string;
+  type: 'before' | 'beforeEach' | 'afterEach' | 'after';
+  state: 'passed' | 'failed' | 'pending' | 'skipped';
+  timing: Timing;
+  error?: {
+    name?: string;
+    message: string;
+    stack?: string;
+  };
+};
+
+// TODO: add typings for objects in mocha events
 export default class Mochawesome {
   constructor(runner: any, options: any) {
     const rawDir = options?.reporterOptions?.reportDir ?? 'mochawesome-report';
@@ -73,6 +87,12 @@ export default class Mochawesome {
 
     const testNodeByMochaTest = new WeakMap<object, TestNode>();
     const testStartMsByMochaTest = new WeakMap<object, number>();
+
+    const hookNodeByMochaHook = new WeakMap<object, HookNode>();
+    const hookStartMsByMochaHook = new WeakMap<object, number>();
+
+    let hookCount = 0;
+    let hookFailCount = 0;
 
     // Mocha can emit different object instances for the same logical test across events,
     // especially for declared pending tests. Track by a stable string key.
@@ -199,6 +219,18 @@ export default class Mochawesome {
     });
 
     runner.on('fail', (test: any, err: any) => {
+      const hookNode = hookNodeByMochaHook.get(test);
+      if (hookNode) {
+        hookNode.state = 'failed';
+        hookNode.error = {
+          name: err?.name ? String(err.name) : undefined,
+          message: err?.message ? String(err.message) : String(err ?? 'Error'),
+          stack: err?.stack ? String(err.stack) : undefined,
+        };
+        hookFailCount += 1;
+        return;
+      }
+
       const node = testNodeByMochaTest.get(test);
       if (!node) return;
       node.state = 'failed';
@@ -280,6 +312,55 @@ export default class Mochawesome {
       }
     });
 
+    runner.on('hook', (hook: any) => {
+      const parentMochaSuite = hook?.parent ?? runner.suite;
+      const parentNode =
+        suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
+
+      const idx = parentNode.hooks.length + 1;
+      const suitePath = parentNode.id.slice(1);
+      const id = `h${suitePath}.${idx}`;
+
+      const hookType: HookNode['type'] = hook?.originalTitle.includes(
+        'before all'
+      )
+        ? 'before'
+        : hook?.originalTitle.includes('before each')
+        ? 'beforeEach'
+        : hook?.originalTitle.includes('after each')
+        ? 'afterEach'
+        : 'after';
+
+      const startIso = isoNow();
+      const node: HookNode = {
+        id,
+        title: String(hook?.title ?? hookType),
+        type: hookType,
+        state: 'pending',
+        timing: { start: startIso, end: startIso, durationMs: 0 },
+      };
+
+      parentNode.hooks.push(node);
+      hookNodeByMochaHook.set(hook, node);
+      hookStartMsByMochaHook.set(hook, Date.now());
+    });
+
+    runner.on('hook end', (hook: any) => {
+      const node = hookNodeByMochaHook.get(hook);
+      if (!node) return;
+
+      const endIso = isoNow();
+      node.timing.end = endIso;
+
+      const startMs = hookStartMsByMochaHook.get(hook);
+      const endMs = Date.now();
+      node.timing.durationMs =
+        typeof startMs === 'number' ? Math.max(0, endMs - startMs) : 0;
+
+      if (node.state === 'pending') node.state = 'passed';
+      hookCount += 1;
+    });
+
     runner.once('end', () => {
       const endedAtIso = isoNow();
       const endedAtMs = msNow();
@@ -307,7 +388,11 @@ export default class Mochawesome {
           suites: suiteCount,
           tests: testCount,
           passes: passCount,
-          failures: failCount,
+          failures: failCount + hookFailCount,
+          failuresByType: {
+            tests: failCount,
+            hooks: hookFailCount,
+          },
           pending: pendingCount,
           skipped: skippedCount,
           start: startedAtIso,

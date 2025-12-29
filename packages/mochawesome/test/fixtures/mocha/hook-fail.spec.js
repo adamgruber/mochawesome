@@ -1,7 +1,7 @@
 describe('outer', () => {
   describe('inner', () => {
     before(() => {
-      // Do something
+      throw new Error('hook boom');
     });
 
     it('passes', () => {});

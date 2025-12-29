@@ -11,6 +11,10 @@ export type Stats = {
   tests: number;
   passes: number;
   failures: number;
+  failuresByType?: {
+    tests: number;
+    hooks: number;
+  };
   pending: number;
   skipped: number;
   start: string;
@@ -60,7 +64,7 @@ export type Test = {
 export type Hook = {
   id: string;
   stableKey?: string;
-  type: 'beforeAll' | 'beforeEach' | 'afterEach' | 'afterAll';
+  type: 'before' | 'beforeEach' | 'afterEach' | 'after';
   title: string;
   state: 'passed' | 'failed' | 'pending' | 'skipped';
   timing: Timing;
