@@ -18,7 +18,7 @@ const mochaBin = require.resolve('mocha/bin/mocha', {
 
 const reporterCjs = path.join(__dirname, 'support', 'reporter.cjs');
 
-function runMocha(fixtureFile: string): Report {
+function runMocha(fixtureFile: string, mochaArgs: string[] = []): Report {
   const reportDirName = `.tmp-mochawesome-${Date.now()}-${Math.random()
     .toString(36)
     .slice(2)}`;
@@ -30,6 +30,7 @@ function runMocha(fixtureFile: string): Report {
       process.execPath,
       [
         mochaBin,
+        ...mochaArgs,
         '--reporter',
         reporterCjs,
         '--reporter-option',
@@ -163,5 +164,18 @@ describe('mocha integration', () => {
     expect(report.stats.tests).toBe(1);
     expect(report.stats.passes).toBe(1);
     expect(report.stats.failuresByType?.tests ?? report.stats.failures).toBe(0);
+  });
+
+  it('bail fixture: emits warning and counts executed tests only', () => {
+    const report = runMocha('bail.spec.js', ['--bail']);
+    const inner = report.rootSuite.suites[0].suites[0];
+
+    expect(inner.tests.length).toBe(1);
+    expect(inner.tests[0].state).toBe('failed');
+    expect(report.stats.tests).toBe(1);
+    expect(report.stats.failures).toBe(1);
+
+    expect(report.warnings?.length).toBeGreaterThan(0);
+    expect(report.warnings?.[0]).toMatch(/ended early/i);
   });
 });

@@ -98,6 +98,7 @@ export default class Mochawesome {
     let pendingCount = 0;
     let skippedCount = 0;
     let suiteCount = 0;
+    const warnings: string[] = [];
 
     runner.once('start', () => {
       // Ensure root timing start reflects actual run start.
@@ -345,6 +346,17 @@ export default class Mochawesome {
       rootSuite.timing.end = endedAtIso;
       rootSuite.timing.durationMs = Math.max(0, endedAtMs - startedAtMs);
 
+      const expectedTotal = (runner as any).total;
+      if (
+        typeof expectedTotal === 'number' &&
+        expectedTotal > 0 &&
+        testCount < expectedTotal
+      ) {
+        warnings.push(
+          `Run ended early (bail/abort). Executed ${testCount}/${expectedTotal} tests; counts reflect executed tests only.`
+        );
+      }
+
       const report = createReport({
         schemaVersion,
         meta: {
@@ -377,6 +389,7 @@ export default class Mochawesome {
           durationMs: Math.max(0, endedAtMs - startedAtMs),
         },
         rootSuite,
+        ...(warnings.length ? { warnings } : {}),
       });
 
       const out = path.join(reportDir, 'mochawesome.json');
