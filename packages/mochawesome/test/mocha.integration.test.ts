@@ -146,4 +146,22 @@ describe('mocha integration', () => {
     expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
     expect(report.stats.pending).toBe(0);
   });
+
+  it('retries fixture', () => {
+    const report = runMocha('retry.spec.js');
+    const inner = report.rootSuite.suites[0].suites[0];
+    const flaky = inner.tests.find((t: any) => t.title === 'flaky');
+    expect(flaky).toBeTruthy();
+
+    expect(flaky?.state).toBe('passed');
+    expect(flaky?.attempt).toBeTruthy();
+    expect(flaky?.attempt?.current).toBe(2);
+    expect(flaky?.attempt?.total).toBe(3);
+    expect(flaky?.attempt?.retry).toBe(true);
+
+    // Ensure retries didn't inflate test count (this fixture has exactly 1 test)
+    expect(report.stats.tests).toBe(1);
+    expect(report.stats.passes).toBe(1);
+    expect(report.stats.failuresByType?.tests ?? report.stats.failures).toBe(0);
+  });
 });

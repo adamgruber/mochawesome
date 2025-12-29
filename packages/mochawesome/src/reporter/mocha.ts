@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import mochaPkg from 'mocha/package.json';
 import type Mocha from 'mocha';
 import {
   addHook,
@@ -7,11 +8,8 @@ import {
   addTest,
   createReport,
   createRootSuite,
-  type ErrorInfo,
-  type Hook,
-  type Suite,
-  type Test,
 } from '../core/model';
+import type { ErrorInfo, Hook, Suite, Test } from '../core/model';
 
 export default class Mochawesome {
   constructor(runner: Mocha.Runner, options: Mocha.MochaOptions) {
@@ -63,6 +61,35 @@ export default class Mochawesome {
         suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
       const suitePath = parentNode.id.slice(1);
       return `${suitePath}|${file}|${fullTitle}`;
+    };
+
+    const getCurrentRetry = (test: Mocha.Test): number => {
+      // @types/mocha marks currentRetry() as protected, but it exists at runtime on Test.
+      const fn = (test as any).currentRetry as undefined | (() => number);
+      if (typeof fn === 'function') return fn.call(test);
+      const n = (test as any)._currentRetry;
+      return typeof n === 'number' ? n : 0;
+    };
+
+    const getRetries = (test: Mocha.Test): number | undefined => {
+      const fn = (test as any).retries as undefined | (() => number);
+      if (typeof fn === 'function') {
+        const n = fn.call(test);
+        return typeof n === 'number' && n >= 0 ? n : undefined;
+      }
+      const n = (test as any)._retries;
+      return typeof n === 'number' && n >= 0 ? n : undefined;
+    };
+
+    const setAttempt = (node: Test, test: Mocha.Test) => {
+      const current = getCurrentRetry(test) + 1; // 1-based
+      const retries = getRetries(test);
+      const total = typeof retries === 'number' ? retries + 1 : undefined;
+      node.attempt = {
+        current,
+        ...(typeof total === 'number' ? { total } : {}),
+        ...(current > 1 ? { retry: true } : {}),
+      };
     };
 
     let testCount = 0;
@@ -130,6 +157,7 @@ export default class Mochawesome {
         testNodeByMochaTest.set(test, node);
         if (!testStartMsByMochaTest.has(test))
           testStartMsByMochaTest.set(test, Date.now());
+        setAttempt(node, test);
         return;
       }
 
@@ -144,6 +172,8 @@ export default class Mochawesome {
         state: 'pending',
         timing: { start: startIso, end: startIso, durationMs: 0 },
       });
+
+      setAttempt(node, test);
 
       testNodeByKey.set(key, node);
       testNodeByMochaTest.set(test, node);
@@ -223,6 +253,7 @@ export default class Mochawesome {
         testNodeByMochaTest.set(test, node);
         testStartMsByMochaTest.set(test, Date.now());
         node.state = 'pending';
+        setAttempt(node, test);
       }
       // Count exactly once per logical test.
       if (!countedTestKeys.has(key)) {
@@ -295,6 +326,18 @@ export default class Mochawesome {
       if (node.state === 'pending') node.state = 'passed';
     });
 
+    runner.on('retry', (test: Mocha.Test, _err: unknown) => {
+      const key = getTestKey(test);
+      const node = testNodeByKey.get(key) ?? testNodeByMochaTest.get(test);
+      if (!node) return;
+
+      // mark attempt info for this retry
+      setAttempt(node, test);
+
+      // ensure state is not left as 'failed' from prior attempt
+      node.state = 'pending';
+    });
+
     runner.once('end', () => {
       const endedAtIso = isoNow();
       const endedAtMs = msNow();
@@ -307,7 +350,7 @@ export default class Mochawesome {
         meta: {
           generatedAt: startedAtIso,
           durationMs: Math.max(0, endedAtMs - startedAtMs),
-          runner: { name: 'mocha', version: '0.0.0' },
+          runner: { name: 'mocha', version: mochaPkg.version },
           reporter: { name: 'mochawesome', version: schemaVersion },
           output: {
             reportDir,
