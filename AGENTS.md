@@ -14,7 +14,8 @@ This repo contains two codebases:
 - Language: TypeScript
 - Tests: vitest
 - Validation: AJV 2020-12
-- CI runs workspace tests only
+- CI runs tests from /packages/mochawesome only
+- Root-level tests/scripts are legacy (v7) and must not be touched
 
 ## Current v8 principles
 
@@ -34,9 +35,9 @@ This repo contains two codebases:
 
 ## Non-goals (for now)
 
-- No Mocha integration yet
-- No renderer work unless explicitly requested
-- No CLI changes
+- No additional test runner integrations beyond Mocha unless explicitly requested
+- Renderer work will come after schema + data model stabilize
+- CLI behavior will follow schema decisions, not lead them
 - No refactors of v7 code
 
 When unsure, ask before expanding scope.
