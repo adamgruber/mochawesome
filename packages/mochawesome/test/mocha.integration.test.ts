@@ -146,6 +146,10 @@ describe('mocha integration', () => {
     expect(report.stats.failures).toBe(1);
     expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
     expect(report.stats.pending).toBe(0);
+
+    // Warning on hook fail
+    expect(report.warnings?.length).toBeGreaterThan(0);
+    expect(report.warnings?.[0]).toMatch(/ended early/i);
   });
 
   it('retries fixture', () => {
@@ -164,6 +168,9 @@ describe('mocha integration', () => {
     expect(report.stats.tests).toBe(1);
     expect(report.stats.passes).toBe(1);
     expect(report.stats.failuresByType?.tests ?? report.stats.failures).toBe(0);
+
+    // No warnings expected
+    expect(report.warnings).toBeUndefined();
   });
 
   it('bail fixture: emits warning and counts executed tests only', () => {
@@ -177,5 +184,66 @@ describe('mocha integration', () => {
 
     expect(report.warnings?.length).toBeGreaterThan(0);
     expect(report.warnings?.[0]).toMatch(/ended early/i);
+  });
+
+  it('bail-hook fixture: emits warning and counts executed tests only', () => {
+    const report = runMocha('bail-hook.spec.js', ['--bail']);
+
+    // outer has two inner suites
+    expect(report.rootSuite.suites.length).toBe(1);
+    expect(report.rootSuite.suites[0].suites.length).toBe(2);
+
+    const innerPass = report.rootSuite.suites[0].suites[0];
+    expect(innerPass.title).toBe('inner-pass');
+    expect(innerPass.tests.length).toBe(1);
+    expect(innerPass.tests[0].state).toBe('passed');
+
+    const innerHookFail = report.rootSuite.suites[0].suites[1];
+    expect(innerHookFail.title).toBe('inner-hook-fail');
+    expect(innerHookFail.hooks.length).toBe(1);
+    expect(innerHookFail.hooks[0].state).toBe('failed');
+    expect(innerHookFail.hooks[0].error?.message).toBe('hook boom');
+
+    // With --bail, only the first suite's test executes before the hook failure aborts.
+    expect(report.stats.tests).toBe(1);
+    expect(report.stats.passes).toBe(1);
+    expect(report.stats.failures).toBe(1);
+    expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
+
+    expect(report.warnings?.length).toBeGreaterThan(0);
+    expect(report.warnings?.[0]).toMatch(/ended early/i);
+  });
+
+  it('timeout fixture', () => {
+    const report = runMocha('timeout.spec.js');
+    const inner = report.rootSuite.suites[0].suites[0];
+
+    expect(inner.tests.length).toBe(1);
+    expect(inner.tests[0].title).toBe('times out');
+    expect(inner.tests[0].state).toBe('failed');
+    expect(inner.tests[0].error?.message).toMatch(/timeout/i);
+
+    expect(report.stats.tests).toBe(1);
+    expect(report.stats.passes).toBe(0);
+    expect(report.stats.failures).toBe(1);
+    expect(report.stats.failuresByType).toEqual({ tests: 1, hooks: 0 });
+    expect(report.stats.pending).toBe(0);
+
+    // No warnings expected
+    expect(report.warnings).toBeUndefined();
+  });
+
+  it('bail + retry: does not warn when retries recover', () => {
+    const report = runMocha('bail-retry.spec.js', ['--bail']);
+    const inner = report.rootSuite.suites[0].suites[0];
+
+    const flaky = inner.tests.find((t: any) => t.title === 'flaky');
+    expect(flaky?.state).toBe('passed');
+    expect(flaky?.attempt?.current).toBe(2);
+
+    expect(report.stats.tests).toBe(2);
+    expect(report.stats.passes).toBe(2);
+    expect(report.stats.failures).toBe(0);
+    expect(report.warnings).toBeUndefined();
   });
 });
