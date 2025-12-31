@@ -11,6 +11,47 @@ import {
 } from '../core/model';
 import type { ErrorInfo, Hook, Suite, Test } from '../core/model';
 import { stableId } from '../core/id';
+import { isoNow, msNow } from '../core/utils';
+
+const getCurrentRetry = (test: Mocha.Test): number => {
+  // @types/mocha marks currentRetry() as protected, but it exists at runtime on Test.
+  const fn = (test as any).currentRetry as undefined | (() => number);
+  if (typeof fn === 'function') return fn.call(test);
+  const n = (test as any)._currentRetry;
+  return typeof n === 'number' ? n : 0;
+};
+
+const getRetries = (test: Mocha.Test): number | undefined => {
+  const fn = (test as any).retries as undefined | (() => number);
+  if (typeof fn === 'function') {
+    const n = fn.call(test);
+    return typeof n === 'number' && n >= 0 ? n : undefined;
+  }
+  const n = (test as any)._retries;
+  return typeof n === 'number' && n >= 0 ? n : undefined;
+};
+
+const setAttempt = (node: Test, test: Mocha.Test) => {
+  const current = getCurrentRetry(test) + 1; // 1-based
+  const retries = getRetries(test);
+  const total = typeof retries === 'number' ? retries + 1 : undefined;
+  node.attempt = {
+    current,
+    ...(typeof total === 'number' ? { total } : {}),
+    ...(current > 1 ? { retry: true } : {}),
+  };
+};
+
+const getHookType = (hook: Mocha.Hook): Hook['type'] => {
+  const hookTitle = hook.originalTitle ?? hook.title;
+  return hookTitle.includes('before all')
+    ? 'before'
+    : hookTitle.includes('before each')
+    ? 'beforeEach'
+    : hookTitle.includes('after each')
+    ? 'afterEach'
+    : 'after';
+};
 
 export default class Mochawesome {
   constructor(runner: Mocha.Runner, options: Mocha.MochaOptions) {
@@ -24,9 +65,6 @@ export default class Mochawesome {
     fs.mkdirSync(reportDir, { recursive: true });
 
     const schemaVersion = '8.0.0-alpha.0';
-
-    const isoNow = () => new Date().toISOString();
-    const msNow = () => Date.now();
 
     const startedAtIso = isoNow();
     const startedAtMs = msNow();
@@ -80,17 +118,6 @@ export default class Mochawesome {
       return `${suitePath}|${file}|${fullTitle}`;
     };
 
-    const getHookType = (hook: Mocha.Hook): Hook['type'] => {
-      const hookTitle = hook.originalTitle ?? hook.title;
-      return hookTitle.includes('before all')
-        ? 'before'
-        : hookTitle.includes('before each')
-        ? 'beforeEach'
-        : hookTitle.includes('after each')
-        ? 'afterEach'
-        : 'after';
-    };
-
     const getHookKey = (hook: Mocha.Hook) => {
       const type = getHookType(hook);
       const title = String(hook?.title ?? type);
@@ -106,35 +133,6 @@ export default class Mochawesome {
       const file =
         parent && (parent as any).file ? String((parent as any).file) : '';
       return `${file}|${parentFullTitle}|hook:${type}|${title}`;
-    };
-
-    const getCurrentRetry = (test: Mocha.Test): number => {
-      // @types/mocha marks currentRetry() as protected, but it exists at runtime on Test.
-      const fn = (test as any).currentRetry as undefined | (() => number);
-      if (typeof fn === 'function') return fn.call(test);
-      const n = (test as any)._currentRetry;
-      return typeof n === 'number' ? n : 0;
-    };
-
-    const getRetries = (test: Mocha.Test): number | undefined => {
-      const fn = (test as any).retries as undefined | (() => number);
-      if (typeof fn === 'function') {
-        const n = fn.call(test);
-        return typeof n === 'number' && n >= 0 ? n : undefined;
-      }
-      const n = (test as any)._retries;
-      return typeof n === 'number' && n >= 0 ? n : undefined;
-    };
-
-    const setAttempt = (node: Test, test: Mocha.Test) => {
-      const current = getCurrentRetry(test) + 1; // 1-based
-      const retries = getRetries(test);
-      const total = typeof retries === 'number' ? retries + 1 : undefined;
-      node.attempt = {
-        current,
-        ...(typeof total === 'number' ? { total } : {}),
-        ...(current > 1 ? { retry: true } : {}),
-      };
     };
 
     let testCount = 0;
