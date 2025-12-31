@@ -123,10 +123,12 @@ export type Report = {
 export type SuiteInput = Omit<
   Suite,
   'id' | 'suites' | 'tests' | 'hooks' | 'stats'
-> & { stats?: Stats };
-
-export type TestInput = Omit<Test, 'id'>;
-export type HookInput = Omit<Hook, 'id'>;
+> & {
+  id?: string;
+  stats?: Stats;
+};
+export type TestInput = Omit<Test, 'id'> & { id?: string };
+export type HookInput = Omit<Hook, 'id'> & { id?: string };
 
 function buildSuite(id: string, input: SuiteInput): Suite {
   return {
@@ -151,7 +153,7 @@ export function createRootSuite(input: SuiteInput): Suite {
 
 export function addSuite(parent: Suite, input: SuiteInput): Suite {
   const index = parent.suites.length + 1;
-  const suite = buildSuite(suiteChildId(parent.id, index), input);
+  const suite = buildSuite(input.id ?? suiteChildId(parent.id, index), input);
   parent.suites.push(suite);
   return suite;
 }
@@ -159,7 +161,7 @@ export function addSuite(parent: Suite, input: SuiteInput): Suite {
 export function addTest(parent: Suite, input: TestInput): Test {
   const index = parent.tests.length + 1;
   const test: Test = {
-    id: testId(parent.id, index),
+    id: input.id ?? testId(parent.id, index),
     title: input.title,
     fullTitle: input.fullTitle,
     state: input.state,
@@ -180,7 +182,7 @@ export function addTest(parent: Suite, input: TestInput): Test {
 export function addHook(parent: Suite, input: HookInput): Hook {
   const index = parent.hooks.length + 1;
   const hook: Hook = {
-    id: hookId(parent.id, index),
+    id: input.id ?? hookId(parent.id, index),
     type: input.type,
     title: input.title,
     state: input.state,

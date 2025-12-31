@@ -10,9 +10,13 @@ import {
   createRootSuite,
 } from '../core/model';
 import type { ErrorInfo, Hook, Suite, Test } from '../core/model';
+import { stableId } from '../core/id';
 
 export default class Mochawesome {
   constructor(runner: Mocha.Runner, options: Mocha.MochaOptions) {
+    const isParallel =
+      typeof (runner as any).isParallelMode === 'function' &&
+      (runner as any).isParallelMode();
     const rawDir = options?.reporterOptions?.reportDir ?? 'mochawesome-report';
     const reportDir = path.isAbsolute(rawDir)
       ? rawDir
@@ -36,11 +40,16 @@ export default class Mochawesome {
     const suiteNodeByMochaSuite = new WeakMap<Mocha.Suite, Suite>();
     suiteNodeByMochaSuite.set(runner.suite, rootSuite);
 
+    const suiteNodeByKey = new Map<string, Suite>();
+
     const testNodeByMochaTest = new WeakMap<Mocha.Test, Test>();
     const testStartMsByMochaTest = new WeakMap<Mocha.Test, number>();
 
     const hookNodeByMochaHook = new WeakMap<Mocha.Hook, Hook>();
     const hookStartMsByMochaHook = new WeakMap<Mocha.Hook, number>();
+    const hookNodeByKey = new Map<string, Hook>();
+
+    const abortedSuites = new WeakSet<Mocha.Suite>();
 
     let hookFailCount = 0;
 
@@ -49,18 +58,54 @@ export default class Mochawesome {
     const testNodeByKey = new Map<string, Test>();
     const countedTestKeys = new Set<string>();
 
+    const getSuiteKey = (suiteNode: Suite) =>
+      suiteNode.stableKey ?? suiteNode.id.slice(1);
+
     const getTestKey = (runnable: Mocha.Runnable) => {
       const fullTitle =
         typeof runnable?.fullTitle === 'function'
           ? String(runnable.fullTitle())
           : String(runnable?.title ?? '');
       const file = runnable?.file ? String(runnable.file) : '';
-      // Include parent suite path so identical titles in different suites don't collide.
+
+      // In parallel mode, suite/test objects can be de-referenced across events;
+      // keys must not depend on suite-node lookups.
+      if (isParallel) return `${file}|${fullTitle}`;
+
+      // Serial mode: include parent suite path so identical titles in different suites don't collide.
       const parentMochaSuite = runnable?.parent ?? runner.suite;
       const parentNode =
         suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
-      const suitePath = parentNode.id.slice(1);
+      const suitePath = getSuiteKey(parentNode);
       return `${suitePath}|${file}|${fullTitle}`;
+    };
+
+    const getHookType = (hook: Mocha.Hook): Hook['type'] => {
+      const hookTitle = hook.originalTitle ?? hook.title;
+      return hookTitle.includes('before all')
+        ? 'before'
+        : hookTitle.includes('before each')
+        ? 'beforeEach'
+        : hookTitle.includes('after each')
+        ? 'afterEach'
+        : 'after';
+    };
+
+    const getHookKey = (hook: Mocha.Hook) => {
+      const type = getHookType(hook);
+      const title = String(hook?.title ?? type);
+      const parent = (hook as any).parent as Mocha.Suite | undefined;
+
+      const parentFullTitle =
+        parent && typeof (parent as any).fullTitle === 'function'
+          ? String((parent as any).fullTitle())
+          : parent
+          ? String((parent as any).title ?? '')
+          : '';
+
+      const file =
+        parent && (parent as any).file ? String((parent as any).file) : '';
+      return `${file}|${parentFullTitle}|hook:${type}|${title}`;
     };
 
     const getCurrentRetry = (test: Mocha.Test): number => {
@@ -112,9 +157,15 @@ export default class Mochawesome {
       const parentMochaSuite = suite.parent ?? runner.suite;
       const parentNode =
         suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
+      const parentKey = getSuiteKey(parentNode);
+      const suiteStableKey = `${parentKey}/suite:${String(suite.title ?? '')}|${
+        suite.file ? String(suite.file) : ''
+      }`;
 
       const startIso = isoNow();
       const childNode = addSuite(parentNode, {
+        id: isParallel ? stableId('s', suiteStableKey) : undefined,
+        stableKey: suiteStableKey,
         title: String(suite.title ?? ''),
         fullTitle:
           typeof suite.fullTitle === 'function'
@@ -125,6 +176,7 @@ export default class Mochawesome {
       });
 
       suiteNodeByMochaSuite.set(suite, childNode);
+      suiteNodeByKey.set(suiteStableKey, childNode);
       suiteCount += 1;
     });
 
@@ -163,7 +215,10 @@ export default class Mochawesome {
       }
 
       const startIso = isoNow();
+      const stableKey = getTestKey(test);
       node = addTest(parentNode, {
+        id: isParallel ? stableId('t', stableKey) : undefined,
+        stableKey,
         title: String(test?.title ?? ''),
         fullTitle:
           typeof test?.fullTitle === 'function'
@@ -182,8 +237,12 @@ export default class Mochawesome {
     });
 
     runner.on('pass', (test: Mocha.Test) => {
-      const node = testNodeByMochaTest.get(test);
-      if (node) node.state = 'passed';
+      const key = getTestKey(test);
+      const node = testNodeByMochaTest.get(test) ?? testNodeByKey.get(key);
+      if (!node) return;
+      node.state = 'passed';
+      // Ensure subsequent events for this specific object instance can resolve.
+      testNodeByMochaTest.set(test, node);
     });
 
     runner.on('fail', (runnable: Mocha.Test | Mocha.Hook, error: unknown) => {
@@ -196,8 +255,15 @@ export default class Mochawesome {
         operator?: unknown;
       };
       const hookNode =
-        runnable.type === 'hook' && hookNodeByMochaHook.get(runnable);
+        runnable.type === 'hook'
+          ? hookNodeByMochaHook.get(runnable as Mocha.Hook) ??
+            (isParallel
+              ? hookNodeByKey.get(getHookKey(runnable as Mocha.Hook))
+              : undefined)
+          : undefined;
       if (hookNode) {
+        // Ensure subsequent events for this specific object instance can resolve.
+        hookNodeByMochaHook.set(runnable as Mocha.Hook, hookNode);
         hookNode.state = 'failed';
         const info: ErrorInfo = {
           name: err?.name ? String(err.name) : undefined,
@@ -206,13 +272,27 @@ export default class Mochawesome {
         };
         hookNode.error = info;
         hookFailCount += 1;
+
+        const hookTitle = String((runnable as any).originalTitle ?? '');
+        if (
+          hookTitle.includes('before all') ||
+          hookTitle.includes('before each')
+        ) {
+          const s = (runnable as any).parent as Mocha.Suite | undefined;
+          if (s) abortedSuites.add(s);
+        }
+
         return;
       }
 
-      const node =
-        runnable.type === 'test' && testNodeByMochaTest.get(runnable);
+      if (runnable.type !== 'test') return;
+      const test = runnable as Mocha.Test;
+      const key = getTestKey(test);
+      const node = testNodeByMochaTest.get(test) ?? testNodeByKey.get(key);
       if (!node) return;
       node.state = 'failed';
+      // Ensure subsequent events for this specific object instance can resolve.
+      testNodeByMochaTest.set(test, node);
       const info: ErrorInfo = {
         name: err?.name ? String(err.name) : undefined,
         message: err?.message ? String(err.message) : String(err ?? 'Error'),
@@ -236,7 +316,10 @@ export default class Mochawesome {
           suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
 
         const startIso = isoNow();
+        const stableKey = getTestKey(test);
         node = addTest(parentNode, {
+          id: isParallel ? stableId('t', stableKey) : undefined,
+          stableKey,
           title: String(test?.title ?? ''),
           fullTitle:
             typeof test?.fullTitle === 'function'
@@ -265,8 +348,11 @@ export default class Mochawesome {
     });
 
     runner.on('test end', (test: Mocha.Test) => {
-      const node = testNodeByMochaTest.get(test);
+      const key = getTestKey(test);
+      const node = testNodeByMochaTest.get(test) ?? testNodeByKey.get(key);
       if (!node) return;
+      // Ensure subsequent events for this specific object instance can resolve.
+      testNodeByMochaTest.set(test, node);
 
       const endIso = isoNow();
       node.timing.end = endIso;
@@ -276,7 +362,6 @@ export default class Mochawesome {
       node.timing.durationMs =
         typeof startMs === 'number' ? Math.max(0, endMs - startMs) : 0;
 
-      const key = getTestKey(test);
       if (!countedTestKeys.has(key)) {
         countedTestKeys.add(key);
         testCount += 1;
@@ -292,29 +377,35 @@ export default class Mochawesome {
       const parentNode =
         suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
 
-      const hookType: Hook['type'] = hook.originalTitle?.includes('before all')
-        ? 'before'
-        : hook.originalTitle?.includes('before each')
-        ? 'beforeEach'
-        : hook.originalTitle?.includes('after each')
-        ? 'afterEach'
-        : 'after';
+      const hookType: Hook['type'] = getHookType(hook);
 
       const startIso = isoNow();
+      const suiteKey = getSuiteKey(parentNode);
+      const hookStableKey = isParallel
+        ? getHookKey(hook)
+        : `${suiteKey}/hook:${hookType}|${String(hook?.title ?? '')}`;
       const node = addHook(parentNode, {
+        id: isParallel ? stableId('h', hookStableKey) : undefined,
+        stableKey: hookStableKey,
         title: String(hook?.title ?? hookType),
         type: hookType,
         state: 'pending',
         timing: { start: startIso, end: startIso, durationMs: 0 },
       });
 
+      hookNodeByKey.set(hookStableKey, node);
       hookNodeByMochaHook.set(hook, node);
       hookStartMsByMochaHook.set(hook, Date.now());
     });
 
     runner.on('hook end', (hook: Mocha.Hook) => {
-      const node = hookNodeByMochaHook.get(hook);
+      const key = isParallel ? getHookKey(hook) : undefined;
+      const node =
+        hookNodeByMochaHook.get(hook) ??
+        (key ? hookNodeByKey.get(key) : undefined);
       if (!node) return;
+      // Ensure subsequent events for this specific object instance can resolve.
+      hookNodeByMochaHook.set(hook, node);
 
       const endIso = isoNow();
       node.timing.end = endIso;
@@ -345,6 +436,182 @@ export default class Mochawesome {
 
       rootSuite.timing.end = endedAtIso;
       rootSuite.timing.durationMs = Math.max(0, endedAtMs - startedAtMs);
+
+      // Parallel mode: Mocha's reporter event stream can be incomplete (suite/pending events).
+      // Build/complete the suite/test tree from the final serialized suite graph and compute stats from it.
+      if (isParallel) {
+        const ensureSuiteNode = (
+          mochaSuite: Mocha.Suite,
+          parentNode: Suite
+        ) => {
+          // Root is represented by rootSuite.
+          if (mochaSuite.root) {
+            suiteNodeByMochaSuite.set(mochaSuite, rootSuite);
+            return rootSuite;
+          }
+
+          const parentKey = getSuiteKey(parentNode);
+          const suiteStableKey = `${parentKey}/suite:${String(
+            mochaSuite.title ?? ''
+          )}|${mochaSuite.file ? String(mochaSuite.file) : ''}`;
+
+          // Prefer stableKey map (worker/main suite objects are not referentially equal).
+          const existing = suiteNodeByKey.get(suiteStableKey);
+          if (existing) {
+            suiteNodeByMochaSuite.set(mochaSuite, existing);
+            return existing;
+          }
+
+          const startIso = startedAtIso;
+          const node = addSuite(parentNode, {
+            id: stableId('s', suiteStableKey),
+            stableKey: suiteStableKey,
+            title: String(mochaSuite.title ?? ''),
+            fullTitle:
+              typeof mochaSuite.fullTitle === 'function'
+                ? String(mochaSuite.fullTitle())
+                : String(mochaSuite.title ?? ''),
+            ...(mochaSuite.file ? { file: String(mochaSuite.file) } : {}),
+            timing: { start: startIso, end: endedAtIso, durationMs: 0 },
+          });
+
+          suiteNodeByKey.set(suiteStableKey, node);
+          suiteNodeByMochaSuite.set(mochaSuite, node);
+          return node;
+        };
+
+        const ensureTestNode = (
+          mochaTest: Mocha.Test,
+          mochaSuite: Mocha.Suite,
+          parentNode: Suite
+        ) => {
+          // In parallel mode, the serialized test objects in runner.suite may not have
+          // full runtime shape. Derive stableKey using robust fallbacks so it matches
+          // the event-time keys (which use file + fullTitle).
+          const fullTitleRaw =
+            typeof (mochaTest as any).fullTitle === 'function'
+              ? (mochaTest as any).fullTitle()
+              : (mochaTest as any).fullTitle ?? mochaTest.title;
+          const fullTitle = String(fullTitleRaw ?? '');
+
+          const fileRaw =
+            (mochaTest as any).file ?? (mochaSuite as any).file ?? '';
+          const file = fileRaw ? String(fileRaw) : '';
+
+          const stableKey = `${file}|${fullTitle}`;
+
+          let node = testNodeByKey.get(stableKey);
+          if (node) return node;
+
+          const pending = !!(mochaTest as any).pending;
+          const stateStr = String((mochaTest as any).state ?? '');
+          const state: Test['state'] = pending
+            ? 'pending'
+            : stateStr === 'passed'
+            ? 'passed'
+            : stateStr === 'failed'
+            ? 'failed'
+            : 'skipped';
+
+          node = addTest(parentNode, {
+            id: stableId('t', stableKey),
+            stableKey,
+            title: String(mochaTest.title ?? ''),
+            fullTitle,
+            ...(file ? { file } : {}),
+            state,
+            timing: { start: startedAtIso, end: endedAtIso, durationMs: 0 },
+          });
+
+          // Best-effort attempt info.
+          try {
+            setAttempt(node, mochaTest);
+          } catch {
+            // ignore
+          }
+
+          // Best-effort error info.
+          const errObj = (mochaTest as any).err;
+          if (state === 'failed' && errObj) {
+            node.error = {
+              name: errObj.name ? String(errObj.name) : undefined,
+              message: errObj.message ? String(errObj.message) : String(errObj),
+              stack: errObj.stack ? String(errObj.stack) : undefined,
+              actual: errObj.actual,
+              expected: errObj.expected,
+              operator: errObj.operator ? String(errObj.operator) : undefined,
+            };
+          }
+
+          testNodeByKey.set(stableKey, node);
+          return node;
+        };
+
+        const walk = (mochaSuite: Mocha.Suite, parentNode: Suite) => {
+          // If a before/beforeEach hook failed, do not count tests in that suite branch.
+          if (abortedSuites.has(mochaSuite)) return;
+
+          const node = ensureSuiteNode(mochaSuite, parentNode);
+
+          for (const t of mochaSuite.tests ?? []) {
+            ensureTestNode(t as Mocha.Test, mochaSuite, node);
+          }
+
+          for (const child of mochaSuite.suites ?? []) {
+            walk(child as Mocha.Suite, node);
+          }
+        };
+
+        walk(runner.suite, rootSuite);
+
+        // Recompute stats from the built tree.
+        const recompute = (s: Suite) => {
+          let suites = 0;
+          let tests = 0;
+          let passes = 0;
+          let failures = 0;
+          let pending = 0;
+          let skipped = 0;
+          let hookFailures = 0;
+
+          const walkSuite = (node: Suite) => {
+            for (const child of node.suites) {
+              suites += 1;
+              walkSuite(child);
+            }
+            for (const t of node.tests) {
+              tests += 1;
+              if (t.state === 'passed') passes += 1;
+              else if (t.state === 'failed') failures += 1;
+              else if (t.state === 'pending') pending += 1;
+              else skipped += 1;
+            }
+            for (const h of node.hooks) {
+              if (h.state === 'failed') hookFailures += 1;
+            }
+          };
+
+          walkSuite(s);
+          return {
+            suites,
+            tests,
+            passes,
+            failures,
+            pending,
+            skipped,
+            hookFailures,
+          };
+        };
+
+        const computed = recompute(rootSuite);
+        suiteCount = computed.suites;
+        testCount = computed.tests;
+        passCount = computed.passes;
+        failCount = computed.failures;
+        pendingCount = computed.pending;
+        skippedCount = computed.skipped;
+        hookFailCount = computed.hookFailures;
+      }
 
       const expectedTotal = (runner as any).total;
       if (

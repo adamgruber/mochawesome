@@ -15,15 +15,23 @@ const pkgRoot = path.resolve(__dirname, '..'); // packages/mochawesome
 const mochaBin = require.resolve('mocha/bin/mocha', {
   paths: [pkgRoot],
 });
-
+const registerPath = path.join(pkgRoot, 'register.cjs');
 const reporterCjs = path.join(__dirname, 'support', 'reporter.cjs');
 
-function runMocha(fixtureFile: string, mochaArgs: string[] = []): Report {
+function runMocha(
+  fixtureFiles: string[] | string,
+  mochaArgs: string[] = []
+): Report {
   const reportDirName = `.tmp-mochawesome-${Date.now()}-${Math.random()
     .toString(36)
     .slice(2)}`;
   const reportDir = path.join(pkgRoot, reportDirName);
-  const fixture = path.join(__dirname, 'fixtures', 'mocha', fixtureFile);
+  const keepTmp = process.env.MOCHAWESOME_KEEP_TMP === '1';
+  const filenames = Array.isArray(fixtureFiles) ? fixtureFiles : [fixtureFiles];
+  const fixtures = filenames.map(filename =>
+    path.join(__dirname, 'fixtures', 'mocha', filename)
+  );
+  const isParallel = mochaArgs.includes('--parallel');
 
   try {
     const res = spawnSync(
@@ -31,12 +39,13 @@ function runMocha(fixtureFile: string, mochaArgs: string[] = []): Report {
       [
         mochaBin,
         ...mochaArgs,
+        ...(isParallel ? ['--require', registerPath] : []),
         '--reporter',
         reporterCjs,
         '--reporter-option',
         `reportDir=${reportDir}`,
         '--',
-        fixture,
+        ...fixtures,
       ],
       {
         cwd: pkgRoot,
@@ -65,19 +74,39 @@ function runMocha(fixtureFile: string, mochaArgs: string[] = []): Report {
 
     // Mocha exits 1 when the fixture has failing tests.
     // We validate behavior via the generated report instead.
-    if (res.status !== 0 && res.status !== 1) {
+    if (res.error || res.status === null) {
       throw new Error(
-        `mocha run failed (exit ${res.status})\nstdout:\n${stdout}\nstderr:\n${stderr}`
+        `mocha spawn failed\nstatus=${res.status}\nsignal=${res.signal}\nstdout:\n${stdout}\nstderr:\n${stderr}`
+      );
+    }
+    // otherwise: proceed to read mochawesome.json + schema validate
+
+    const outPath = path.join(reportDir, 'mochawesome.json');
+    if (!fs.existsSync(outPath)) {
+      const files = fs.existsSync(reportDir) ? fs.readdirSync(reportDir) : [];
+      throw new Error(
+        [
+          `mochawesome.json missing at: ${outPath}`,
+          `files in reportDir: ${files.join(', ')}`,
+          `mocha exit: ${res.status} signal: ${res.signal ?? 'none'}`,
+          `stdout:\n${stdout}`,
+          `stderr:\n${stderr}`,
+        ].join('\n')
       );
     }
 
-    const outPath = path.join(reportDir, 'mochawesome.json');
     const report = JSON.parse(fs.readFileSync(outPath, 'utf8'));
     const ok = validate(report);
-    if (!ok) throw new Error(JSON.stringify(validate.errors, null, 2));
+    if (!ok) {
+      throw new Error(
+        `schema validation failed:\n${JSON.stringify(validate.errors, null, 2)}`
+      );
+    }
     return report as Report;
   } finally {
-    fs.rmSync(reportDir, { recursive: true, force: true });
+    if (!keepTmp) {
+      fs.rmSync(reportDir, { recursive: true, force: true });
+    }
   }
 }
 
@@ -245,5 +274,143 @@ describe('mocha integration', () => {
     expect(report.stats.passes).toBe(2);
     expect(report.stats.failures).toBe(0);
     expect(report.warnings).toBeUndefined();
+  });
+
+  it('parallel mode: stable ids and valid schema', () => {
+    const report1 = runMocha(
+      ['parallel/a.spec.js', 'parallel/b.spec.js'],
+      ['--parallel', '--jobs', '2']
+    );
+    const report2 = runMocha(
+      ['parallel/a.spec.js', 'parallel/b.spec.js'],
+      ['--parallel', '--jobs', '2']
+    );
+
+    // Basic stats sanity: two files, each has 3 tests.
+    expect(report1.stats.tests).toBe(6);
+    expect(report1.stats.passes).toBe(2);
+    expect(report1.stats.failures).toBe(2);
+    expect(report1.stats.failuresByType).toEqual({ tests: 2, hooks: 0 });
+    expect(report1.stats.pending).toBe(2);
+    expect(report1.stats.skipped).toBe(0);
+    expect(report1.warnings).toBeUndefined();
+
+    // Collect all tests and hooks from the suite tree (order-independent)
+    const collectNodes = (report: Report) => {
+      const tests: any[] = [];
+      const hooks: any[] = [];
+
+      const walkSuite = (s: any) => {
+        for (const h of s?.hooks ?? []) hooks.push(h);
+        for (const t of s?.tests ?? []) tests.push(t);
+        for (const child of s?.suites ?? []) walkSuite(child);
+      };
+
+      walkSuite(report.rootSuite);
+      return { tests, hooks };
+    };
+
+    const nodes1 = collectNodes(report1);
+
+    // We should have 6 tests total across both files.
+    expect(nodes1.tests.length).toBe(6);
+
+    // Hooks: each file defines `before` + `beforeEach`. (Mocha may also emit additional hooks.)
+    expect(nodes1.hooks.length).toBeGreaterThanOrEqual(4);
+
+    // Hooks: none should fail.
+    for (const h of nodes1.hooks) {
+      expect(h.state).not.toBe('failed');
+    }
+
+    // Each file defines a single `before` hook; ensure we captured at least those and they passed.
+    const beforeHooks = nodes1.hooks.filter(h => h.type === 'before');
+    expect(beforeHooks.length).toBeGreaterThanOrEqual(2);
+    for (const h of beforeHooks) {
+      expect(h.state).toBe('passed');
+    }
+
+    // Each file defines a `beforeEach` hook; ensure we captured at least those and they passed.
+    const beforeEachHooks = nodes1.hooks.filter(h => h.type === 'beforeEach');
+    expect(beforeEachHooks.length).toBeGreaterThanOrEqual(2);
+    for (const h of beforeEachHooks) {
+      expect(h.state).toBe('passed');
+    }
+
+    // Tests: assert per-title state and (for failures) error message.
+    const byTitle = new Map<string, any>();
+    for (const t of nodes1.tests) byTitle.set(String(t.title), t);
+
+    const expectTest = (title: string, state: string) => {
+      const t = byTitle.get(title);
+      expect(t, `missing test: ${title}`).toBeTruthy();
+      expect(t.state).toBe(state);
+      return t;
+    };
+
+    expectTest('a: passes', 'passed');
+    expectTest('b: passes', 'passed');
+
+    const aFail = expectTest('a: fails', 'failed');
+    expect(aFail.error?.message).toBe('boom');
+    const bFail = expectTest('b: fails', 'failed');
+    expect(bFail.error?.message).toBe('boom');
+
+    expectTest('a: pending', 'pending');
+    expectTest('b: pending', 'pending');
+
+    const collectIds = (report: Report) => {
+      const suites = new Map<string, string>();
+      const tests = new Map<string, string>();
+      const hooks = new Map<string, string>();
+
+      const walkSuite = (s: any) => {
+        if (s?.stableKey) suites.set(String(s.stableKey), String(s.id));
+        for (const h of s?.hooks ?? []) {
+          if (h?.stableKey) hooks.set(String(h.stableKey), String(h.id));
+        }
+        for (const t of s?.tests ?? []) {
+          if (t?.stableKey) tests.set(String(t.stableKey), String(t.id));
+        }
+        for (const child of s?.suites ?? []) walkSuite(child);
+      };
+
+      walkSuite(report.rootSuite);
+      return { suites, tests, hooks };
+    };
+
+    const ids1 = collectIds(report1);
+    const ids2 = collectIds(report2);
+
+    // Light id-format sanity check
+    const isStableId = (prefix: string, id: string) =>
+      new RegExp(`^${prefix}_[0-9a-f]{12}$`).test(id);
+
+    for (const id of ids1.tests.values())
+      expect(isStableId('t', id)).toBe(true);
+    for (const id of ids1.suites.values())
+      expect(isStableId('s', id)).toBe(true);
+    for (const id of ids1.hooks.values())
+      expect(isStableId('h', id)).toBe(true);
+
+    // Ensure we actually captured stable keys
+    expect(ids1.tests.size).toBeGreaterThan(0);
+    expect(ids1.suites.size).toBeGreaterThan(0);
+
+    // IDs must be deterministic across parallel runs.
+    expect(ids1.tests.size).toBe(ids2.tests.size);
+    for (const [k, id] of ids1.tests.entries()) {
+      expect(ids2.tests.get(k)).toBe(id);
+    }
+
+    expect(ids1.suites.size).toBe(ids2.suites.size);
+    for (const [k, id] of ids1.suites.entries()) {
+      expect(ids2.suites.get(k)).toBe(id);
+    }
+
+    expect(ids1.hooks.size).toBe(ids2.hooks.size);
+    for (const [k, id] of ids1.hooks.entries()) {
+      expect(ids2.hooks.get(k)).toBe(id);
+    }
   });
 });

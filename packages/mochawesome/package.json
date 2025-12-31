@@ -1,6 +1,9 @@
 {
   "name": "mochawesome",
   "private": true,
+  "exports": {
+    "./register": "./register.cjs"
+  },
   "scripts": {
     "test": "vitest run"
   },

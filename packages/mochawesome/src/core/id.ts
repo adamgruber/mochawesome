@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 type IdPrefix = 's' | 't' | 'h';
 
 const ID_PART_RE = /^\d+$/;
@@ -21,17 +23,20 @@ function parseSuitePath(suiteId: string): number[] {
   }
   const raw = suiteId.slice(1);
   const parts = raw.length === 0 ? [] : raw.split('.');
-  if (!parts.every((part) => ID_PART_RE.test(part))) {
+  if (!parts.every(part => ID_PART_RE.test(part))) {
     throw new Error(`Invalid suite id path: ${suiteId}`);
   }
-  return parts.map((part) => Number(part));
+  return parts.map(part => Number(part));
 }
 
 export function suiteId(path: number[]): string {
   return formatId('s', path);
 }
 
-export function suiteChildId(parentSuiteId: string, childIndex: number): string {
+export function suiteChildId(
+  parentSuiteId: string,
+  childIndex: number
+): string {
   const parentPath = parseSuitePath(parentSuiteId);
   return suiteId([...parentPath, childIndex]);
 }
@@ -44,4 +49,13 @@ export function testId(parentSuiteId: string, testIndex: number): string {
 export function hookId(parentSuiteId: string, hookIndex: number): string {
   const parentPath = parseSuitePath(parentSuiteId);
   return formatId('h', [...parentPath, hookIndex]);
+}
+
+export function stableId(prefix: 's' | 't' | 'h', stableKey: string): string {
+  const hash = crypto
+    .createHash('sha1')
+    .update(stableKey)
+    .digest('hex')
+    .slice(0, 12);
+  return `${prefix}_${hash}`;
 }
