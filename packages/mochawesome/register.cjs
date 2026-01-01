@@ -4,6 +4,7 @@
 // Ensure declared-pending tests (it('name') with no fn) are included in the serialized suite tree.
 
 (() => {
+  globalThis.__mochawesomeRegisterLoaded__ = true;
   let mocha;
   try {
     mocha = require('mocha');

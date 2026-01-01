@@ -79,6 +79,15 @@ export default class Mochawesome {
     const isParallel =
       typeof (runner as any).isParallelMode === 'function' &&
       (runner as any).isParallelMode();
+
+    const registerLoaded =
+      (globalThis as any).__mochawesomeRegisterLoaded__ === true;
+    if (isParallel && !registerLoaded) {
+      throw new Error(
+        'Parallel mode requires registering mochawesome to patch Mocha serialization. Run Mocha with: --require mochawesome/register'
+      );
+    }
+
     const rawDir = options?.reporterOptions?.reportDir ?? 'mochawesome-report';
     const reportDir = path.isAbsolute(rawDir)
       ? rawDir
