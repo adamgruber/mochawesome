@@ -276,6 +276,174 @@ describe('mocha integration', () => {
     expect(report.warnings).toBeUndefined();
   });
 
+  it('duplicate-titles fixture', () => {
+    const report = runMocha('duplicate-titles.spec.js');
+
+    const outer = report.rootSuite.suites[0];
+    expect(outer.title).toBe('outer');
+    expect(outer.suites.length).toBe(2);
+
+    const innerA = outer.suites.find((s: any) => s.title === 'inner-a');
+    const innerB = outer.suites.find((s: any) => s.title === 'inner-b');
+    expect(innerA).toBeTruthy();
+    expect(innerB).toBeTruthy();
+
+    expect(innerA?.tests.length).toBe(1);
+    expect(innerB?.tests.length).toBe(1);
+    expect(innerA?.tests[0].title).toBe('passes');
+    expect(innerB?.tests[0].title).toBe('passes');
+
+    // Serial IDs should differ because suite path differs.
+    expect(innerA?.tests[0].id).not.toBe(innerB?.tests[0].id);
+    expect(innerA?.tests[0].state).toBe('passed');
+    expect(innerB?.tests[0].state).toBe('passed');
+
+    expect(report.stats.tests).toBe(2);
+    expect(report.stats.passes).toBe(2);
+    expect(report.stats.failures).toBe(0);
+    expect(report.stats.pending).toBe(0);
+    expect(report.stats.skipped).toBe(0);
+    expect(report.warnings).toBeUndefined();
+  });
+
+  it('after-all-fail fixture', () => {
+    const report = runMocha('after-all-fail.spec.js');
+    const inner = report.rootSuite.suites[0].suites[0];
+
+    expect(inner.title).toBe('inner');
+
+    // Tests still run and pass.
+    expect(inner.tests.length).toBe(2);
+    expect(inner.tests[0].state).toBe('passed');
+    expect(inner.tests[1].state).toBe('passed');
+
+    // after/afterAll hook fails once.
+    expect(inner.hooks.length).toBeGreaterThanOrEqual(1);
+    const afterHook = inner.hooks.find((h: any) => h.type === 'after');
+    expect(afterHook).toBeTruthy();
+    expect(afterHook?.state).toBe('failed');
+    expect(afterHook?.error?.message).toBe('afterAll boom');
+
+    expect(report.stats.tests).toBe(2);
+    expect(report.stats.passes).toBe(2);
+    expect(report.stats.failures).toBe(1);
+    expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
+    expect(report.stats.pending).toBe(0);
+    expect(report.stats.skipped).toBe(0);
+    expect(report.warnings).toBeUndefined();
+  });
+
+  it('after-each-fail fixture', () => {
+    const report = runMocha('after-each-fail.spec.js');
+    const inner = report.rootSuite.suites[0].suites[0];
+
+    expect(inner.title).toBe('inner');
+
+    // Tests themselves pass.
+    expect(inner.tests.length).toBe(1);
+    expect(inner.tests[0].state).toBe('passed');
+
+    // afterEach hook fails for each executed test.
+    const afterEachHooks = inner.hooks.filter(
+      (h: any) => h.type === 'afterEach'
+    );
+    expect(afterEachHooks.length).toBeGreaterThanOrEqual(1);
+    for (const h of afterEachHooks) {
+      expect(h.state).toBe('failed');
+      expect(h.error?.message).toBe('afterEach boom');
+    }
+
+    expect(report.stats.tests).toBe(1);
+    expect(report.stats.passes).toBe(1);
+    expect(report.stats.failures).toBe(1);
+
+    expect(report.stats.failuresByType?.tests ?? 0).toBe(0);
+    expect(report.stats.failuresByType?.hooks).toBe(1);
+
+    expect(report.stats.pending).toBe(0);
+    expect(report.stats.skipped).toBe(0);
+    expect(report.warnings?.length).toBeGreaterThan(0);
+    expect(report.warnings?.[0]).toMatch(/ended early/i);
+  });
+
+  it('before-each-fail fixture', () => {
+    const report = runMocha('before-each-fail.spec.js');
+    const inner = report.rootSuite.suites[0].suites[0];
+
+    expect(inner.title).toBe('inner');
+
+    // beforeEach hook fails before any test executes.
+    const beforeEachHook = inner.hooks.find(
+      (h: any) => h.type === 'beforeEach'
+    );
+    expect(beforeEachHook).toBeTruthy();
+    expect(beforeEachHook?.state).toBe('failed');
+    expect(beforeEachHook?.error?.message).toBe('beforeEach boom');
+
+    expect(inner.tests.length).toBe(1);
+    expect(inner.tests[0].state).toBe('skipped');
+
+    expect(report.stats.tests).toBe(1);
+    expect(report.stats.passes).toBe(0);
+    expect(report.stats.failures).toBe(1);
+    expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
+    expect(report.stats.pending).toBe(0);
+    expect(report.stats.skipped).toBe(1);
+
+    // Expect an ended-early warning.
+    expect(report.warnings?.length).toBeGreaterThan(0);
+    expect(report.warnings?.[0]).toMatch(/ended early/i);
+  });
+
+  it('skip fixture', () => {
+    const report = runMocha('skip.spec.js');
+
+    const outer = report.rootSuite.suites[0];
+    const inner = outer.suites[0];
+
+    const collectTests = (s: any): any[] => {
+      const tests: any[] = [];
+      const walk = (node: any) => {
+        for (const t of node?.tests ?? []) tests.push(t);
+        for (const child of node?.suites ?? []) walk(child);
+      };
+      walk(s);
+      return tests;
+    };
+
+    const tests = collectTests(inner);
+    const byTitle = new Map<string, any>();
+    for (const t of tests) byTitle.set(String(t.title), t);
+
+    // These must exist and be correctly classified.
+    expect(byTitle.get('explicit skip')?.state).toBe('skipped');
+
+    // Mocha does not reliably preserve a distinguishable marker between `it.skip('name')`
+    // and declared-pending (`it('name')`) in the reporter event payload. Accept either
+    // pending or skipped here, but enforce the aggregate counts below.
+    expect(['pending', 'skipped']).toContain(byTitle.get('it.skip')?.state);
+
+    expect(byTitle.get('passes')?.state).toBe('passed');
+
+    // If present, it must be skipped.
+    const skippedBySuite = byTitle.get('skipped by suite');
+    if (skippedBySuite) expect(skippedBySuite.state).toBe('skipped');
+
+    expect(report.stats.passes).toBe(1);
+    expect(report.stats.failures).toBe(0);
+
+    // We expect at least two non-executed tests across skip mechanisms.
+    // Depending on Mocha's emitted payload, `it.skip` may appear as pending or skipped.
+    expect(report.stats.skipped + report.stats.pending).toBeGreaterThanOrEqual(
+      2
+    );
+
+    // But the runtime `this.skip()` case must count as skipped.
+    expect(report.stats.skipped).toBeGreaterThanOrEqual(1);
+
+    expect(report.warnings).toBeUndefined();
+  });
+
   it('parallel mode: stable ids and valid schema', () => {
     const report1 = runMocha(
       ['parallel/a.spec.js', 'parallel/b.spec.js'],

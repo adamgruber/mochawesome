@@ -53,6 +53,27 @@ const getHookType = (hook: Mocha.Hook): Hook['type'] => {
     : 'after';
 };
 
+const getPendingState = (test: Mocha.Test): Test['state'] => {
+  // Mocha uses `pending` for both declared-pending tests (`it('name')`) and explicit skips
+  // (`it.skip`, `describe.skip`, `this.skip()`). We want to preserve both semantics:
+  // - "pending"  => declared TODO/unimplemented
+  // - "skipped"  => explicitly skipped / filtered / runtime skipped
+
+  // If the parent suite is skipped/pending (e.g. `describe.skip(...)`), treat tests as skipped.
+  const parentPending = !!(test as any)?.parent?.pending;
+  if (parentPending) return 'skipped';
+
+  const fn = (test as any).fn;
+  const body = (test as any).body;
+
+  // If we still have a function/body, it was explicitly skipped.
+  if (typeof fn === 'function') return 'skipped';
+  if (typeof body === 'string' && body.trim().length > 0) return 'skipped';
+
+  // Otherwise treat as declared pending (no fn).
+  return 'pending';
+};
+
 export default class Mochawesome {
   constructor(runner: Mocha.Runner, options: Mocha.MochaOptions) {
     const isParallel =
@@ -278,6 +299,56 @@ export default class Mochawesome {
         ) {
           const s = (runnable as any).parent as Mocha.Suite | undefined;
           if (s) abortedSuites.add(s);
+
+          // If a beforeEach fails, Mocha may not emit a "pending" event for the
+          // current test. Mark it as skipped so the report reflects non-execution.
+          if (hookTitle.includes('before each')) {
+            const currentTest = (runnable as any).ctx?.currentTest as
+              | Mocha.Test
+              | undefined;
+            if (currentTest) {
+              const key = getTestKey(currentTest);
+              let node =
+                testNodeByMochaTest.get(currentTest) ?? testNodeByKey.get(key);
+
+              // Ensure a node exists for the current test.
+              if (!node) {
+                const parentMochaSuite = currentTest?.parent ?? runner.suite;
+                const parentNode =
+                  suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
+
+                const nowIso = isoNow();
+                const stableKey = getTestKey(currentTest);
+                node = addTest(parentNode, {
+                  id: isParallel ? stableId('t', stableKey) : undefined,
+                  stableKey,
+                  title: String(currentTest?.title ?? ''),
+                  fullTitle:
+                    typeof currentTest?.fullTitle === 'function'
+                      ? String(currentTest.fullTitle())
+                      : String(currentTest?.title ?? ''),
+                  ...(currentTest?.file
+                    ? { file: String(currentTest.file) }
+                    : {}),
+                  state: 'skipped',
+                  timing: { start: nowIso, end: nowIso, durationMs: 0 },
+                });
+
+                testNodeByKey.set(key, node);
+              }
+
+              // Mark as skipped and attach to this Mocha test instance.
+              node.state = 'skipped';
+              testNodeByMochaTest.set(currentTest, node);
+
+              // Count exactly once per logical test.
+              if (!countedTestKeys.has(key)) {
+                countedTestKeys.add(key);
+                testCount += 1;
+                skippedCount += 1;
+              }
+            }
+          }
         }
 
         return;
@@ -334,14 +405,18 @@ export default class Mochawesome {
       if (node) {
         testNodeByMochaTest.set(test, node);
         testStartMsByMochaTest.set(test, Date.now());
-        node.state = 'pending';
+        node.state = getPendingState(test);
         setAttempt(node, test);
       }
       // Count exactly once per logical test.
       if (!countedTestKeys.has(key)) {
         countedTestKeys.add(key);
         testCount += 1;
-        pendingCount += 1;
+        if (node?.state === 'pending') {
+          pendingCount += 1;
+        } else {
+          skippedCount += 1;
+        }
       }
     });
 
@@ -504,7 +579,7 @@ export default class Mochawesome {
           const pending = !!(mochaTest as any).pending;
           const stateStr = String((mochaTest as any).state ?? '');
           const state: Test['state'] = pending
-            ? 'pending'
+            ? getPendingState(mochaTest as any)
             : stateStr === 'passed'
             ? 'passed'
             : stateStr === 'failed'
