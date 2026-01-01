@@ -687,11 +687,18 @@ export default class Mochawesome {
       }
 
       const expectedTotal = (runner as any).total;
-      if (
+      const didRunEndEarly =
         typeof expectedTotal === 'number' &&
         expectedTotal > 0 &&
-        testCount < expectedTotal
-      ) {
+        testCount < expectedTotal;
+
+      // `runner.total` includes tests registered, including those filtered out by `.only` / `--grep`.
+      // Only warn when the run actually ended early (bail/abort or a blocking hook failure).
+      const didAbort = !!(runner as any)._abort;
+      const didBail = !!(options as any)?.bail;
+      const didBlockOnHookFailure = hookFailCount > 0;
+
+      if (didRunEndEarly && (didAbort || didBail || didBlockOnHookFailure)) {
         warnings.push(
           `Run ended early (bail/abort). Executed ${testCount}/${expectedTotal} tests; counts reflect executed tests only.`
         );
