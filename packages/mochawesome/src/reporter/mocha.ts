@@ -131,12 +131,29 @@ export default class Mochawesome {
     const getSuiteKey = (suiteNode: Suite) =>
       suiteNode.stableKey ?? suiteNode.id.slice(1);
 
+    const getRunnableFullTitle = (runnable: Mocha.Runnable) =>
+      typeof runnable?.fullTitle === 'function'
+        ? String(runnable.fullTitle())
+        : String(runnable?.title ?? '');
+
+    const getRunnableFile = (
+      runnable: Mocha.Runnable,
+      fallbackSuite?: Mocha.Suite
+    ) => {
+      const file = runnable?.file ?? fallbackSuite?.file;
+      return file ? String(file) : '';
+    };
+
+    const getSuiteStableKey = (parentNode: Suite, suite: Mocha.Suite) => {
+      const parentKey = getSuiteKey(parentNode);
+      return `${parentKey}/suite:${String(suite.title ?? '')}|${
+        suite.file ? String(suite.file) : ''
+      }`;
+    };
+
     const getTestKey = (runnable: Mocha.Runnable) => {
-      const fullTitle =
-        typeof runnable?.fullTitle === 'function'
-          ? String(runnable.fullTitle())
-          : String(runnable?.title ?? '');
-      const file = runnable?.file ? String(runnable.file) : '';
+      const fullTitle = getRunnableFullTitle(runnable);
+      const file = getRunnableFile(runnable);
 
       // In parallel mode, suite/test objects can be de-referenced across events;
       // keys must not depend on suite-node lookups.
@@ -166,6 +183,149 @@ export default class Mochawesome {
       return `${file}|${parentFullTitle}|hook:${type}|${title}`;
     };
 
+    const finalizeTiming = (
+      node: Suite | Test | Hook,
+      endIso: string,
+      startMsOverride?: number,
+      endMsOverride?: number
+    ) => {
+      node.timing.end = endIso;
+      const startMs =
+        typeof startMsOverride === 'number'
+          ? startMsOverride
+          : Date.parse(node.timing.start);
+      const endMs =
+        typeof endMsOverride === 'number' ? endMsOverride : Date.parse(endIso);
+      node.timing.durationMs =
+        Number.isFinite(startMs) && Number.isFinite(endMs)
+          ? Math.max(0, endMs - startMs)
+          : 0;
+    };
+
+    const createTestNode = (
+      parentNode: Suite,
+      mochaTest: Mocha.Test,
+      options?: {
+        initialState?: Test['state'];
+        timingIso?: string;
+        key?: string;
+        setStartMs?: boolean;
+      }
+    ): { key: string; node: Test } => {
+      const key = options?.key ?? getTestKey(mochaTest);
+      const stableKey = key;
+      const startIso = options?.timingIso ?? isoNow();
+      const initialState = options?.initialState ?? 'pending';
+
+      const node = addTest(parentNode, {
+        id: isParallel ? stableId('t', stableKey) : undefined,
+        stableKey,
+        title: String(mochaTest?.title ?? ''),
+        fullTitle:
+          typeof mochaTest?.fullTitle === 'function'
+            ? String(mochaTest.fullTitle())
+            : String(mochaTest?.title ?? ''),
+        ...(mochaTest?.file ? { file: String(mochaTest.file) } : {}),
+        state: initialState,
+        timing: { start: startIso, end: startIso, durationMs: 0 },
+      });
+
+      setAttempt(node, mochaTest);
+
+      testNodeByKey.set(key, node);
+      testNodeByMochaTest.set(mochaTest, node);
+
+      const shouldSetStartMs = options?.setStartMs ?? true;
+      if (shouldSetStartMs && !testStartMsByMochaTest.has(mochaTest)) {
+        testStartMsByMochaTest.set(mochaTest, Date.now());
+      }
+
+      return { key, node };
+    };
+
+    const createHookNode = (
+      parentNode: Suite,
+      hook: Mocha.Hook,
+      options?: { stableKey?: string; timingIso?: string }
+    ) => {
+      const hookType: Hook['type'] = getHookType(hook);
+      const stableKey = options?.stableKey ?? getHookKey(hook);
+      const startIso = options?.timingIso ?? isoNow();
+      const node = addHook(parentNode, {
+        id: isParallel ? stableId('h', stableKey) : undefined,
+        stableKey,
+        title: String(hook?.title ?? hookType),
+        type: hookType,
+        state: 'pending',
+        timing: { start: startIso, end: startIso, durationMs: 0 },
+      });
+      return node;
+    };
+
+    const toErrorInfo = (
+      error: unknown,
+      options?: { includeAssertion?: boolean }
+    ): ErrorInfo => {
+      const err = error as {
+        name?: unknown;
+        message?: unknown;
+        stack?: unknown;
+        actual?: unknown;
+        expected?: unknown;
+        operator?: unknown;
+      };
+      return {
+        name: err?.name ? String(err.name) : undefined,
+        message: err?.message ? String(err.message) : String(err ?? 'Error'),
+        stack: err?.stack ? String(err.stack) : undefined,
+        ...(options?.includeAssertion
+          ? {
+              actual: err?.actual,
+              expected: err?.expected,
+              operator: err?.operator ? String(err.operator) : undefined,
+            }
+          : {}),
+      };
+    };
+
+    const recomputeStats = (s: Suite) => {
+      let suites = 0;
+      let tests = 0;
+      let passes = 0;
+      let failures = 0;
+      let pending = 0;
+      let skipped = 0;
+      let hookFailures = 0;
+
+      const walkSuite = (node: Suite) => {
+        for (const child of node.suites) {
+          suites += 1;
+          walkSuite(child);
+        }
+        for (const t of node.tests) {
+          tests += 1;
+          if (t.state === 'passed') passes += 1;
+          else if (t.state === 'failed') failures += 1;
+          else if (t.state === 'pending') pending += 1;
+          else skipped += 1;
+        }
+        for (const h of node.hooks) {
+          if (h.state === 'failed') hookFailures += 1;
+        }
+      };
+
+      walkSuite(s);
+      return {
+        suites,
+        tests,
+        passes,
+        failures,
+        pending,
+        skipped,
+        hookFailures,
+      };
+    };
+
     let testCount = 0;
     let passCount = 0;
     let failCount = 0;
@@ -186,10 +346,7 @@ export default class Mochawesome {
       const parentMochaSuite = suite.parent ?? runner.suite;
       const parentNode =
         suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
-      const parentKey = getSuiteKey(parentNode);
-      const suiteStableKey = `${parentKey}/suite:${String(suite.title ?? '')}|${
-        suite.file ? String(suite.file) : ''
-      }`;
+      const suiteStableKey = getSuiteStableKey(parentNode, suite);
 
       const startIso = isoNow();
       const childNode = addSuite(parentNode, {
@@ -215,14 +372,7 @@ export default class Mochawesome {
       if (!node) return;
 
       const endIso = isoNow();
-      node.timing.end = endIso;
-
-      const startMs = Date.parse(node.timing.start);
-      const endMs = Date.parse(endIso);
-      node.timing.durationMs =
-        Number.isFinite(startMs) && Number.isFinite(endMs)
-          ? Math.max(0, endMs - startMs)
-          : 0;
+      finalizeTiming(node, endIso);
     });
 
     runner.on('test', (test: Mocha.Test) => {
@@ -243,26 +393,7 @@ export default class Mochawesome {
         return;
       }
 
-      const startIso = isoNow();
-      const stableKey = getTestKey(test);
-      node = addTest(parentNode, {
-        id: isParallel ? stableId('t', stableKey) : undefined,
-        stableKey,
-        title: String(test?.title ?? ''),
-        fullTitle:
-          typeof test?.fullTitle === 'function'
-            ? String(test.fullTitle())
-            : String(test?.title ?? ''),
-        ...(test?.file ? { file: String(test.file) } : {}),
-        state: 'pending',
-        timing: { start: startIso, end: startIso, durationMs: 0 },
-      });
-
-      setAttempt(node, test);
-
-      testNodeByKey.set(key, node);
-      testNodeByMochaTest.set(test, node);
-      testStartMsByMochaTest.set(test, Date.now());
+      ({ node } = createTestNode(parentNode, test, { key }));
     });
 
     runner.on('pass', (test: Mocha.Test) => {
@@ -275,15 +406,6 @@ export default class Mochawesome {
     });
 
     runner.on('fail', (runnable: Mocha.Test | Mocha.Hook, error: unknown) => {
-      const err = error as {
-        name?: unknown;
-        message?: unknown;
-        stack?: unknown;
-        actual?: unknown;
-        expected?: unknown;
-        operator?: unknown;
-      };
-
       if (isHook(runnable)) {
         const hookNode =
           hookNodeByMochaHook.get(runnable) ??
@@ -292,14 +414,7 @@ export default class Mochawesome {
           // Ensure subsequent events for this specific object instance can resolve.
           hookNodeByMochaHook.set(runnable, hookNode);
           hookNode.state = 'failed';
-          const info: ErrorInfo = {
-            name: err?.name ? String(err.name) : undefined,
-            message: err?.message
-              ? String(err.message)
-              : String(err ?? 'Error'),
-            stack: err?.stack ? String(err.stack) : undefined,
-          };
-          hookNode.error = info;
+          hookNode.error = toErrorInfo(error);
           hookFailCount += 1;
 
           const hookTitle = String(runnable.originalTitle ?? '');
@@ -328,24 +443,12 @@ export default class Mochawesome {
                   const parentNode =
                     suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
 
-                  const nowIso = isoNow();
-                  const stableKey = getTestKey(currentTest);
-                  node = addTest(parentNode, {
-                    id: isParallel ? stableId('t', stableKey) : undefined,
-                    stableKey,
-                    title: String(currentTest?.title ?? ''),
-                    fullTitle:
-                      typeof currentTest?.fullTitle === 'function'
-                        ? String(currentTest.fullTitle())
-                        : String(currentTest?.title ?? ''),
-                    ...(currentTest?.file
-                      ? { file: String(currentTest.file) }
-                      : {}),
-                    state: 'skipped',
-                    timing: { start: nowIso, end: nowIso, durationMs: 0 },
-                  });
-
-                  testNodeByKey.set(key, node);
+                  ({ node } = createTestNode(parentNode, currentTest, {
+                    key,
+                    initialState: 'skipped',
+                    timingIso: isoNow(),
+                    setStartMs: false,
+                  }));
                 }
 
                 // Mark as skipped and attach to this Mocha test instance.
@@ -370,17 +473,7 @@ export default class Mochawesome {
           node.state = 'failed';
           // Ensure subsequent events for this specific object instance can resolve.
           testNodeByMochaTest.set(test, node);
-          const info: ErrorInfo = {
-            name: err?.name ? String(err.name) : undefined,
-            message: err?.message
-              ? String(err.message)
-              : String(err ?? 'Error'),
-            stack: err?.stack ? String(err.stack) : undefined,
-            actual: err?.actual,
-            expected: err?.expected,
-            operator: err?.operator ? String(err.operator) : undefined,
-          };
-          node.error = info;
+          node.error = toErrorInfo(error, { includeAssertion: true });
         }
       }
     });
@@ -396,22 +489,7 @@ export default class Mochawesome {
         const parentNode =
           suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
 
-        const startIso = isoNow();
-        const stableKey = getTestKey(test);
-        node = addTest(parentNode, {
-          id: isParallel ? stableId('t', stableKey) : undefined,
-          stableKey,
-          title: String(test?.title ?? ''),
-          fullTitle:
-            typeof test?.fullTitle === 'function'
-              ? String(test.fullTitle())
-              : String(test?.title ?? ''),
-          ...(test?.file ? { file: String(test.file) } : {}),
-          state: 'pending',
-          timing: { start: startIso, end: startIso, durationMs: 0 },
-        });
-
-        testNodeByKey.set(key, node);
+        ({ node } = createTestNode(parentNode, test, { key }));
       }
       // Attach node to this specific Mocha test object and ensure state.
       if (node) {
@@ -439,13 +517,8 @@ export default class Mochawesome {
       // Ensure subsequent events for this specific object instance can resolve.
       testNodeByMochaTest.set(test, node);
 
-      const endIso = isoNow();
-      node.timing.end = endIso;
-
       const startMs = testStartMsByMochaTest.get(test);
-      const endMs = Date.now();
-      node.timing.durationMs =
-        typeof startMs === 'number' ? Math.max(0, endMs - startMs) : 0;
+      finalizeTiming(node, isoNow(), startMs, Date.now());
 
       if (!countedTestKeys.has(key)) {
         countedTestKeys.add(key);
@@ -463,19 +536,12 @@ export default class Mochawesome {
         suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
 
       const hookType: Hook['type'] = getHookType(hook);
-
-      const startIso = isoNow();
       const suiteKey = getSuiteKey(parentNode);
       const hookStableKey = isParallel
         ? getHookKey(hook)
         : `${suiteKey}/hook:${hookType}|${String(hook?.title ?? '')}`;
-      const node = addHook(parentNode, {
-        id: isParallel ? stableId('h', hookStableKey) : undefined,
+      const node = createHookNode(parentNode, hook, {
         stableKey: hookStableKey,
-        title: String(hook?.title ?? hookType),
-        type: hookType,
-        state: 'pending',
-        timing: { start: startIso, end: startIso, durationMs: 0 },
       });
 
       hookNodeByKey.set(hookStableKey, node);
@@ -492,13 +558,8 @@ export default class Mochawesome {
       // Ensure subsequent events for this specific object instance can resolve.
       hookNodeByMochaHook.set(hook, node);
 
-      const endIso = isoNow();
-      node.timing.end = endIso;
-
       const startMs = hookStartMsByMochaHook.get(hook);
-      const endMs = Date.now();
-      node.timing.durationMs =
-        typeof startMs === 'number' ? Math.max(0, endMs - startMs) : 0;
+      finalizeTiming(node, isoNow(), startMs, Date.now());
 
       if (node.state === 'pending') node.state = 'passed';
     });
@@ -535,10 +596,7 @@ export default class Mochawesome {
             return rootSuite;
           }
 
-          const parentKey = getSuiteKey(parentNode);
-          const suiteStableKey = `${parentKey}/suite:${String(
-            mochaSuite.title ?? ''
-          )}|${mochaSuite.file ? String(mochaSuite.file) : ''}`;
+          const suiteStableKey = getSuiteStableKey(parentNode, mochaSuite);
 
           // Prefer stableKey map (worker/main suite objects are not referentially equal).
           const existing = suiteNodeByKey.get(suiteStableKey);
@@ -573,14 +631,8 @@ export default class Mochawesome {
           // In parallel mode, the serialized test objects in runner.suite may not have
           // full runtime shape. Derive stableKey using robust fallbacks so it matches
           // the event-time keys (which use file + fullTitle).
-          const fullTitleRaw =
-            typeof mochaTest.fullTitle === 'function'
-              ? mochaTest.fullTitle()
-              : (mochaTest.fullTitle ?? mochaTest.title);
-          const fullTitle = String(fullTitleRaw ?? '');
-
-          const fileRaw = mochaTest.file ?? mochaSuite.file ?? '';
-          const file = fileRaw ? String(fileRaw) : '';
+          const fullTitle = getRunnableFullTitle(mochaTest);
+          const file = getRunnableFile(mochaTest, mochaSuite);
 
           const stableKey = `${file}|${fullTitle}`;
 
@@ -653,45 +705,7 @@ export default class Mochawesome {
         walk(runner.suite, rootSuite);
 
         // Recompute stats from the built tree.
-        const recompute = (s: Suite) => {
-          let suites = 0;
-          let tests = 0;
-          let passes = 0;
-          let failures = 0;
-          let pending = 0;
-          let skipped = 0;
-          let hookFailures = 0;
-
-          const walkSuite = (node: Suite) => {
-            for (const child of node.suites) {
-              suites += 1;
-              walkSuite(child);
-            }
-            for (const t of node.tests) {
-              tests += 1;
-              if (t.state === 'passed') passes += 1;
-              else if (t.state === 'failed') failures += 1;
-              else if (t.state === 'pending') pending += 1;
-              else skipped += 1;
-            }
-            for (const h of node.hooks) {
-              if (h.state === 'failed') hookFailures += 1;
-            }
-          };
-
-          walkSuite(s);
-          return {
-            suites,
-            tests,
-            passes,
-            failures,
-            pending,
-            skipped,
-            hookFailures,
-          };
-        };
-
-        const computed = recompute(rootSuite);
+        const computed = recomputeStats(rootSuite);
         suiteCount = computed.suites;
         testCount = computed.tests;
         passCount = computed.passes;
