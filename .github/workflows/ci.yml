@@ -18,5 +18,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-
-      - run: npm test
+      - run: npm --workspace packages/mochawesome run typecheck
+      - run: npm --workspace packages/mochawesome run lint
+      - run: npm --workspace packages/mochawesome run format:check
+      - run: npm --workspace packages/mochawesome test

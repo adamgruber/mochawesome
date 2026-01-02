@@ -1,0 +1,2 @@
+npm test
+npx lint-staged -c packages/mochawesome/.lintstagedrc.json

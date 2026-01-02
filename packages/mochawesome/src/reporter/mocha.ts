@@ -13,21 +13,24 @@ import type { ErrorInfo, Hook, Suite, Test } from '../core/model';
 import { stableId } from '../core/id';
 import { isoNow, msNow } from '../core/utils';
 
+function isHook(node: Mocha.Test | Mocha.Hook): node is Mocha.Hook {
+  return node.type === 'hook';
+}
+
 const getCurrentRetry = (test: Mocha.Test): number => {
-  // @types/mocha marks currentRetry() as protected, but it exists at runtime on Test.
-  const fn = (test as any).currentRetry as undefined | (() => number);
-  if (typeof fn === 'function') return fn.call(test);
-  const n = (test as any)._currentRetry;
-  return typeof n === 'number' ? n : 0;
+  // @ts-expect-error: @types/mocha marks currentRetry() as protected, but it exists at runtime on Test.
+  if (typeof test.currentRetry === 'function') return test.currentRetry();
+  // @ts-expect-error: @types/mocha marks _currentRetry as private, but it exists at runtime on Test.
+  return typeof test._currentRetry === 'number' ? test._currentRetry : 0;
 };
 
 const getRetries = (test: Mocha.Test): number | undefined => {
-  const fn = (test as any).retries as undefined | (() => number);
-  if (typeof fn === 'function') {
-    const n = fn.call(test);
+  if (typeof test.retries === 'function') {
+    const n = test.retries();
     return typeof n === 'number' && n >= 0 ? n : undefined;
   }
-  const n = (test as any)._retries;
+  // @ts-expect-error: @types/mocha marks _retries as private, but it exists at runtime on Test.
+  const n = test._retries;
   return typeof n === 'number' && n >= 0 ? n : undefined;
 };
 
@@ -47,10 +50,10 @@ const getHookType = (hook: Mocha.Hook): Hook['type'] => {
   return hookTitle.includes('before all')
     ? 'before'
     : hookTitle.includes('before each')
-    ? 'beforeEach'
-    : hookTitle.includes('after each')
-    ? 'afterEach'
-    : 'after';
+      ? 'beforeEach'
+      : hookTitle.includes('after each')
+        ? 'afterEach'
+        : 'after';
 };
 
 const getPendingState = (test: Mocha.Test): Test['state'] => {
@@ -60,11 +63,11 @@ const getPendingState = (test: Mocha.Test): Test['state'] => {
   // - "skipped"  => explicitly skipped / filtered / runtime skipped
 
   // If the parent suite is skipped/pending (e.g. `describe.skip(...)`), treat tests as skipped.
-  const parentPending = !!(test as any)?.parent?.pending;
+  const parentPending = !!test?.parent?.pending;
   if (parentPending) return 'skipped';
 
-  const fn = (test as any).fn;
-  const body = (test as any).body;
+  const fn = test.fn;
+  const body = test.body;
 
   // If we still have a function/body, it was explicitly skipped.
   if (typeof fn === 'function') return 'skipped';
@@ -77,11 +80,10 @@ const getPendingState = (test: Mocha.Test): Test['state'] => {
 export default class Mochawesome {
   constructor(runner: Mocha.Runner, options: Mocha.MochaOptions) {
     const isParallel =
-      typeof (runner as any).isParallelMode === 'function' &&
-      (runner as any).isParallelMode();
+      // @ts-expect-error: isParallelMode exists on Runner as of v8.2.0
+      typeof runner.isParallelMode === 'function' && runner.isParallelMode();
 
-    const registerLoaded =
-      (globalThis as any).__mochawesomeRegisterLoaded__ === true;
+    const registerLoaded = globalThis.__mochawesomeRegisterLoaded__ === true;
     if (isParallel && !registerLoaded) {
       throw new Error(
         'Parallel mode requires registering mochawesome to patch Mocha serialization. Run Mocha with: --require mochawesome/register'
@@ -151,17 +153,16 @@ export default class Mochawesome {
     const getHookKey = (hook: Mocha.Hook) => {
       const type = getHookType(hook);
       const title = String(hook?.title ?? type);
-      const parent = (hook as any).parent as Mocha.Suite | undefined;
+      const parent = hook.parent;
 
       const parentFullTitle =
-        parent && typeof (parent as any).fullTitle === 'function'
-          ? String((parent as any).fullTitle())
+        parent && typeof parent.fullTitle === 'function'
+          ? String(parent.fullTitle())
           : parent
-          ? String((parent as any).title ?? '')
-          : '';
+            ? String(parent.title ?? '')
+            : '';
 
-      const file =
-        parent && (parent as any).file ? String((parent as any).file) : '';
+      const file = parent && parent.file ? String(parent.file) : '';
       return `${file}|${parentFullTitle}|hook:${type}|${title}`;
     };
 
@@ -282,104 +283,106 @@ export default class Mochawesome {
         expected?: unknown;
         operator?: unknown;
       };
-      const hookNode =
-        runnable.type === 'hook'
-          ? hookNodeByMochaHook.get(runnable as Mocha.Hook) ??
-            (isParallel
-              ? hookNodeByKey.get(getHookKey(runnable as Mocha.Hook))
-              : undefined)
-          : undefined;
-      if (hookNode) {
-        // Ensure subsequent events for this specific object instance can resolve.
-        hookNodeByMochaHook.set(runnable as Mocha.Hook, hookNode);
-        hookNode.state = 'failed';
-        const info: ErrorInfo = {
-          name: err?.name ? String(err.name) : undefined,
-          message: err?.message ? String(err.message) : String(err ?? 'Error'),
-          stack: err?.stack ? String(err.stack) : undefined,
-        };
-        hookNode.error = info;
-        hookFailCount += 1;
 
-        const hookTitle = String((runnable as any).originalTitle ?? '');
-        if (
-          hookTitle.includes('before all') ||
-          hookTitle.includes('before each')
-        ) {
-          const s = (runnable as any).parent as Mocha.Suite | undefined;
-          if (s) abortedSuites.add(s);
+      if (isHook(runnable)) {
+        const hookNode =
+          hookNodeByMochaHook.get(runnable) ??
+          (isParallel ? hookNodeByKey.get(getHookKey(runnable)) : undefined);
+        if (hookNode) {
+          // Ensure subsequent events for this specific object instance can resolve.
+          hookNodeByMochaHook.set(runnable, hookNode);
+          hookNode.state = 'failed';
+          const info: ErrorInfo = {
+            name: err?.name ? String(err.name) : undefined,
+            message: err?.message
+              ? String(err.message)
+              : String(err ?? 'Error'),
+            stack: err?.stack ? String(err.stack) : undefined,
+          };
+          hookNode.error = info;
+          hookFailCount += 1;
 
-          // If a beforeEach fails, Mocha may not emit a "pending" event for the
-          // current test. Mark it as skipped so the report reflects non-execution.
-          if (hookTitle.includes('before each')) {
-            const currentTest = (runnable as any).ctx?.currentTest as
-              | Mocha.Test
-              | undefined;
-            if (currentTest) {
-              const key = getTestKey(currentTest);
-              let node =
-                testNodeByMochaTest.get(currentTest) ?? testNodeByKey.get(key);
+          const hookTitle = String(runnable.originalTitle ?? '');
+          if (
+            hookTitle.includes('before all') ||
+            hookTitle.includes('before each')
+          ) {
+            const s = runnable.parent;
+            if (s) abortedSuites.add(s);
 
-              // Ensure a node exists for the current test.
-              if (!node) {
-                const parentMochaSuite = currentTest?.parent ?? runner.suite;
-                const parentNode =
-                  suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
+            // If a beforeEach fails, Mocha may not emit a "pending" event for the
+            // current test. Mark it as skipped so the report reflects non-execution.
+            if (hookTitle.includes('before each')) {
+              const currentTest = runnable.ctx?.currentTest as
+                | Mocha.Test
+                | undefined;
+              if (currentTest) {
+                const key = getTestKey(currentTest);
+                let node =
+                  testNodeByMochaTest.get(currentTest) ??
+                  testNodeByKey.get(key);
 
-                const nowIso = isoNow();
-                const stableKey = getTestKey(currentTest);
-                node = addTest(parentNode, {
-                  id: isParallel ? stableId('t', stableKey) : undefined,
-                  stableKey,
-                  title: String(currentTest?.title ?? ''),
-                  fullTitle:
-                    typeof currentTest?.fullTitle === 'function'
-                      ? String(currentTest.fullTitle())
-                      : String(currentTest?.title ?? ''),
-                  ...(currentTest?.file
-                    ? { file: String(currentTest.file) }
-                    : {}),
-                  state: 'skipped',
-                  timing: { start: nowIso, end: nowIso, durationMs: 0 },
-                });
+                // Ensure a node exists for the current test.
+                if (!node) {
+                  const parentMochaSuite = currentTest?.parent ?? runner.suite;
+                  const parentNode =
+                    suiteNodeByMochaSuite.get(parentMochaSuite) ?? rootSuite;
 
-                testNodeByKey.set(key, node);
-              }
+                  const nowIso = isoNow();
+                  const stableKey = getTestKey(currentTest);
+                  node = addTest(parentNode, {
+                    id: isParallel ? stableId('t', stableKey) : undefined,
+                    stableKey,
+                    title: String(currentTest?.title ?? ''),
+                    fullTitle:
+                      typeof currentTest?.fullTitle === 'function'
+                        ? String(currentTest.fullTitle())
+                        : String(currentTest?.title ?? ''),
+                    ...(currentTest?.file
+                      ? { file: String(currentTest.file) }
+                      : {}),
+                    state: 'skipped',
+                    timing: { start: nowIso, end: nowIso, durationMs: 0 },
+                  });
 
-              // Mark as skipped and attach to this Mocha test instance.
-              node.state = 'skipped';
-              testNodeByMochaTest.set(currentTest, node);
+                  testNodeByKey.set(key, node);
+                }
 
-              // Count exactly once per logical test.
-              if (!countedTestKeys.has(key)) {
-                countedTestKeys.add(key);
-                testCount += 1;
-                skippedCount += 1;
+                // Mark as skipped and attach to this Mocha test instance.
+                node.state = 'skipped';
+                testNodeByMochaTest.set(currentTest, node);
+
+                // Count exactly once per logical test.
+                if (!countedTestKeys.has(key)) {
+                  countedTestKeys.add(key);
+                  testCount += 1;
+                  skippedCount += 1;
+                }
               }
             }
           }
         }
-
-        return;
+      } else {
+        const test = runnable;
+        const key = getTestKey(test);
+        const node = testNodeByMochaTest.get(test) ?? testNodeByKey.get(key);
+        if (node) {
+          node.state = 'failed';
+          // Ensure subsequent events for this specific object instance can resolve.
+          testNodeByMochaTest.set(test, node);
+          const info: ErrorInfo = {
+            name: err?.name ? String(err.name) : undefined,
+            message: err?.message
+              ? String(err.message)
+              : String(err ?? 'Error'),
+            stack: err?.stack ? String(err.stack) : undefined,
+            actual: err?.actual,
+            expected: err?.expected,
+            operator: err?.operator ? String(err.operator) : undefined,
+          };
+          node.error = info;
+        }
       }
-
-      if (runnable.type !== 'test') return;
-      const test = runnable as Mocha.Test;
-      const key = getTestKey(test);
-      const node = testNodeByMochaTest.get(test) ?? testNodeByKey.get(key);
-      if (!node) return;
-      node.state = 'failed';
-      // Ensure subsequent events for this specific object instance can resolve.
-      testNodeByMochaTest.set(test, node);
-      const info: ErrorInfo = {
-        name: err?.name ? String(err.name) : undefined,
-        message: err?.message ? String(err.message) : String(err ?? 'Error'),
-        stack: err?.stack ? String(err.stack) : undefined,
-        actual: err?.actual,
-        expected: err?.expected,
-        operator: err?.operator ? String(err.operator) : undefined,
-      };
-      node.error = info;
     });
 
     runner.on('pending', (test: Mocha.Test) => {
@@ -571,13 +574,12 @@ export default class Mochawesome {
           // full runtime shape. Derive stableKey using robust fallbacks so it matches
           // the event-time keys (which use file + fullTitle).
           const fullTitleRaw =
-            typeof (mochaTest as any).fullTitle === 'function'
-              ? (mochaTest as any).fullTitle()
-              : (mochaTest as any).fullTitle ?? mochaTest.title;
+            typeof mochaTest.fullTitle === 'function'
+              ? mochaTest.fullTitle()
+              : (mochaTest.fullTitle ?? mochaTest.title);
           const fullTitle = String(fullTitleRaw ?? '');
 
-          const fileRaw =
-            (mochaTest as any).file ?? (mochaSuite as any).file ?? '';
+          const fileRaw = mochaTest.file ?? mochaSuite.file ?? '';
           const file = fileRaw ? String(fileRaw) : '';
 
           const stableKey = `${file}|${fullTitle}`;
@@ -585,15 +587,15 @@ export default class Mochawesome {
           let node = testNodeByKey.get(stableKey);
           if (node) return node;
 
-          const pending = !!(mochaTest as any).pending;
-          const stateStr = String((mochaTest as any).state ?? '');
+          const pending = !!mochaTest.pending;
+          const stateStr = String(mochaTest.state ?? '');
           const state: Test['state'] = pending
-            ? getPendingState(mochaTest as any)
+            ? getPendingState(mochaTest)
             : stateStr === 'passed'
-            ? 'passed'
-            : stateStr === 'failed'
-            ? 'failed'
-            : 'skipped';
+              ? 'passed'
+              : stateStr === 'failed'
+                ? 'failed'
+                : 'skipped';
 
           node = addTest(parentNode, {
             id: stableId('t', stableKey),
@@ -613,7 +615,11 @@ export default class Mochawesome {
           }
 
           // Best-effort error info.
-          const errObj = (mochaTest as any).err;
+          const errObj = mochaTest.err as Error & {
+            actual?: unknown;
+            expected?: unknown;
+            operator?: string;
+          };
           if (state === 'failed' && errObj) {
             node.error = {
               name: errObj.name ? String(errObj.name) : undefined,
@@ -636,11 +642,11 @@ export default class Mochawesome {
           const node = ensureSuiteNode(mochaSuite, parentNode);
 
           for (const t of mochaSuite.tests ?? []) {
-            ensureTestNode(t as Mocha.Test, mochaSuite, node);
+            ensureTestNode(t, mochaSuite, node);
           }
 
           for (const child of mochaSuite.suites ?? []) {
-            walk(child as Mocha.Suite, node);
+            walk(child, node);
           }
         };
 
@@ -695,7 +701,7 @@ export default class Mochawesome {
         hookFailCount = computed.hookFailures;
       }
 
-      const expectedTotal = (runner as any).total;
+      const expectedTotal = runner.total;
       const didRunEndEarly =
         typeof expectedTotal === 'number' &&
         expectedTotal > 0 &&
@@ -703,8 +709,9 @@ export default class Mochawesome {
 
       // `runner.total` includes tests registered, including those filtered out by `.only` / `--grep`.
       // Only warn when the run actually ended early (bail/abort or a blocking hook failure).
-      const didAbort = !!(runner as any)._abort;
-      const didBail = !!(options as any)?.bail;
+      // @ts-expect-error: _abort is private
+      const didAbort = !!runner._abort;
+      const didBail = !!options?.bail;
       const didBlockOnHookFailure = hookFailCount > 0;
 
       if (didRunEndEarly && (didAbort || didBail || didBlockOnHookFailure)) {

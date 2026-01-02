@@ -33,7 +33,6 @@ Mochawesome v8 distinguishes **pending** and **skipped** tests to preserve user 
 ### Definitions
 
 - **pending**
-
   - A test that is declared but not implemented.
   - Example:
     ```js

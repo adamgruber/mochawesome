@@ -14,7 +14,7 @@ import type {
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
-const validate = ajv.compile(schema as any);
+const validate = ajv.compile(schema);
 
 const pkgRoot = path.resolve(__dirname, '..'); // packages/mochawesome
 const mochaBin = require.resolve('mocha/bin/mocha', {
@@ -22,6 +22,34 @@ const mochaBin = require.resolve('mocha/bin/mocha', {
 });
 const registerPath = path.join(pkgRoot, 'register.cjs');
 const reporterCjs = path.join(__dirname, 'support', 'reporter.cjs');
+
+const getOuterSuite = (report: Report, index = 0) =>
+  report.rootSuite.suites[index];
+
+const getInnerSuite = (report: Report, outerIndex = 0, innerIndex = 0) =>
+  getOuterSuite(report, outerIndex).suites[innerIndex];
+
+const collectTests = (s: SuiteModel): TestModel[] => {
+  const tests: TestModel[] = [];
+  const walk = (node: SuiteModel) => {
+    for (const t of node?.tests ?? []) tests.push(t);
+    for (const child of node?.suites ?? []) walk(child);
+  };
+  walk(s);
+  return tests;
+};
+
+const byTitle = <T extends { title?: string | null }>(items: T[]) =>
+  new Map(items.map(item => [String(item.title), item]));
+
+const expectWarning = (report: Report, matcher = /ended early/i) => {
+  expect(report.warnings?.length).toBeGreaterThan(0);
+  expect(report.warnings?.[0]).toMatch(matcher);
+};
+
+const expectNoWarnings = (report: Report) => {
+  expect(report.warnings).toBeUndefined();
+};
 
 function runMocha(
   fixtureFiles: string[] | string,
@@ -120,14 +148,15 @@ describe('mocha integration', () => {
     const report = runMocha('basic.spec.js');
 
     // Suite tree assertions
+    const outer = getOuterSuite(report);
     expect(report.rootSuite.suites.length).toBe(1);
-    expect(report.rootSuite.suites[0].id).toBe('s0.1');
-    expect(report.rootSuite.suites[0].title).toBe('outer');
-    expect(report.rootSuite.suites[0].suites.length).toBe(1);
-    expect(report.rootSuite.suites[0].suites[0].id).toBe('s0.1.1');
-    expect(report.rootSuite.suites[0].suites[0].title).toBe('inner');
+    expect(outer.id).toBe('s0.1');
+    expect(outer.title).toBe('outer');
+    expect(outer.suites.length).toBe(1);
 
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
+    expect(inner.id).toBe('s0.1.1');
+    expect(inner.title).toBe('inner');
 
     // Hooks assertions
     expect(inner.hooks.length).toBe(1);
@@ -163,14 +192,15 @@ describe('mocha integration', () => {
     const report = runMocha('hook-fail.spec.js');
 
     // Suite tree assertions
+    const outer = getOuterSuite(report);
     expect(report.rootSuite.suites.length).toBe(1);
-    expect(report.rootSuite.suites[0].id).toBe('s0.1');
-    expect(report.rootSuite.suites[0].title).toBe('outer');
-    expect(report.rootSuite.suites[0].suites.length).toBe(1);
-    expect(report.rootSuite.suites[0].suites[0].id).toBe('s0.1.1');
-    expect(report.rootSuite.suites[0].suites[0].title).toBe('inner');
+    expect(outer.id).toBe('s0.1');
+    expect(outer.title).toBe('outer');
+    expect(outer.suites.length).toBe(1);
 
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
+    expect(inner.id).toBe('s0.1.1');
+    expect(inner.title).toBe('inner');
 
     // Hooks assertions
     expect(inner.hooks.length).toBe(1);
@@ -189,13 +219,12 @@ describe('mocha integration', () => {
     expect(report.stats.pending).toBe(0);
 
     // Warning on hook fail
-    expect(report.warnings?.length).toBeGreaterThan(0);
-    expect(report.warnings?.[0]).toMatch(/ended early/i);
+    expectWarning(report);
   });
 
   it('retries fixture', () => {
     const report = runMocha('retry.spec.js');
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
     const flaky = inner.tests.find(t => t.title === 'flaky');
     expect(flaky).toBeTruthy();
 
@@ -211,35 +240,35 @@ describe('mocha integration', () => {
     expect(report.stats.failuresByType?.tests ?? report.stats.failures).toBe(0);
 
     // No warnings expected
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('bail fixture: emits warning and counts executed tests only', () => {
     const report = runMocha('bail.spec.js', ['--bail']);
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
 
     expect(inner.tests.length).toBe(1);
     expect(inner.tests[0].state).toBe('failed');
     expect(report.stats.tests).toBe(1);
     expect(report.stats.failures).toBe(1);
 
-    expect(report.warnings?.length).toBeGreaterThan(0);
-    expect(report.warnings?.[0]).toMatch(/ended early/i);
+    expectWarning(report);
   });
 
   it('bail-hook fixture: emits warning and counts executed tests only', () => {
     const report = runMocha('bail-hook.spec.js', ['--bail']);
 
     // outer has two inner suites
+    const outer = getOuterSuite(report);
     expect(report.rootSuite.suites.length).toBe(1);
-    expect(report.rootSuite.suites[0].suites.length).toBe(2);
+    expect(outer.suites.length).toBe(2);
 
-    const innerPass = report.rootSuite.suites[0].suites[0];
+    const innerPass = outer.suites[0];
     expect(innerPass.title).toBe('inner-pass');
     expect(innerPass.tests.length).toBe(1);
     expect(innerPass.tests[0].state).toBe('passed');
 
-    const innerHookFail = report.rootSuite.suites[0].suites[1];
+    const innerHookFail = outer.suites[1];
     expect(innerHookFail.title).toBe('inner-hook-fail');
     expect(innerHookFail.hooks.length).toBe(1);
     expect(innerHookFail.hooks[0].state).toBe('failed');
@@ -251,13 +280,12 @@ describe('mocha integration', () => {
     expect(report.stats.failures).toBe(1);
     expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
 
-    expect(report.warnings?.length).toBeGreaterThan(0);
-    expect(report.warnings?.[0]).toMatch(/ended early/i);
+    expectWarning(report);
   });
 
   it('timeout fixture', () => {
     const report = runMocha('timeout.spec.js');
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
 
     expect(inner.tests.length).toBe(1);
     expect(inner.tests[0].title).toBe('times out');
@@ -271,12 +299,12 @@ describe('mocha integration', () => {
     expect(report.stats.pending).toBe(0);
 
     // No warnings expected
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('bail + retry: does not warn when retries recover', () => {
     const report = runMocha('bail-retry.spec.js', ['--bail']);
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
 
     const flaky = inner.tests.find(t => t.title === 'flaky');
     expect(flaky?.state).toBe('passed');
@@ -285,13 +313,13 @@ describe('mocha integration', () => {
     expect(report.stats.tests).toBe(2);
     expect(report.stats.passes).toBe(2);
     expect(report.stats.failures).toBe(0);
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('duplicate-titles fixture', () => {
     const report = runMocha('duplicate-titles.spec.js');
 
-    const outer = report.rootSuite.suites[0];
+    const outer = getOuterSuite(report);
     expect(outer.title).toBe('outer');
     expect(outer.suites.length).toBe(2);
 
@@ -315,12 +343,12 @@ describe('mocha integration', () => {
     expect(report.stats.failures).toBe(0);
     expect(report.stats.pending).toBe(0);
     expect(report.stats.skipped).toBe(0);
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('after-all-fail fixture', () => {
     const report = runMocha('after-all-fail.spec.js');
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
 
     expect(inner.title).toBe('inner');
 
@@ -342,12 +370,12 @@ describe('mocha integration', () => {
     expect(report.stats.failuresByType).toEqual({ tests: 0, hooks: 1 });
     expect(report.stats.pending).toBe(0);
     expect(report.stats.skipped).toBe(0);
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('after-each-fail fixture', () => {
     const report = runMocha('after-each-fail.spec.js');
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
 
     expect(inner.title).toBe('inner');
 
@@ -372,13 +400,12 @@ describe('mocha integration', () => {
 
     expect(report.stats.pending).toBe(0);
     expect(report.stats.skipped).toBe(0);
-    expect(report.warnings?.length).toBeGreaterThan(0);
-    expect(report.warnings?.[0]).toMatch(/ended early/i);
+    expectWarning(report);
   });
 
   it('before-each-fail fixture', () => {
     const report = runMocha('before-each-fail.spec.js');
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
 
     expect(inner.title).toBe('inner');
 
@@ -399,43 +426,31 @@ describe('mocha integration', () => {
     expect(report.stats.skipped).toBe(1);
 
     // Expect an ended-early warning.
-    expect(report.warnings?.length).toBeGreaterThan(0);
-    expect(report.warnings?.[0]).toMatch(/ended early/i);
+    expectWarning(report);
   });
 
   it('skip fixture', () => {
     const report = runMocha('skip.spec.js');
 
-    const outer = report.rootSuite.suites[0];
+    const outer = getOuterSuite(report);
     const inner = outer.suites[0];
 
-    const collectTests = (s: SuiteModel): TestModel[] => {
-      const tests: TestModel[] = [];
-      const walk = (node: SuiteModel) => {
-        for (const t of node?.tests ?? []) tests.push(t);
-        for (const child of node?.suites ?? []) walk(child);
-      };
-      walk(s);
-      return tests;
-    };
-
     const tests = collectTests(inner);
-    const byTitle = new Map<string, TestModel>();
-    for (const t of tests) byTitle.set(String(t.title), t);
+    const byTitleMap = byTitle(tests);
 
     // These must exist and be correctly classified.
-    expect(byTitle.get('explicit skip')?.state).toBe('skipped');
+    expect(byTitleMap.get('explicit skip')?.state).toBe('skipped');
 
     // Mocha does not reliably preserve a distinguishable marker between `it.skip('name')`
     // and declared-pending (`it('name')`) in the reporter event payload. Accept either
     // pending or skipped here, but enforce the aggregate counts below.
-    expect(['pending', 'skipped']).toContain(byTitle.get('it.skip')?.state);
+    expect(['pending', 'skipped']).toContain(byTitleMap.get('it.skip')?.state);
 
-    expect(byTitle.get('passes')?.state).toBe('passed');
+    expect(byTitleMap.get('passes')?.state).toBe('passed');
 
     // If present, it must be skipped.
-    const skippedBySuite = byTitle.get('skipped by suite');
-    if (skippedBySuite) expect(skippedBySuite.state).toBe('skipped');
+    const skippedBySuite = byTitleMap.get('skipped by suite');
+    expect(skippedBySuite && skippedBySuite.state !== 'skipped').toBe(false);
 
     expect(report.stats.passes).toBe(1);
     expect(report.stats.failures).toBe(0);
@@ -449,27 +464,27 @@ describe('mocha integration', () => {
     // But the runtime `this.skip()` case must count as skipped.
     expect(report.stats.skipped).toBeGreaterThanOrEqual(1);
 
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('only / grep filtering: non-selected tests are skipped', () => {
     const report = runMocha('only.spec.js');
 
-    const inner = report.rootSuite.suites[0].suites[0];
+    const inner = getInnerSuite(report);
     expect(inner.title).toBe('inner');
 
-    const byTitle = new Map(inner.tests.map(t => [t.title, t]));
+    const byTitleMap = byTitle(inner.tests);
 
-    expect(byTitle.get('runs')?.state).toBe('passed');
-    expect(byTitle.has('filtered out 1')).toBe(false);
-    expect(byTitle.has('filtered out 2')).toBe(false);
+    expect(byTitleMap.get('runs')?.state).toBe('passed');
+    expect(byTitleMap.has('filtered out 1')).toBe(false);
+    expect(byTitleMap.has('filtered out 2')).toBe(false);
 
     expect(report.stats.tests).toBe(1);
     expect(report.stats.passes).toBe(1);
     expect(report.stats.failures).toBe(0);
     expect(report.stats.pending).toBe(0);
     expect(report.stats.skipped).toBe(0);
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('serial mode: multi-file run aggregates correctly and keeps suites distinct', () => {
@@ -498,33 +513,21 @@ describe('mocha integration', () => {
     expect(innerSkip).toBeTruthy();
 
     // Basic fixture expectations
-    const byTitleBasic = new Map<string, TestModel>(
-      innerBasic?.tests.map(t => [t.title, t])
-    );
+    const byTitleBasic = byTitle(innerBasic?.tests ?? []);
     expect(byTitleBasic.get('passes')?.state).toBe('passed');
     expect(byTitleBasic.get('fails')?.state).toBe('failed');
     expect(byTitleBasic.get('pending')?.state).toBe('pending');
 
     // Skip fixture expectations (match your existing skip test semantics)
-    const collectTests = (s: SuiteModel): TestModel[] => {
-      const tests: TestModel[] = [];
-      const walk = (node: SuiteModel) => {
-        for (const t of node?.tests ?? []) tests.push(t);
-        for (const child of node?.suites ?? []) walk(child);
-      };
-      walk(s);
-      return tests;
-    };
-
     const skipTests = collectTests(innerSkip!);
-    const byTitleSkip = new Map(skipTests.map((t: any) => [t.title, t]));
+    const byTitleSkip = byTitle(skipTests);
 
     expect(byTitleSkip.get('explicit skip')?.state).toBe('skipped');
     expect(['pending', 'skipped']).toContain(byTitleSkip.get('it.skip')?.state);
     expect(byTitleSkip.get('passes')?.state).toBe('passed');
 
     const skippedBySuite = byTitleSkip.get('skipped by suite');
-    if (skippedBySuite) expect(skippedBySuite.state).toBe('skipped');
+    expect(skippedBySuite && skippedBySuite.state !== 'skipped').toBe(false);
 
     // Aggregate stats: stable assertions (avoid Mocha ambiguity around it.skip classification)
     expect(report.stats.passes).toBe(2); // basic passes + skip passes
@@ -536,7 +539,7 @@ describe('mocha integration', () => {
     expect(report.stats.tests).toBeLessThanOrEqual(7);
 
     // No bail/abort should be inferred for multi-file normal completion.
-    expect(report.warnings).toBeUndefined();
+    expectNoWarnings(report);
   });
 
   it('parallel mode: stable ids and valid schema', () => {
@@ -601,13 +604,13 @@ describe('mocha integration', () => {
     }
 
     // Tests: assert per-title state and (for failures) error message.
-    const byTitle = new Map<string, any>();
+    const byTitle = new Map<string, TestModel>();
     for (const t of nodes1.tests) byTitle.set(String(t.title), t);
 
     const expectTest = (title: string, state: string) => {
       const t = byTitle.get(title);
       expect(t, `missing test: ${title}`).toBeTruthy();
-      expect(t.state).toBe(state);
+      expect(t?.state).toBe(state);
       return t;
     };
 
@@ -615,9 +618,9 @@ describe('mocha integration', () => {
     expectTest('b: passes', 'passed');
 
     const aFail = expectTest('a: fails', 'failed');
-    expect(aFail.error?.message).toBe('boom');
+    expect(aFail?.error?.message).toBe('boom');
     const bFail = expectTest('b: fails', 'failed');
-    expect(bFail.error?.message).toBe('boom');
+    expect(bFail?.error?.message).toBe('boom');
 
     expectTest('a: pending', 'pending');
     expectTest('b: pending', 'pending');
@@ -627,7 +630,7 @@ describe('mocha integration', () => {
       const tests = new Map<string, string>();
       const hooks = new Map<string, string>();
 
-      const walkSuite = (s: any) => {
+      const walkSuite = (s: SuiteModel) => {
         if (s?.stableKey) suites.set(String(s.stableKey), String(s.id));
         for (const h of s?.hooks ?? []) {
           if (h?.stableKey) hooks.set(String(h.stableKey), String(h.id));

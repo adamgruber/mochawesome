@@ -7,7 +7,7 @@ import schema from '../src/schema/mochawesome-report-8.schema.json';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
-const validate = ajv.compile(schema as any);
+const validate = ajv.compile(schema);
 
 describe('golden report fixtures', () => {
   it('basic.mochawesome.json matches schema', () => {

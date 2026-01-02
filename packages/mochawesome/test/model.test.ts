@@ -12,7 +12,7 @@ import {
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
-const validate = ajv.compile(schema as any);
+const validate = ajv.compile(schema);
 
 describe('model builder', () => {
   it('builds a deterministic report that matches the schema', () => {
