@@ -2,7 +2,17 @@
 
 ## Status
 
-Active rewrite on branch `next`.
+### Reporter (Mocha)
+
+- Complete for v8 alpha: serial + parallel mode, retries, bail/abort, hook failures, timeouts, skips/pending semantics.
+- Contract is enforced by integration fixtures under `test/fixtures/mocha/*`.
+- Parallel mode requires `--require mochawesome/register` (report includes a warning when missing).
+
+### Deferred
+
+- HTML rendering (marge / new renderer)
+- Asset bundling strategy (inline vs link)
+- CLI / multi-runner support
 
 ## Goals
 

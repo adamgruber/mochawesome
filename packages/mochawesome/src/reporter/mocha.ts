@@ -77,7 +77,7 @@ const getPendingState = (test: Mocha.Test): Test['state'] => {
   return 'pending';
 };
 
-export default class Mochawesome {
+class Mochawesome {
   constructor(runner: Mocha.Runner, options: Mocha.MochaOptions) {
     const isParallel =
       // @ts-expect-error: isParallelMode exists on Runner as of v8.2.0
@@ -774,3 +774,5 @@ export default class Mochawesome {
     });
   }
 }
+
+export = Mochawesome;

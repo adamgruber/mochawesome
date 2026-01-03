@@ -1,6 +1,20 @@
 # mochawesome changelog
 
+
 ## [Unreleased]
+
+## [8.0.0-alpha.0] - 2026-01-02
+### Added
+- v8 JSON report schema (alpha)
+- New TypeScript-based Mocha reporter implementation
+- Integration fixtures covering serial + parallel mode and major edge cases (retries, bail/abort, hook failures, timeouts, skip/pending semantics)
+
+### Changed
+- Parallel mode requires `--require mochawesome/register` (exported as `mochawesome/register`)
+
+### Notes
+- This is an alpha release focused on JSON output correctness. HTML rendering is not included yet.
+
 
 ## [7.1.4] - 2022-03-25
 ### Changed
@@ -317,7 +331,8 @@ This release is in tandem with and requires mochawesome-report-generator >= 3.0.
 - Custom font-icon set
 - All fonts are now local to the report
 
-[Unreleased]: https://github.com/adamgruber/mochawesome/compare/7.1.4...HEAD
+[Unreleased]: https://github.com/adamgruber/mochawesome/compare/8.0.0-alpha.0...HEAD
+[8.0.0-alpha.0]: https://github.com/adamgruber/mochawesome/compare/7.1.4...8.0.0-alpha.0
 [7.1.4]: https://github.com/adamgruber/mochawesome/compare/7.1.3...7.1.4
 [7.1.3]: https://github.com/adamgruber/mochawesome/compare/7.1.2...7.1.3
 [7.1.2]: https://github.com/adamgruber/mochawesome/compare/7.1.1...7.1.2
