@@ -40,4 +40,8 @@ This repo contains two codebases:
 - CLI behavior will follow schema decisions, not lead them
 - No refactors of v7 code
 
+## Committing
+
+- Follow conventional commits spec https://www.conventionalcommits.org/en/v1.0.0/#specification
+
 When unsure, ask before expanding scope.

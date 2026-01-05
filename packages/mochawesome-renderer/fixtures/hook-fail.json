@@ -1,0 +1,90 @@
+{
+  "schema": { "name": "mochawesome-report", "version": "8.0.0-alpha.0" },
+  "meta": {
+    "generatedAt": "2025-01-01T00:00:00.000Z",
+    "durationMs": 15,
+    "runner": { "name": "mocha", "version": "0.0.0" },
+    "reporter": { "name": "mochawesome", "version": "8.0.0-alpha.0" },
+    "output": {
+      "reportDir": "mochawesome-report",
+      "htmlFile": "mochawesome.html",
+      "jsonFile": "mochawesome.json",
+      "assetsDir": "assets",
+      "assetMode": "inline",
+      "attachmentMode": "link"
+    }
+  },
+  "stats": {
+    "suites": 2,
+    "tests": 0,
+    "passes": 0,
+    "failures": 1,
+    "failuresByType": { "tests": 0, "hooks": 1 },
+    "pending": 0,
+    "skipped": 0,
+    "start": "2025-01-01T00:00:00.000Z",
+    "end": "2025-01-01T00:00:00.015Z",
+    "durationMs": 15
+  },
+  "rootSuite": {
+    "id": "s0",
+    "stableKey": "root",
+    "title": "",
+    "fullTitle": "",
+    "timing": {
+      "start": "2025-01-01T00:00:00.000Z",
+      "end": "2025-01-01T00:00:00.015Z",
+      "durationMs": 15
+    },
+    "suites": [
+      {
+        "id": "s0.1",
+        "stableKey": "root/suite:outer",
+        "title": "outer",
+        "fullTitle": "outer",
+        "timing": {
+          "start": "2025-01-01T00:00:00.000Z",
+          "end": "2025-01-01T00:00:00.015Z",
+          "durationMs": 15
+        },
+        "suites": [
+          {
+            "id": "s0.1.1",
+            "stableKey": "root/suite:outer/suite:inner",
+            "title": "inner",
+            "fullTitle": "outer inner",
+            "timing": {
+              "start": "2025-01-01T00:00:00.000Z",
+              "end": "2025-01-01T00:00:00.015Z",
+              "durationMs": 15
+            },
+            "suites": [],
+            "tests": [],
+            "hooks": [
+              {
+                "id": "h0.1.1.1",
+                "stableKey": "root/suite:outer/suite:inner/hook:before",
+                "type": "before",
+                "title": "before all",
+                "state": "failed",
+                "timing": {
+                  "start": "2025-01-01T00:00:00.000Z",
+                  "end": "2025-01-01T00:00:00.005Z",
+                  "durationMs": 5
+                },
+                "error": {
+                  "message": "hook boom",
+                  "stack": "Error: hook boom\n    at Context.<anonymous>"
+                }
+              }
+            ]
+          }
+        ],
+        "tests": [],
+        "hooks": []
+      }
+    ],
+    "tests": [],
+    "hooks": []
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "schema": { "name": "mochawesome-report", "version": "8.0.0-alpha.0" },
+  "meta": {
+    "generatedAt": "2025-01-01T00:00:00.000Z",
+    "durationMs": 12,
+    "runner": { "name": "mocha", "version": "0.0.0" },
+    "reporter": { "name": "mochawesome", "version": "8.0.0-alpha.0" },
+    "output": {
+      "reportDir": "mochawesome-report",
+      "htmlFile": "mochawesome.html",
+      "jsonFile": "mochawesome.json",
+      "assetsDir": "assets",
+      "assetMode": "inline",
+      "attachmentMode": "link"
+    }
+  },
+  "stats": {
+    "suites": 2,
+    "tests": 2,
+    "passes": 1,
+    "failures": 0,
+    "pending": 0,
+    "skipped": 1,
+    "start": "2025-01-01T00:00:00.000Z",
+    "end": "2025-01-01T00:00:00.012Z",
+    "durationMs": 12
+  },
+  "rootSuite": {
+    "id": "s0",
+    "stableKey": "root",
+    "title": "",
+    "fullTitle": "",
+    "timing": {
+      "start": "2025-01-01T00:00:00.000Z",
+      "end": "2025-01-01T00:00:00.012Z",
+      "durationMs": 12
+    },
+    "suites": [
+      {
+        "id": "s0.1",
+        "stableKey": "root/suite:outer",
+        "title": "outer",
+        "fullTitle": "outer",
+        "timing": {
+          "start": "2025-01-01T00:00:00.000Z",
+          "end": "2025-01-01T00:00:00.012Z",
+          "durationMs": 12
+        },
+        "suites": [
+          {
+            "id": "s0.1.1",
+            "stableKey": "root/suite:outer/suite:inner",
+            "title": "inner",
+            "fullTitle": "outer inner",
+            "timing": {
+              "start": "2025-01-01T00:00:00.000Z",
+              "end": "2025-01-01T00:00:00.012Z",
+              "durationMs": 12
+            },
+            "suites": [],
+            "tests": [
+              {
+                "id": "t0.1.1.1",
+                "stableKey": "root/suite:outer/suite:inner/test:passes",
+                "title": "passes",
+                "fullTitle": "outer inner passes",
+                "state": "passed",
+                "timing": {
+                  "start": "2025-01-01T00:00:00.000Z",
+                  "end": "2025-01-01T00:00:00.005Z",
+                  "durationMs": 5
+                }
+              },
+              {
+                "id": "t0.1.1.2",
+                "stableKey": "root/suite:outer/suite:inner/test:skipped",
+                "title": "skipped",
+                "fullTitle": "outer inner skipped",
+                "state": "skipped",
+                "timing": {
+                  "start": "2025-01-01T00:00:00.006Z",
+                  "end": "2025-01-01T00:00:00.010Z",
+                  "durationMs": 4
+                }
+              }
+            ],
+            "hooks": []
+          }
+        ],
+        "tests": [],
+        "hooks": []
+      }
+    ],
+    "tests": [],
+    "hooks": []
+  }
+}
