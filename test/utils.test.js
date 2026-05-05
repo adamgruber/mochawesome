@@ -4,7 +4,7 @@ const sampleTests = require('./sample-tests');
 const sampleSuite = require('./sample-suite');
 
 const utils = proxyquire('../src/utils', {
-  uuid: { v4: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' },
+  crypto: { randomUUID: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' },
 });
 
 const { log, cleanCode, cleanTest, cleanSuite } = utils;
