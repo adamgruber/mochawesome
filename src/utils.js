@@ -1,5 +1,3 @@
-const isString = require('lodash.isstring');
-const isFunction = require('lodash.isfunction');
 const isEmpty = require('lodash.isempty');
 const chalk = require('chalk');
 const uuid = require('uuid');
@@ -125,7 +123,7 @@ function normalizeErr(err, config) {
     expected !== undefined
   ) {
     /* istanbul ignore if */
-    if (!(isString(actual) && isString(expected))) {
+    if (typeof actual !== "string" && typeof expected === "string") {
       err.actual = mochaUtils.stringify(actual);
       err.expected = mochaUtils.stringify(expected);
     }
@@ -160,7 +158,7 @@ function normalizeErr(err, config) {
 function cleanTest(test, config) {
   const code = config.code ? test.body || '' : '';
 
-  const fullTitle = isFunction(test.fullTitle)
+  const fullTitle = typeof test.fullTitle === "function"
     ? stripAnsi(test.fullTitle())
     : stripAnsi(test.title);
 
