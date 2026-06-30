@@ -65,7 +65,7 @@ function consoleReporter(reporter) {
   if (reporter) {
     try {
       return require(`mocha/lib/reporters/${reporter}`);
-    } catch (e) {
+    } catch {
       log(`Unknown console reporter '${reporter}', defaulting to spec`);
     }
   }
@@ -112,7 +112,7 @@ function Mochawesome(runner, options) {
   const reporterName = reporterOptions.consoleReporter;
   if (reporterName !== 'none') {
     const ConsoleReporter = consoleReporter(reporterName);
-    new ConsoleReporter(runner); // eslint-disable-line
+    new ConsoleReporter(runner);
   }
 
   let endCalled = false;

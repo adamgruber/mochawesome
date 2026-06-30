@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 /**
  * Strip start of function
  *
