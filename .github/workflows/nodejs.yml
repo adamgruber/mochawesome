@@ -1,17 +1,15 @@
 name: Node.js CI
-on: 
+on:
   push:
     branches:
-      - master
+      - main
     paths-ignore:
-      - 'docs'
-      - '**.yml'
+      - 'docs/**'
       - '**.md'
       - '.*'
   pull_request:
     paths-ignore:
-      - 'docs'
-      - '**.yml'
+      - 'docs/**'
       - '**.md'
       - '.*'
 jobs:
@@ -19,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [22.x, 24.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm test
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
