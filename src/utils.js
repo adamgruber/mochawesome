@@ -2,7 +2,7 @@ const isString = require('lodash.isstring');
 const isFunction = require('lodash.isfunction');
 const isEmpty = require('lodash.isempty');
 const chalk = require('chalk');
-const uuid = require('uuid');
+const { randomUUID } = require('node:crypto');
 const mochaUtils = require('mocha/lib/utils');
 const stringify = require('json-stringify-safe');
 const diff = require('diff');
@@ -177,7 +177,7 @@ function cleanTest(test, config) {
     context: stringify(test.context, null, 2),
     code: code && cleanCode(code),
     err: (test.err && normalizeErr(test.err, config)) || {},
-    uuid: test.uuid || /* istanbul ignore next: default */ uuid.v4(),
+    uuid: test.uuid || /* istanbul ignore next: default */ randomUUID(),
     parentUUID: test.parent && test.parent.uuid,
     isHook: test.type === 'hook',
   };
@@ -227,7 +227,7 @@ function cleanSuite(suite, testTotals, config) {
   testTotals.skipped += skippedTests.length;
 
   const cleaned = {
-    uuid: suite.uuid || /* istanbul ignore next: default */ uuid.v4(),
+    uuid: suite.uuid || /* istanbul ignore next: default */ randomUUID(),
     title: stripAnsi(suite.title),
     fullFile: suite.file || '',
     file: suite.file ? suite.file.replace(process.cwd(), '') : '',

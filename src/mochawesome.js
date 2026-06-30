@@ -1,6 +1,6 @@
 const Base = require('mocha/lib/reporters/base');
 const mochaPkg = require('mocha/package.json');
-const uuid = require('uuid');
+const { randomUUID } = require('node:crypto');
 const marge = require('mochawesome-report-generator');
 const margePkg = require('mochawesome-report-generator/package.json');
 const conf = require('./config');
@@ -120,7 +120,7 @@ function Mochawesome(runner, options) {
   // Add a unique identifier to each suite/test/hook
   ['suite', 'test', 'hook', 'pending'].forEach(type => {
     runner.on(type, item => {
-      item.uuid = uuid.v4();
+      item.uuid = randomUUID();
     });
   });
 
