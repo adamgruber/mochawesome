@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [8.0.0]
+### Breaking
+- Require Node.js >=22. Node 12/14/16/18/20 are no longer supported.
+- Bumped the `mocha` peer dependency range from `>=7` to `>=8`.
+
+### Changed
+- Replaced the `uuid` dependency with the built-in `crypto.randomUUID()`.
+  Report output is unchanged (still RFC 4122 v4 UUIDs).
+- Updated dev tooling to current majors (eslint 10 with flat config,
+  prettier 3, mocha 11, nyc 18, sinon 22, husky 9, lint-staged 17).
+
+### Removed
+- `uuid` dependency (replaced by native `crypto.randomUUID()`).
+- `cross-env` dev dependency and the unused `NODE_ENV=test` test flag.
+
 ## [7.1.4] - 2022-03-25
 ### Changed
 - Bump marge to 6.3.0 [#140](https://github.com/adamgruber/mochawesome-report-generator/issues/140)
