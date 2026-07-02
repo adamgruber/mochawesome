@@ -8,11 +8,17 @@
 ### Changed
 - Replaced the `uuid` dependency with the built-in `crypto.randomUUID()`.
   Report output is unchanged (still RFC 4122 v4 UUIDs).
+- Replaced `chalk` and `strip-ansi` with the Node built-ins
+  `util.styleText` and `util.stripVTControlCharacters`.
+- Replaced the `lodash.is*` micro-dependencies with native checks.
 - Updated dev tooling to current majors (eslint 10 with flat config,
   prettier 3, mocha 11, nyc 18, sinon 22, husky 9, lint-staged 17).
 
 ### Removed
 - `uuid` dependency (replaced by native `crypto.randomUUID()`).
+- `chalk` and `strip-ansi` dependencies (replaced by `node:util`).
+- `lodash.isempty`, `lodash.isfunction`, `lodash.isobject`, and
+  `lodash.isstring` dependencies (replaced by native checks).
 - `cross-env` dev dependency and the unused `NODE_ENV=test` test flag.
 
 ## [7.1.4] - 2022-03-25

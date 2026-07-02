@@ -8,10 +8,10 @@ stays CommonJS. This is a roadmap for a later major (v9+).
 
 - Several runtime deps have gone ESM-only and are pinned to old majors
   purely because we still `require()`:
-  - `chalk` (pinned ^4; latest 5.x is ESM-only)
-  - `strip-ansi` (pinned ^6; latest 7.x is ESM-only)
   - `diff` (pinned ^5; 8.x+ is ESM-only — and 6–8 carry a DoS advisory,
-    so we are currently stuck on a CJS line with no in-range fix)
+    so we are currently stuck on a CJS line with no in-range fix). This is
+    now the _only_ runtime dependency held back by CJS: `chalk` and
+    `strip-ansi` were removed in v8 in favor of `node:util` built-ins.
 - ESM is the ecosystem default; staying CJS increasingly costs us security
   and feature updates.
 
