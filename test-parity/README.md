@@ -42,9 +42,19 @@ The output changed. Two cases:
 
 ## Comparing against a published version
 
-The same fixtures + normalizer can double as a "next vs last published"
-check: `npm pack` the branch, install it and the previous npm release into
-two temp projects, run the fixtures through each, and diff the normalized
-JSON. The committed golden makes this unnecessary for routine work — the
-golden _is_ the recorded baseline — but it's useful as a one-off sanity
-check before a major release.
+For a one-off "next vs last published" check before cutting a major:
+
+```bash
+npm run test:parity:published            # vs mochawesome@latest on npm
+npm run test:parity:published -- 7.1.4   # vs a specific published version
+```
+
+This packs the working tree, installs both the tarball and the published
+release into temp projects (pinned to the same mocha version), runs the
+fixtures through each, and diffs the normalized JSON. A clean run means the
+report output is unchanged vs what's on npm.
+
+It's a manual check, not part of `npm test`: it hits the network and can't
+tell an intended change from a regression the way the reviewable golden
+diff can. The committed golden is the routine baseline; this is the extra
+belt-and-suspenders pass for a major release.

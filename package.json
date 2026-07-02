@@ -7,6 +7,7 @@
     "test": "npm run lint && nyc mocha --config test/.mocharc.json && npm run test:parity",
     "test:parity": "node test-parity/run.js",
     "test:parity:update": "node test-parity/run.js --update",
+    "test:parity:published": "node test-parity/published.js",
     "test:fn": "mocha test-functional --config test-functional/.mocharc.json",
     "test:par": "mocha test-parallel --parallel --config test-parallel/.mocharc.json",
     "test:prog": "node ./test-programmatic",

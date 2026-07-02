@@ -1,5 +1,12 @@
 const assert = require('node:assert');
-const addContext = require('../../addContext');
+// Resolve addContext whether we run inside this repo (golden gate) or from a
+// temp project that installed the package (published comparison).
+let addContext;
+try {
+  addContext = require('mochawesome/addContext');
+} catch {
+  addContext = require('../../addContext');
+}
 
 // Deterministic fixture suite used by the report-output parity gate.
 // Covers passing, failing-with-diff, pending, nested suites, hooks and
