@@ -1,0 +1,246 @@
+{
+  "meta": "M",
+  "results": [
+    {
+      "_timeout": 2000,
+      "afterHooks": [],
+      "beforeHooks": [],
+      "duration": 0,
+      "failures": [],
+      "file": "",
+      "fullFile": "F",
+      "passes": [],
+      "pending": [],
+      "root": true,
+      "rootEmpty": true,
+      "skipped": [],
+      "suites": [
+        {
+          "_timeout": null,
+          "afterHooks": [],
+          "beforeHooks": [
+            {
+              "code": "addContext(this, 'beforeEach context');",
+              "context": null,
+              "duration": 0,
+              "err": {},
+              "fail": false,
+              "fullTitle": "Parity Suite \"before each\" hook in \"Parity Suite\"",
+              "isHook": true,
+              "parentUUID": "X",
+              "pass": false,
+              "pending": null,
+              "skipped": false,
+              "speed": "S",
+              "state": null,
+              "timedOut": null,
+              "title": "\"before each\" hook in \"Parity Suite\"",
+              "uuid": "X"
+            }
+          ],
+          "duration": 0,
+          "failures": [
+            "X"
+          ],
+          "file": "/test-parity/fixtures/spec.a.test.js",
+          "fullFile": "F",
+          "passes": [
+            "X"
+          ],
+          "pending": [
+            "X"
+          ],
+          "root": false,
+          "rootEmpty": false,
+          "skipped": [],
+          "suites": [
+            {
+              "_timeout": null,
+              "afterHooks": [],
+              "beforeHooks": [],
+              "duration": 0,
+              "failures": [],
+              "file": "/test-parity/fixtures/spec.a.test.js",
+              "fullFile": "F",
+              "passes": [
+                "X"
+              ],
+              "pending": [],
+              "root": false,
+              "rootEmpty": false,
+              "skipped": [],
+              "suites": [],
+              "tests": [
+                {
+                  "code": "assert.strictEqual(typeof 'x', 'string');",
+                  "context": "\"beforeEach context\"",
+                  "duration": 0,
+                  "err": {},
+                  "fail": false,
+                  "fullTitle": "Parity Suite Nested Suite nested pass",
+                  "isHook": false,
+                  "parentUUID": "X",
+                  "pass": true,
+                  "pending": false,
+                  "skipped": false,
+                  "speed": "S",
+                  "state": "passed",
+                  "timedOut": null,
+                  "title": "nested pass",
+                  "uuid": "X"
+                }
+              ],
+              "title": "Nested Suite",
+              "uuid": "X"
+            }
+          ],
+          "tests": [
+            {
+              "code": "addContext(this, 'a simple string');\naddContext(this, { title: 'an object', value: { a: 1, b: '2' } });\nassert.strictEqual(1 + 1, 2);",
+              "context": "[\n  \"beforeEach context\",\n  \"a simple string\",\n  {\n    \"title\": \"an object\",\n    \"value\": {\n      \"a\": 1,\n      \"b\": \"2\"\n    }\n  }\n]",
+              "duration": 0,
+              "err": {},
+              "fail": false,
+              "fullTitle": "Parity Suite passes with context",
+              "isHook": false,
+              "parentUUID": "X",
+              "pass": true,
+              "pending": false,
+              "skipped": false,
+              "speed": "S",
+              "state": "passed",
+              "timedOut": null,
+              "title": "passes with context",
+              "uuid": "X"
+            },
+            {
+              "code": "// Build the error by hand so the message/diff do not depend on the\n// Node version's assertion-message formatting.\nconst err = new Error('values are not equal');\nerr.name = 'AssertionError';\nerr.actual = { a: 2 };\nerr.expected = { a: 1 };\nerr.showDiff = true;\nthrow err;",
+              "context": "\"beforeEach context\"",
+              "duration": 0,
+              "err": {
+                "diff": " {\n-   \"a\": 2\n+   \"a\": 1\n }\n",
+                "estack": "E",
+                "message": "AssertionError: values are not equal"
+              },
+              "fail": true,
+              "fullTitle": "Parity Suite fails with a diff",
+              "isHook": false,
+              "parentUUID": "X",
+              "pass": false,
+              "pending": false,
+              "skipped": false,
+              "speed": "S",
+              "state": "failed",
+              "timedOut": null,
+              "title": "fails with a diff",
+              "uuid": "X"
+            },
+            {
+              "code": "",
+              "context": null,
+              "duration": 0,
+              "err": {},
+              "fail": false,
+              "fullTitle": "Parity Suite is pending",
+              "isHook": false,
+              "parentUUID": "X",
+              "pass": false,
+              "pending": true,
+              "skipped": false,
+              "speed": "S",
+              "state": "pending",
+              "timedOut": null,
+              "title": "is pending",
+              "uuid": "X"
+            }
+          ],
+          "title": "Parity Suite",
+          "uuid": "X"
+        },
+        {
+          "_timeout": null,
+          "afterHooks": [],
+          "beforeHooks": [],
+          "duration": 0,
+          "failures": [
+            "X"
+          ],
+          "file": "/test-parity/fixtures/spec.b.test.js",
+          "fullFile": "F",
+          "passes": [
+            "X"
+          ],
+          "pending": [],
+          "root": false,
+          "rootEmpty": false,
+          "skipped": [],
+          "suites": [],
+          "tests": [
+            {
+              "code": "assert.ok(true);",
+              "context": null,
+              "duration": 0,
+              "err": {},
+              "fail": false,
+              "fullTitle": "Second File b pass",
+              "isHook": false,
+              "parentUUID": "X",
+              "pass": true,
+              "pending": false,
+              "skipped": false,
+              "speed": "S",
+              "state": "passed",
+              "timedOut": null,
+              "title": "b pass",
+              "uuid": "X"
+            },
+            {
+              "code": "const err = new Error('nope');\nerr.name = 'AssertionError';\nthrow err;",
+              "context": null,
+              "duration": 0,
+              "err": {
+                "diff": null,
+                "estack": "E",
+                "message": "AssertionError: nope"
+              },
+              "fail": true,
+              "fullTitle": "Second File b fail",
+              "isHook": false,
+              "parentUUID": "X",
+              "pass": false,
+              "pending": false,
+              "skipped": false,
+              "speed": "S",
+              "state": "failed",
+              "timedOut": null,
+              "title": "b fail",
+              "uuid": "X"
+            }
+          ],
+          "title": "Second File",
+          "uuid": "X"
+        }
+      ],
+      "tests": [],
+      "title": "",
+      "uuid": "X"
+    }
+  ],
+  "stats": {
+    "duration": 0,
+    "end": "T",
+    "failures": 2,
+    "hasOther": false,
+    "hasSkipped": false,
+    "other": 0,
+    "passPercent": 60,
+    "passes": 3,
+    "pending": 1,
+    "pendingPercent": 16.666666666666664,
+    "skipped": 0,
+    "start": "T",
+    "suites": 3,
+    "tests": 6,
+    "testsRegistered": 6
+  }
+}

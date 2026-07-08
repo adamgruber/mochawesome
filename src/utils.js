@@ -1,12 +1,8 @@
-const isString = require('lodash.isstring');
-const isFunction = require('lodash.isfunction');
-const isEmpty = require('lodash.isempty');
-const chalk = require('chalk');
-const uuid = require('uuid');
+const { randomUUID } = require('node:crypto');
+const { styleText, stripVTControlCharacters } = require('node:util');
 const mochaUtils = require('mocha/lib/utils');
 const stringify = require('json-stringify-safe');
 const diff = require('diff');
-const stripAnsi = require('strip-ansi');
 const stripFnStart = require('./stripFnStart');
 
 /**
@@ -24,7 +20,7 @@ function log(msg, level, config) {
   if (typeof msg === 'object') {
     out = stringify(msg, null, 2);
   }
-  logMethod(`[${chalk.gray('mochawesome')}] ${out}\n`);
+  logMethod(`[${styleText('gray', 'mochawesome')}] ${out}\n`);
 }
 
 /**
@@ -48,7 +44,7 @@ function cleanCode(str) {
   // and removing that amount of space from each line
   const spaces = str.match(/^\n?( *)/)[1].length;
   const tabs = str.match(/^\n?(\t*)/)[1].length;
-  /* istanbul ignore next */
+  /* c8 ignore next */
   const indentRegex = new RegExp(
     `^\n?${tabs ? '\t' : ' '}{${tabs || spaces}}`,
     'gm'
@@ -124,11 +120,12 @@ function normalizeErr(err, config) {
     sameType(actual, expected) &&
     expected !== undefined
   ) {
-    /* istanbul ignore if */
-    if (!(isString(actual) && isString(expected))) {
+    /* c8 ignore start */
+    if (!(typeof actual === 'string' && typeof expected === 'string')) {
       err.actual = mochaUtils.stringify(actual);
       err.expected = mochaUtils.stringify(expected);
     }
+    /* c8 ignore stop */
     errDiff = config.useInlineDiffs
       ? createInlineDiff(err)
       : createUnifiedDiff(err);
@@ -137,14 +134,14 @@ function normalizeErr(err, config) {
   // Assertion libraries do not output consitent error objects so in order to
   // get a consistent message object we need to create it ourselves
   if (name && message) {
-    errMessage = `${name}: ${stripAnsi(message)}`;
+    errMessage = `${name}: ${stripVTControlCharacters(message)}`;
   } else if (stack) {
     errMessage = stack.replace(/\n.*/g, '');
   }
 
   return {
     message: errMessage,
-    estack: stack && stripAnsi(stack),
+    estack: stack && stripVTControlCharacters(stack),
     diff: errDiff,
   };
 }
@@ -160,12 +157,13 @@ function normalizeErr(err, config) {
 function cleanTest(test, config) {
   const code = config.code ? test.body || '' : '';
 
-  const fullTitle = isFunction(test.fullTitle)
-    ? stripAnsi(test.fullTitle())
-    : stripAnsi(test.title);
+  const fullTitle =
+    typeof test.fullTitle === 'function'
+      ? stripVTControlCharacters(test.fullTitle())
+      : stripVTControlCharacters(test.title);
 
   const cleaned = {
-    title: stripAnsi(test.title),
+    title: stripVTControlCharacters(test.title),
     fullTitle,
     timedOut: test.timedOut,
     duration: test.duration || 0,
@@ -177,7 +175,7 @@ function cleanTest(test, config) {
     context: stringify(test.context, null, 2),
     code: code && cleanCode(code),
     err: (test.err && normalizeErr(test.err, config)) || {},
-    uuid: test.uuid || /* istanbul ignore next: default */ uuid.v4(),
+    uuid: test.uuid || /* c8 ignore next */ randomUUID(),
     parentUUID: test.parent && test.parent.uuid,
     isHook: test.type === 'hook',
   };
@@ -227,8 +225,8 @@ function cleanSuite(suite, testTotals, config) {
   testTotals.skipped += skippedTests.length;
 
   const cleaned = {
-    uuid: suite.uuid || /* istanbul ignore next: default */ uuid.v4(),
-    title: stripAnsi(suite.title),
+    uuid: suite.uuid || /* c8 ignore next */ randomUUID(),
+    title: stripVTControlCharacters(suite.title),
     fullFile: suite.file || '',
     file: suite.file ? suite.file.replace(process.cwd(), '') : '',
     beforeHooks,
@@ -246,10 +244,10 @@ function cleanSuite(suite, testTotals, config) {
   };
 
   const isEmptySuite =
-    isEmpty(cleaned.suites) &&
-    isEmpty(cleaned.tests) &&
-    isEmpty(cleaned.beforeHooks) &&
-    isEmpty(cleaned.afterHooks);
+    cleaned.suites.length === 0 &&
+    cleaned.tests.length === 0 &&
+    cleaned.beforeHooks.length === 0 &&
+    cleaned.afterHooks.length === 0;
 
   return !isEmptySuite && cleaned;
 }

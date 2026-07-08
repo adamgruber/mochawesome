@@ -1,6 +1,5 @@
 const tests = require('./sample-tests');
 
-/* eslint-disable */
 module.exports = {
   one: {
     raw: {

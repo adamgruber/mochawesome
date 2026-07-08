@@ -1,7 +1,5 @@
-const isObject = require('lodash.isobject');
-const isEmpty = require('lodash.isempty');
-const chalk = require('chalk');
 const stringify = require('json-stringify-safe');
+const { styleText } = require('node:util');
 
 const errorPrefix = 'Error adding context:';
 const ERRORS = {
@@ -22,15 +20,16 @@ const ERRORS = {
  * HELPER FUNCTIONS
  */
 
-/* istanbul ignore next */
+/* c8 ignore start */
 function log(msg, level) {
   const logMethod = console[level] || console.log;
   let out = msg;
   if (typeof msg === 'object') {
     out = stringify(msg, null, 2);
   }
-  logMethod(`[${chalk.gray('mochawesome')}] ${out}\n`);
+  logMethod(`[${styleText('gray', 'mochawesome')}] ${out}\n`);
 }
+/* c8 ignore stop */
 
 function _isValidContext(ctx) {
   /*
@@ -40,10 +39,11 @@ function _isValidContext(ctx) {
    */
   if (!ctx) return false;
   return (
-    (typeof ctx === 'string' && !isEmpty(ctx)) ||
-    (Object.hasOwnProperty.call(ctx, 'title') &&
-      !isEmpty(ctx.title) &&
-      Object.hasOwnProperty.call(ctx, 'value'))
+    typeof ctx === 'string' ||
+    (Object.hasOwn(ctx, 'title') &&
+      typeof ctx.title === 'string' &&
+      ctx.title.length > 0 &&
+      Object.hasOwn(ctx, 'value'))
   );
 }
 
@@ -78,7 +78,7 @@ function _isValidContext(ctx) {
 
 const addContext = function (...args) {
   // Check args to see if we should bother continuing
-  if (args.length !== 2 || !isObject(args[0])) {
+  if (args.length !== 2 || typeof args[0] !== 'object' || args[0] === null) {
     log(ERRORS.INVALID_ARGS, 'error');
     return;
   }

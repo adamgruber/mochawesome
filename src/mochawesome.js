@@ -1,6 +1,6 @@
 const Base = require('mocha/lib/reporters/base');
 const mochaPkg = require('mocha/package.json');
-const uuid = require('uuid');
+const { randomUUID } = require('node:crypto');
 const marge = require('mochawesome-report-generator');
 const margePkg = require('mochawesome-report-generator/package.json');
 const conf = require('./config');
@@ -31,23 +31,19 @@ const testTotals = {
  *
  * @return {Promise} Resolves with successful report creation
  */
-function done(output, options, config, failures, exit) {
-  return marge
-    .create(output, options)
-    .then(([htmlFile, jsonFile]) => {
-      if (!htmlFile && !jsonFile) {
-        log('No files were generated', 'warn', config);
-      } else {
-        jsonFile && log(`Report JSON saved to ${jsonFile}`, null, config);
-        htmlFile && log(`Report HTML saved to ${htmlFile}`, null, config);
-      }
-    })
-    .catch(err => {
-      log(err, 'error', config);
-    })
-    .then(() => {
-      exit && exit(failures > 0 ? 1 : 0);
-    });
+async function done(output, options, config, failures, exit) {
+  try {
+    const [htmlFile, jsonFile] = await marge.create(output, options);
+    if (!htmlFile && !jsonFile) {
+      log('No files were generated', 'warn', config);
+    } else {
+      jsonFile && log(`Report JSON saved to ${jsonFile}`, null, config);
+      htmlFile && log(`Report HTML saved to ${htmlFile}`, null, config);
+    }
+  } catch (err) {
+    log(err, 'error', config);
+  }
+  exit && exit(failures > 0 ? 1 : 0);
 }
 
 /**
@@ -65,7 +61,7 @@ function consoleReporter(reporter) {
   if (reporter) {
     try {
       return require(`mocha/lib/reporters/${reporter}`);
-    } catch (e) {
+    } catch {
       log(`Unknown console reporter '${reporter}', defaulting to spec`);
     }
   }
@@ -112,7 +108,7 @@ function Mochawesome(runner, options) {
   const reporterName = reporterOptions.consoleReporter;
   if (reporterName !== 'none') {
     const ConsoleReporter = consoleReporter(reporterName);
-    new ConsoleReporter(runner); // eslint-disable-line
+    new ConsoleReporter(runner);
   }
 
   let endCalled = false;
@@ -120,7 +116,7 @@ function Mochawesome(runner, options) {
   // Add a unique identifier to each suite/test/hook
   ['suite', 'test', 'hook', 'pending'].forEach(type => {
     runner.on(type, item => {
-      item.uuid = uuid.v4();
+      item.uuid = randomUUID();
     });
   });
 
@@ -151,7 +147,7 @@ function Mochawesome(runner, options) {
   // Process the full suite
   runner.on('end', () => {
     try {
-      /* istanbul ignore else */
+      /* c8 ignore next */
       if (!endCalled) {
         // end gets called more than once for some reason
         // so we ensure the suite is processed only once
@@ -208,12 +204,13 @@ function Mochawesome(runner, options) {
         // Save the final output to be used in the done function
         this.output = obj;
       }
+      /* c8 ignore start */
     } catch (e) {
       // required because thrown errors are not handled directly in the
       // event emitter pattern and mocha does not have an "on error"
-      /* istanbul ignore next */
       log(`Problem with mochawesome: ${e.stack}`, 'error');
     }
+    /* c8 ignore stop */
   });
 }
 

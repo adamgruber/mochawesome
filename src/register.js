@@ -8,29 +8,37 @@ Mocha.Suite.prototype.serialize = function (...args) {
     // Skipping the EVENT_SUITE_BEGIN serialization can reduce data transfer via IPC by 25%
     return serializeSuite(this);
   }
-  return mochaSerializeSuite.apply(this, args)
-}
+  return mochaSerializeSuite.apply(this, args);
+};
 
-const serializeSuite = (suite) => {
-  const result = suite.root ? mochaSerializeSuite.call(suite) : serializeObject(suite, ['file']);
+const serializeSuite = suite => {
+  const result = suite.root
+    ? mochaSerializeSuite.call(suite)
+    : serializeObject(suite, ['file']);
   result.suites = suite.suites.map(it => serializeSuite(it));
   result.tests = suite.tests.map(it => serializeTest(it));
   ['_beforeAll', '_beforeEach', '_afterEach', '_afterAll'].forEach(hookName => {
-    result[hookName] = suite[hookName].map(it => serializeHook(it))
+    result[hookName] = suite[hookName].map(it => serializeHook(it));
   });
   return result;
-}
+};
 
 const serializeHook = hook => {
-  return serializeObject(hook, ['body', 'state', 'err', 'context', '$$fullTitle']);
-}
+  return serializeObject(hook, [
+    'body',
+    'state',
+    'err',
+    'context',
+    '$$fullTitle',
+  ]);
+};
 
 const serializeTest = test => {
   const result = serializeObject(test, ['pending', 'context']);
   // to remove a circular dependency: https://github.com/adamgruber/mochawesome/issues/356
-  result["$$retriedTest"] = null;
+  result['$$retriedTest'] = null;
   return result;
-}
+};
 
 const serializeObject = (obj, fields) => {
   const result = obj.serialize();
@@ -59,4 +67,10 @@ const serializeError = error => {
   return error;
 };
 
-module.exports = { serializeSuite, serializeHook, serializeTest, serializeObject, serializeError };
+module.exports = {
+  serializeSuite,
+  serializeHook,
+  serializeTest,
+  serializeObject,
+  serializeError,
+};

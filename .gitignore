@@ -4,5 +4,4 @@ node_modules/
 mochawesome-report*/
 _site/
 coverage/
-.nyc_output/
 dist/

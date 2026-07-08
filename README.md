@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) ![Node.js CI](https://github.com/adamgruber/mochawesome/workflows/Node.js%20CI/badge.svg) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general)
 
-Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js (>=10) and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to help visualize your test runs.
+Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to help visualize your test runs.
 
 ## Features
 

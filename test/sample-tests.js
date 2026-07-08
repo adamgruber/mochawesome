@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-escape */
-
 module.exports = {
   passing: {
     raw: {
@@ -84,8 +82,7 @@ module.exports = {
   failing: {
     raw: {
       title: 'failing test',
-      body:
-        'function (tDone) {\n        return tDone(new Assert(error));\n      }',
+      body: 'function (tDone) {\n        return tDone(new Assert(error));\n      }',
       async: 1,
       sync: false,
       _timeout: 2000,
@@ -285,8 +282,7 @@ module.exports = {
   hook: {
     raw: {
       title: '"before each" hook: failing beforeEach hook for "passing test"',
-      body:
-        'function () {\n      console.log(a); // eslint-disable-line\n    }',
+      body: 'function () {\n      console.log(a); // eslint-disable-line\n    }',
       async: 0,
       sync: true,
       _timeout: 2000,
@@ -303,8 +299,7 @@ module.exports = {
         ctx: {
           currentTest: {
             title: 'passing test',
-            body:
-              'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
+            body: 'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
             async: 1,
             sync: false,
             _timeout: 2000,
@@ -328,8 +323,7 @@ module.exports = {
         tests: [
           {
             title: 'passing test',
-            body:
-              'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
+            body: 'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
             async: 1,
             sync: false,
             _timeout: 2000,
@@ -388,8 +382,7 @@ module.exports = {
       ctx: {
         currentTest: {
           title: 'passing test',
-          body:
-            'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
+          body: 'function (done) {\n      (1 1).should.equal(2);\n      done();\n    }',
           async: 1,
           sync: false,
           _timeout: 2000,
