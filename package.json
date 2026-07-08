@@ -4,7 +4,7 @@
   "description": "A gorgeous reporter for Mocha.js",
   "scripts": {
     "lint": "eslint src test*",
-    "test": "npm run lint && nyc mocha --config test/.mocharc.json && npm run test:parity",
+    "test": "npm run lint && c8 mocha --config test/.mocharc.json && npm run test:parity",
     "test:parity": "node test-parity/run.js",
     "test:parity:update": "node test-parity/run.js --update",
     "test:parity:published": "node test-parity/published.js",
@@ -13,7 +13,7 @@
     "test:prog": "node ./test-programmatic",
     "test:mem": "mocha test-functional/mem-test.js --config test-functional/.mocharc.json",
     "test:ctx": "mocha test-functional/test-context.js --config test-functional/.mocharc.json",
-    "tdd": "npm run lint && nyc mocha --config test/.mocharc.json --watch",
+    "tdd": "npm run lint && c8 mocha --config test/.mocharc.json --watch",
     "prepare": "husky",
     "prepack": "npm run test"
   },
@@ -38,7 +38,7 @@
     "register.js",
     "src"
   ],
-  "nyc": {
+  "c8": {
     "include": [
       "src/*.js"
     ],
@@ -47,7 +47,6 @@
       "html",
       "text-summary"
     ],
-    "cache": false,
     "check-coverage": true,
     "lines": 99,
     "statements": 99,
@@ -64,13 +63,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "c8": "^11.0.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
     "mocha": "^11.7.6",
-    "nyc": "^18.0.0",
     "prettier": "^3.9.4",
     "proxyquire": "^2.1.3",
     "should": "^13.2.3",

@@ -20,7 +20,7 @@ const ERRORS = {
  * HELPER FUNCTIONS
  */
 
-/* istanbul ignore next */
+/* c8 ignore start */
 function log(msg, level) {
   const logMethod = console[level] || console.log;
   let out = msg;
@@ -29,6 +29,7 @@ function log(msg, level) {
   }
   logMethod(`[${styleText('gray', 'mochawesome')}] ${out}\n`);
 }
+/* c8 ignore stop */
 
 function _isValidContext(ctx) {
   /*

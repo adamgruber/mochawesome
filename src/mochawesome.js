@@ -147,7 +147,7 @@ function Mochawesome(runner, options) {
   // Process the full suite
   runner.on('end', () => {
     try {
-      /* istanbul ignore else */
+      /* c8 ignore next */
       if (!endCalled) {
         // end gets called more than once for some reason
         // so we ensure the suite is processed only once
@@ -204,12 +204,13 @@ function Mochawesome(runner, options) {
         // Save the final output to be used in the done function
         this.output = obj;
       }
+      /* c8 ignore start */
     } catch (e) {
       // required because thrown errors are not handled directly in the
       // event emitter pattern and mocha does not have an "on error"
-      /* istanbul ignore next */
       log(`Problem with mochawesome: ${e.stack}`, 'error');
     }
+    /* c8 ignore stop */
   });
 }
 

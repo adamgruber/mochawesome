@@ -12,7 +12,9 @@
   `util.styleText` and `util.stripVTControlCharacters`.
 - Replaced the `lodash.is*` micro-dependencies with native checks.
 - Updated dev tooling to current majors (eslint 10 with flat config,
-  prettier 3, mocha 11, nyc 18, sinon 22, husky 9, lint-staged 17).
+  prettier 3, mocha 11, sinon 22, husky 9, lint-staged 17).
+- Switched coverage from `nyc` to `c8` (native V8 coverage; drops the
+  Babel-based instrumentation subtree).
 
 ### Removed
 - `uuid` dependency (replaced by native `crypto.randomUUID()`).

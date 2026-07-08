@@ -44,7 +44,7 @@ function cleanCode(str) {
   // and removing that amount of space from each line
   const spaces = str.match(/^\n?( *)/)[1].length;
   const tabs = str.match(/^\n?(\t*)/)[1].length;
-  /* istanbul ignore next */
+  /* c8 ignore next */
   const indentRegex = new RegExp(
     `^\n?${tabs ? '\t' : ' '}{${tabs || spaces}}`,
     'gm'
@@ -120,11 +120,12 @@ function normalizeErr(err, config) {
     sameType(actual, expected) &&
     expected !== undefined
   ) {
-    /* istanbul ignore if */
+    /* c8 ignore start */
     if (!(typeof actual === 'string' && typeof expected === 'string')) {
       err.actual = mochaUtils.stringify(actual);
       err.expected = mochaUtils.stringify(expected);
     }
+    /* c8 ignore stop */
     errDiff = config.useInlineDiffs
       ? createInlineDiff(err)
       : createUnifiedDiff(err);
@@ -174,7 +175,7 @@ function cleanTest(test, config) {
     context: stringify(test.context, null, 2),
     code: code && cleanCode(code),
     err: (test.err && normalizeErr(test.err, config)) || {},
-    uuid: test.uuid || /* istanbul ignore next: default */ randomUUID(),
+    uuid: test.uuid || /* c8 ignore next */ randomUUID(),
     parentUUID: test.parent && test.parent.uuid,
     isHook: test.type === 'hook',
   };
@@ -224,7 +225,7 @@ function cleanSuite(suite, testTotals, config) {
   testTotals.skipped += skippedTests.length;
 
   const cleaned = {
-    uuid: suite.uuid || /* istanbul ignore next: default */ randomUUID(),
+    uuid: suite.uuid || /* c8 ignore next */ randomUUID(),
     title: stripVTControlCharacters(suite.title),
     fullFile: suite.file || '',
     file: suite.file ? suite.file.replace(process.cwd(), '') : '',
