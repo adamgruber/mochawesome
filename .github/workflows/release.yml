@@ -1,0 +1,77 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version bump (patch/minor/major) or an explicit version like 8.0.0'
+        required: true
+        default: patch
+      dry-run:
+        description: 'Run the gate and a publish dry-run without bumping, tagging, or publishing'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write # push the version bump/tag and create the GitHub release
+  id-token: write # npm publish --provenance
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+
+      # Gate: never bump/tag/publish a failing build.
+      - run: npm test
+
+      # Compute the target version and stage the bump (no commit/tag yet) so we
+      # know the number before touching the CHANGELOG.
+      - name: Compute version
+        id: version
+        run: |
+          NEW=$(npm version "${{ github.event.inputs.version }}" --no-git-tag-version)
+          echo "tag=$NEW" >> "$GITHUB_OUTPUT"
+          echo "number=${NEW#v}" >> "$GITHUB_OUTPUT"
+
+      # Promote the curated "## [Unreleased]" section to a dated version heading
+      # and extract those lines as the GitHub release notes.
+      - name: Update CHANGELOG and extract notes
+        id: notes
+        run: node .github/scripts/changelog-release.mjs "${{ steps.version.outputs.number }}"
+
+      - name: Publish (dry run)
+        if: ${{ github.event.inputs.dry-run == 'true' }}
+        run: |
+          echo "DRY RUN — would release ${{ steps.version.outputs.tag }}"
+          echo '--- release notes ---'
+          cat "${{ steps.notes.outputs.file }}"
+          npm publish --provenance --dry-run
+
+      - name: Commit, tag, push, publish, release
+        if: ${{ github.event.inputs.dry-run != 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "release: ${{ steps.version.outputs.tag }}"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push --follow-tags origin main
+          npm publish --provenance
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --title "${{ steps.version.outputs.tag }}" \
+            --notes-file "${{ steps.notes.outputs.file }}"
