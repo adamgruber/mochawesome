@@ -15,7 +15,7 @@ on:
 
 permissions:
   contents: write # push the version bump/tag and create the GitHub release
-  id-token: write # npm publish --provenance
+  id-token: write # npm trusted publishing (OIDC) + provenance
 
 jobs:
   release:
@@ -30,6 +30,9 @@ jobs:
         with:
           node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
+
+      # Node 22 ships npm 10; trusted publishing (OIDC) needs npm >= 11.5.1.
+      - run: npm install -g npm@latest
 
       - run: npm ci
 
@@ -62,9 +65,9 @@ jobs:
       - name: Publish, then commit/tag/push and release
         if: ${{ github.event.inputs.dry-run != 'true' }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Auth is via npm trusted publishing (OIDC) — no NPM_TOKEN needed.
           # Publish first: it's the step most likely to fail (auth) and the only
           # irreversible one. If it fails, nothing has been committed/tagged/
           # pushed, so a re-run starts from a clean tree.
