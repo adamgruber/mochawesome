@@ -59,19 +59,22 @@ jobs:
           cat "${{ steps.notes.outputs.file }}"
           npm publish --provenance --dry-run
 
-      - name: Commit, tag, push, publish, release
+      - name: Publish, then commit/tag/push and release
         if: ${{ github.event.inputs.dry-run != 'true' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Publish first: it's the step most likely to fail (auth) and the only
+          # irreversible one. If it fails, nothing has been committed/tagged/
+          # pushed, so a re-run starts from a clean tree.
+          npm publish --provenance
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add package.json package-lock.json CHANGELOG.md
           git commit -m "release: ${{ steps.version.outputs.tag }}"
           git tag "${{ steps.version.outputs.tag }}"
           git push --follow-tags origin main
-          npm publish --provenance
           gh release create "${{ steps.version.outputs.tag }}" \
             --title "${{ steps.version.outputs.tag }}" \
             --notes-file "${{ steps.notes.outputs.file }}"
