@@ -45,7 +45,7 @@ jobs:
         id: version
         run: |
           NEW=$(npm version "${{ github.event.inputs.version }}" --no-git-tag-version)
-          echo "tag=$NEW" >> "$GITHUB_OUTPUT"
+          # Bare version, no leading "v" — matches the repo's tag convention.
           echo "number=${NEW#v}" >> "$GITHUB_OUTPUT"
 
       # Promote the curated "## [Unreleased]" section to a dated version heading
@@ -57,7 +57,7 @@ jobs:
       - name: Publish (dry run)
         if: ${{ github.event.inputs.dry-run == 'true' }}
         run: |
-          echo "DRY RUN — would release ${{ steps.version.outputs.tag }}"
+          echo "DRY RUN — would release ${{ steps.version.outputs.number }}"
           echo '--- release notes ---'
           cat "${{ steps.notes.outputs.file }}"
           npm publish --provenance --dry-run
@@ -75,9 +75,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add package.json package-lock.json CHANGELOG.md
-          git commit -m "release: ${{ steps.version.outputs.tag }}"
-          git tag "${{ steps.version.outputs.tag }}"
+          # --no-verify: skip husky/lint-staged on the automated release commit.
+          git commit --no-verify -m "release: ${{ steps.version.outputs.number }}"
+          # Annotated tag so `git push --follow-tags` actually pushes it (it
+          # skips lightweight tags); bare version to match the tag convention.
+          git tag -a "${{ steps.version.outputs.number }}" -m "${{ steps.version.outputs.number }}"
           git push --follow-tags origin main
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "${{ steps.version.outputs.tag }}" \
+          gh release create "${{ steps.version.outputs.number }}" \
+            --title "${{ steps.version.outputs.number }}" \
             --notes-file "${{ steps.notes.outputs.file }}"
