@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [8.0.0] - 2026-07-30
 ### Breaking
 - Require Node.js >=22. Node 12/14/16/18/20 are no longer supported.
 - Bumped the `mocha` peer dependency range from `>=7` to `>=8`.
