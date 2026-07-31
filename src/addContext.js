@@ -1,5 +1,15 @@
 const stringify = require('json-stringify-safe');
-const { styleText } = require('node:util');
+
+// Gray the log prefix without importing `node:util`. `addContext` is bundled
+// for the browser (e.g. Cypress/webpack), and a `node:` builtin anywhere in
+// its require graph breaks bundling (#425). Only emit ANSI codes for a TTY so
+// browsers/CI logs get plain text instead of raw escape sequences.
+/* c8 ignore start */
+const gray = str =>
+  typeof process !== 'undefined' && process.stdout?.isTTY
+    ? `[90m${str}[39m`
+    : str;
+/* c8 ignore stop */
 
 const errorPrefix = 'Error adding context:';
 const ERRORS = {
@@ -27,7 +37,7 @@ function log(msg, level) {
   if (typeof msg === 'object') {
     out = stringify(msg, null, 2);
   }
-  logMethod(`[${styleText('gray', 'mochawesome')}] ${out}\n`);
+  logMethod(`[${gray('mochawesome')}] ${out}\n`);
 }
 /* c8 ignore stop */
 

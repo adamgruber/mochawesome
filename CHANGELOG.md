@@ -1,6 +1,10 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- `mochawesome/addContext` no longer imports `node:util`, restoring browser
+  bundling (e.g. Cypress support files built with webpack) that broke in
+  8.0.0 [#425](https://github.com/adamgruber/mochawesome/issues/425).
 
 ## [8.0.0] - 2026-07-30
 ### Breaking

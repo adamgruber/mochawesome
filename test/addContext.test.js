@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const addContext = require('../src/addContext');
 
 describe('addContext', () => {
@@ -26,8 +28,7 @@ describe('addContext', () => {
 
     activeTest = {
       title: 'sample test',
-      body:
-        'function () {\n    addContext(this, "i\'m in a test");\n    assert(true);\n  }',
+      body: 'function () {\n    addContext(this, "i\'m in a test");\n    assert(true);\n  }',
       async: 0,
       sync: true,
       timedOut: false,
@@ -194,5 +195,16 @@ describe('addContext', () => {
       addContext(testObj, { title: 'context title' });
       test.should.not.have.property('context');
     });
+  });
+
+  // addContext is imported into browser test code (e.g. Cypress support files)
+  // and bundled with webpack, which cannot resolve the `node:` scheme. Guard
+  // against a Node builtin creeping back into its require graph — see #425.
+  it('does not import any node: builtin', () => {
+    const src = fs.readFileSync(
+      path.join(__dirname, '../src/addContext.js'),
+      'utf8'
+    );
+    src.should.not.match(/require\(['"]node:/);
   });
 });
