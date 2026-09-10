@@ -1,6 +1,11 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Added
+- Support for Mocha 12 while remaining compatible with Mocha 8–11. Reporter,
+  stats-collector, and `utils` imports now handle both the pre-12 CommonJS
+  exports and the Mocha 12 ESM named exports
+  [#427](https://github.com/adamgruber/mochawesome/pull/427).
 
 ## [8.0.1] - 2026-07-31
 ### Fixed
