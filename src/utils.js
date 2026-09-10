@@ -1,6 +1,6 @@
 const { randomUUID } = require('node:crypto');
 const { styleText, stripVTControlCharacters } = require('node:util');
-const mochaUtils = require('mocha/lib/utils');
+const { utils: mochaUtils } = require('mocha');
 const stringify = require('json-stringify-safe');
 const diff = require('diff');
 const stripFnStart = require('./stripFnStart');

@@ -5,3 +5,4 @@ mochawesome-report*/
 _site/
 coverage/
 dist/
+.eslintcache

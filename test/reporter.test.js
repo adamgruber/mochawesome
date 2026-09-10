@@ -1,5 +1,8 @@
-const Mocha = require('mocha');
-const createStatsCollector = require('mocha/lib/stats-collector');
+const mochaModule = require('mocha');
+const Mocha = mochaModule.Mocha || mochaModule;
+const statsCollector = require('mocha/lib/stats-collector');
+const createStatsCollector =
+  statsCollector.createStatsCollector || statsCollector;
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const Assert = require('assert').AssertionError;
@@ -12,7 +15,7 @@ const reportStub = sinon.stub();
 const logStub = sinon.stub();
 const specStub = sinon.stub();
 const nyanStub = sinon.stub();
-const statsCollectorStub = sinon.stub();
+const statsCollectorStub = { createStatsCollector: sinon.stub() };
 
 utils.log = logStub;
 
@@ -73,7 +76,7 @@ describe('Mochawesome Reporter', () => {
     });
 
     it('should initialize stats collector', () => {
-      statsCollectorStub.called.should.equal(true);
+      statsCollectorStub.createStatsCollector.called.should.equal(true);
     });
   });
 
