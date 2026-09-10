@@ -59,11 +59,19 @@ async function done(output, options, config, failures, exit) {
  * @return {Object} Reporter class object
  */
 function consoleReporter(reporter) {
+  // Mocha <= 11 ships CommonJS reporters (`module.exports = ReporterClass`),
+  // while Mocha >= 12 ships ES modules that expose the reporter as a named
+  // export (e.g. `export { Spec }`). Rather than trusting the first function
+  // found on the namespace object, match a class that actually derives from
+  // the Base reporter so an unexpected Mocha internals change surfaces as a
+  // thrown error here instead of silently selecting the wrong export.
   const getReporter = reporterModule =>
     typeof reporterModule === 'function'
       ? reporterModule
       : Object.values(reporterModule).find(
-          value => typeof value === 'function'
+          value =>
+            typeof value === 'function' &&
+            (value === Base || value.prototype instanceof Base)
         );
 
   if (reporter) {
