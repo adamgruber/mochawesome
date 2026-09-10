@@ -1,4 +1,5 @@
-const Mocha = require('mocha');
+const mochaModule = require('mocha');
+const Mocha = mochaModule.Mocha || mochaModule;
 const statsCollector = require('mocha/lib/stats-collector');
 const createStatsCollector =
   statsCollector.createStatsCollector || statsCollector;
