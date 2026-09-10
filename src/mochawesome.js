@@ -1,4 +1,5 @@
-const Base = require('mocha/lib/reporters/base');
+const baseReporter = require('mocha/lib/reporters/base');
+const Base = baseReporter.Base || baseReporter;
 const mochaPkg = require('mocha/package.json');
 const { randomUUID } = require('node:crypto');
 const marge = require('mochawesome-report-generator');
@@ -58,15 +59,24 @@ async function done(output, options, config, failures, exit) {
  * @return {Object} Reporter class object
  */
 function consoleReporter(reporter) {
+  const getReporter = reporterModule =>
+    typeof reporterModule === 'function'
+      ? reporterModule
+      : Object.values(reporterModule).find(
+          value => typeof value === 'function'
+        );
+
   if (reporter) {
     try {
-      return require(`mocha/lib/reporters/${reporter}`);
+      const reporterModule = require(`mocha/lib/reporters/${reporter}`);
+      return getReporter(reporterModule);
     } catch {
       log(`Unknown console reporter '${reporter}', defaulting to spec`);
     }
   }
 
-  return require('mocha/lib/reporters/spec');
+  const specReporter = require('mocha/lib/reporters/spec');
+  return getReporter(specReporter);
 }
 
 /**
@@ -81,7 +91,9 @@ function Mochawesome(runner, options) {
 
   // Ensure stats collector has been initialized
   if (!runner.stats) {
-    const createStatsCollector = require('mocha/lib/stats-collector');
+    const statsCollector = require('mocha/lib/stats-collector');
+    const createStatsCollector =
+      statsCollector.createStatsCollector || statsCollector;
     createStatsCollector(runner);
   }
 
@@ -103,7 +115,7 @@ function Mochawesome(runner, options) {
   testTotals.skipped = 0;
 
   // Call the Base mocha reporter
-  Base.call(this, runner);
+  Object.assign(this, new Base(runner));
 
   const reporterName = reporterOptions.consoleReporter;
   if (reporterName !== 'none') {
