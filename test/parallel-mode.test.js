@@ -1,7 +1,13 @@
-const { serializeSuite, serializeHook, serializeTest, serializeError } = require('../src/register');
+const {
+  serializeSuite,
+  serializeHook,
+  serializeTest,
+  serializeError,
+} = require('../src/register');
 const Mochawesome = require('../src/mochawesome');
 const { EventEmitter } = require('events');
-const Mocha = require('mocha');
+const mochaModule = require('mocha');
+const Mocha = mochaModule.Mocha || mochaModule;
 const { Runner, Suite, Test, Hook } = Mocha;
 const { constants } = Runner;
 
@@ -9,20 +15,23 @@ describe('Parallel Mode', () => {
   const noop = () => {};
 
   describe("Mocha's worker", () => {
-    describe("Mocha.Suite.serialize()", () => {
+    describe('Mocha.Suite.serialize()', () => {
       const createSuite = function (name, isRoot) {
         const suite = new Suite(name, {}, isRoot);
-        suite.beforeAll(() => console.log("beforeAll"));
-        suite.beforeEach(() => console.log("beforeEach"));
-        suite.addTest(new Test(name + ": FAKE TEST"))
-        suite.afterEach(() => console.log("afterEach"));
-        suite.afterAll(() => console.log("afterAll"));
+        suite.beforeAll(() => console.log('beforeAll'));
+        suite.beforeEach(() => console.log('beforeEach'));
+        suite.addTest(new Test(name + ': FAKE TEST'));
+        suite.afterEach(() => console.log('afterEach'));
+        suite.afterAll(() => console.log('afterAll'));
         return suite;
       };
 
       it(`should serialize the root suite's fully with all sub suites`, () => {
         // arrange
-        const given = { suiteName: 'FAKE ROOT SUITE', subSuiteName: 'FAKE SUB SUITE' };
+        const given = {
+          suiteName: 'FAKE ROOT SUITE',
+          subSuiteName: 'FAKE SUB SUITE',
+        };
         const suite = createSuite(given.suiteName, true);
         suite.addSuite(createSuite(given.subSuiteName, false));
 
@@ -31,7 +40,7 @@ describe('Parallel Mode', () => {
 
         // assert
         actual.should.be.ok();
-        const dumpSuite = (suite) => ({
+        const dumpSuite = suite => ({
           title: suite.title,
           suites: suite.suites.map(it => dumpSuite(it)),
           tests: suite.tests.map(it => ({ title: it.title })),
@@ -45,7 +54,10 @@ describe('Parallel Mode', () => {
 
       it(`should serialize the suite's shallowly`, () => {
         // arrange
-        const given = { suiteName: 'FAKE SUITE', subSuiteName: 'FAKE SUB SUITE' };
+        const given = {
+          suiteName: 'FAKE SUITE',
+          subSuiteName: 'FAKE SUB SUITE',
+        };
         const suite = createSuite(given.suiteName, false);
         suite.addSuite(createSuite(given.subSuiteName, false));
 
@@ -67,8 +79,8 @@ describe('Parallel Mode', () => {
       });
     });
 
-    describe("serializeSuite()", () => {
-      [ true, false ].forEach(isRoot => {
+    describe('serializeSuite()', () => {
+      [true, false].forEach(isRoot => {
         [
           isRoot ? [] : ['file', '/test/test.js'],
           ['suites', [new Suite('FAKE SUB-SUITE')]],
@@ -110,7 +122,7 @@ describe('Parallel Mode', () => {
       });
     });
 
-    describe("serializeHook()", () => {
+    describe('serializeHook()', () => {
       [
         ['body', '() => console.log(a)'],
         ['state', 'failed'],
@@ -139,11 +151,11 @@ describe('Parallel Mode', () => {
         hook.parent = new Suite(given.suiteName);
 
         // act
-        const actual = serializeHook(hook)["$$fullTitle"];
+        const actual = serializeHook(hook)['$$fullTitle'];
 
         // assert
         actual.should.equal(hook.fullTitle());
-        actual.should.equal([ given.suiteName, given.hookName ].join(' '));
+        actual.should.equal([given.suiteName, given.hookName].join(' '));
       });
 
       it(`should serialize the hook's err`, () => {
@@ -151,14 +163,14 @@ describe('Parallel Mode', () => {
         const given = {
           hookName: 'FAKE HOOK',
           suiteName: 'FAKE SUITE',
-          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+          error: Object.assign(new Error('FAKE ERROR'), { fake: true }),
         };
         const hook = new Hook(given.hookName, noop);
         hook.parent = new Suite(given.suiteName);
         hook.err = given.error;
 
         // act
-        const actual = serializeHook(hook)["err"];
+        const actual = serializeHook(hook)['err'];
 
         // assert
         actual.should.not.equal(given.error);
@@ -166,12 +178,12 @@ describe('Parallel Mode', () => {
           name: given.error.name,
           message: given.error.message,
           stack: given.error.stack,
-          fake: true
+          fake: true,
         });
       });
     });
 
-    describe("serializeTest()", () => {
+    describe('serializeTest()', () => {
       [
         ['context', 'FAKE CONTEXT'],
         ['pending', Math.random() > 0.5],
@@ -198,14 +210,14 @@ describe('Parallel Mode', () => {
         const given = {
           testName: 'FAKE TEST',
           suiteName: 'FAKE SUITE',
-          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+          error: Object.assign(new Error('FAKE ERROR'), { fake: true }),
         };
         const test = new Test(given.testName, noop);
         test.parent = new Suite(given.suiteName);
         test.err = given.error;
 
         // act
-        const actual = serializeTest(test)["err"];
+        const actual = serializeTest(test)['err'];
 
         // assert
         actual.should.not.equal(given.error);
@@ -213,7 +225,7 @@ describe('Parallel Mode', () => {
           name: given.error.name,
           message: given.error.message,
           stack: given.error.stack,
-          fake: true
+          fake: true,
         });
       });
 
@@ -223,27 +235,27 @@ describe('Parallel Mode', () => {
           testName: 'FAKE TEST',
           retriedName: 'RETRIED TEST',
           suiteName: 'FAKE SUITE',
-          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+          error: Object.assign(new Error('FAKE ERROR'), { fake: true }),
         };
         const test = new Test(given.testName, noop);
         test.parent = new Suite(given.suiteName);
-        test.retriedTest(new Test(given.retriedName, noop))
+        test.retriedTest(new Test(given.retriedName, noop));
 
         // act
         const actual = serializeTest(test);
 
         // assert
         actual.should.containDeep({
-          "$$retriedTest": null
+          $$retriedTest: null,
         });
       });
     });
 
-    describe("serializeError()", () => {
+    describe('serializeError()', () => {
       it(`should serialize the instance of Error`, () => {
         // arrange
         const given = {
-          error: Object.assign(new Error("FAKE ERROR"), { fake: true })
+          error: Object.assign(new Error('FAKE ERROR'), { fake: true }),
         };
 
         // act
@@ -255,14 +267,14 @@ describe('Parallel Mode', () => {
           name: given.error.name,
           message: given.error.message,
           stack: given.error.stack,
-          fake: true
+          fake: true,
         });
       });
 
       it(`should return the same object if it isn't the instance of Error`, () => {
         // arrange
         const given = {
-          error: { message: "FAKE ERROR", fake: true }
+          error: { message: 'FAKE ERROR', fake: true },
         };
 
         // act
@@ -344,7 +356,7 @@ describe('Parallel Mode', () => {
       // assert
       mochaReporter.output.should.be.ok();
 
-      const dumpSuite = (suite) => ({
+      const dumpSuite = suite => ({
         title: suite.title,
         suites: suite.suites.map(it => dumpSuite(it)),
         tests: suite.tests.map(it => ({ title: it.title })),
@@ -357,9 +369,7 @@ describe('Parallel Mode', () => {
           ...suite._afterEach.map(it => ({ title: it.title })),
         ],
       });
-      mochaReporter.output.results.should.containDeep([
-        dumpSuite(rootSuite)
-      ]);
+      mochaReporter.output.results.should.containDeep([dumpSuite(rootSuite)]);
     });
   });
 });
