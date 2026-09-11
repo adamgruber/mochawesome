@@ -1,6 +1,8 @@
 # mochawesome changelog
 
 ## [Unreleased]
+
+## [8.1.0] - 2026-09-11
 ### Added
 - Support for Mocha 12 while remaining compatible with Mocha 8–11. Reporter,
   stats-collector, and `utils` imports now handle both the pre-12 CommonJS
