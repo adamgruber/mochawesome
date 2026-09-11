@@ -7,6 +7,11 @@
   exports and the Mocha 12 ESM named exports
   [#427](https://github.com/adamgruber/mochawesome/pull/427).
 
+### Changed
+- Lowered the minimum supported Node version from 22 to 18. The `>=22`
+  requirement came solely from `util.styleText`; the gray log prefix now uses a
+  bare ANSI escape, so mochawesome runs on Node 18, 20, and 22+.
+
 ## [8.0.1] - 2026-07-31
 ### Fixed
 - `mochawesome/addContext` no longer imports `node:util`, restoring browser

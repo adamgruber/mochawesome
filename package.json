@@ -30,7 +30,7 @@
   ],
   "main": "src/mochawesome.js",
   "engines": {
-    "node": ">=22"
+    "node": ">=18"
   },
   "files": [
     "addContext.js",

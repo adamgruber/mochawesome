@@ -1,9 +1,20 @@
 const { randomUUID } = require('node:crypto');
-const { styleText, stripVTControlCharacters } = require('node:util');
+const { stripVTControlCharacters } = require('node:util');
 const { utils: mochaUtils } = require('mocha');
 const stringify = require('json-stringify-safe');
 const diff = require('diff');
 const stripFnStart = require('./stripFnStart');
+
+// Gray the log prefix with a bare ANSI escape instead of `util.styleText`, which
+// is only stable on Node >= 22 and was the sole reason this package required
+// Node 22. Mirrors the helper in `addContext.js`. Only emit ANSI for a TTY so
+// CI logs stay plain.
+/* c8 ignore start */
+const gray = str =>
+  typeof process !== 'undefined' && process.stdout?.isTTY
+    ? `\x1b[90m${str}\x1b[39m`
+    : str;
+/* c8 ignore stop */
 
 /**
  * Logger utility
@@ -20,7 +31,7 @@ function log(msg, level, config) {
   if (typeof msg === 'object') {
     out = stringify(msg, null, 2);
   }
-  logMethod(`[${styleText('gray', 'mochawesome')}] ${out}\n`);
+  logMethod(`[${gray('mochawesome')}] ${out}\n`);
 }
 
 /**
