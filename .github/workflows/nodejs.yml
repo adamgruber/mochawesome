@@ -18,8 +18,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [22.x, 24.x]
+        node-version: [18.x, 20.x, 22.x, 24.x]
         mocha-version: [11, 12]
+        # Mocha 12 requires Node ^20.19 || >=22.12, so it can't run on Node 18.
+        # Node 18 support is covered by the Mocha 11 leg (Mocha 11 allows ^18.18).
+        exclude:
+          - node-version: 18.x
+            mocha-version: 12
     name: Node ${{ matrix.node-version }} / Mocha ${{ matrix.mocha-version }}
     steps:
       - uses: actions/checkout@v7
