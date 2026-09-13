@@ -1,6 +1,6 @@
 # mochawesome
 
-[![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](http://www.npmjs.com/package/mochawesome) ![Node.js CI](https://github.com/adamgruber/mochawesome/workflows/Node.js%20CI/badge.svg) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/mochawesome/general)
+[![npm](https://img.shields.io/npm/v/mochawesome.svg?style=flat-square)](https://www.npmjs.com/package/mochawesome) [![npm downloads](https://img.shields.io/npm/dm/mochawesome.svg?style=flat-square)](https://www.npmjs.com/package/mochawesome) [![node](https://img.shields.io/node/v/mochawesome.svg?style=flat-square)](https://www.npmjs.com/package/mochawesome) [![Node.js CI](https://github.com/adamgruber/mochawesome/actions/workflows/nodejs.yml/badge.svg)](https://github.com/adamgruber/mochawesome/actions/workflows/nodejs.yml)
 
 Mochawesome is a custom reporter for use with the Javascript testing framework, [mocha][mocha]. It runs on Node.js and works in conjunction with [mochawesome-report-generator][marge] to generate a standalone HTML/CSS report to help visualize your test runs.
 
@@ -20,20 +20,32 @@ Mochawesome is a custom reporter for use with the Javascript testing framework, 
 - Offline viewing
 - Supports `parallel` mode
 
+## Requirements
+
+- **Node.js** >= 18
+- **Mocha** 8 – 12 (a peer dependency — install it alongside mochawesome)
+
 ## Usage
 
 1. Add Mochawesome to your project:
 
-`npm install --save-dev mochawesome`
+```bash
+npm install --save-dev mochawesome
+```
 
 2. Tell mocha to use the Mochawesome reporter:
 
-`mocha testfile.js --reporter mochawesome`
+```bash
+mocha testfile.js --reporter mochawesome
+```
 
 3. If using mocha programatically:
 
 ```js
-var mocha = new Mocha({
+// Mocha 12 exports a named `Mocha`; earlier versions export it directly.
+const { Mocha } = require('mocha'); // Mocha <= 11: const Mocha = require('mocha')
+
+const mocha = new Mocha({
   reporter: 'mochawesome',
 });
 ```
@@ -42,7 +54,9 @@ var mocha = new Mocha({
 
 Since `mocha@8` test files can be run in parallel using the `--parallel` flag. In order for mochawesome to work properly it needs to be registered as a hook.
 
-`mocha tests --reporter mochawesome --require mochawesome/register`
+```bash
+mocha tests --reporter mochawesome --require mochawesome/register
+```
 
 ### Output
 
@@ -96,7 +110,7 @@ $ mocha test.js --reporter mochawesome --reporter-options reportDir=customReport
 Alternately, `reporter-options` can be passed in programatically:
 
 ```js
-var mocha = new Mocha({
+const mocha = new Mocha({
   reporter: 'mochawesome',
   reporterOptions: {
     reportFilename: 'customReportFilename',
@@ -226,8 +240,8 @@ describe('test suite', () => {
 
 This project does not maintain its own type definitions, however they are available on npm from [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mochawesome).
 
-```
-$ npm install --save-dev @types/mochawesome
+```bash
+npm install --save-dev @types/mochawesome
 ```
 
 ## Related
