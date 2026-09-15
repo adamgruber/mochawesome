@@ -5,6 +5,8 @@ const {
   serializeError,
 } = require('../src/register');
 const Mochawesome = require('../src/mochawesome');
+const registerState = require('../src/registerState');
+const sinon = require('sinon');
 const { EventEmitter } = require('events');
 const mochaModule = require('mocha');
 const Mocha = mochaModule.Mocha || mochaModule;
@@ -370,6 +372,44 @@ describe('Parallel Mode', () => {
         ],
       });
       mochaReporter.output.results.should.containDeep([dumpSuite(rootSuite)]);
+    });
+
+    describe('register hook warning', () => {
+      let warnStub;
+      let wasRegistered;
+
+      beforeEach(() => {
+        wasRegistered = registerState.registered;
+        warnStub = sinon.stub(console, 'warn');
+      });
+
+      afterEach(() => {
+        registerState.registered = wasRegistered;
+        warnStub.restore();
+      });
+
+      const makeReporter = () => {
+        const rootSuite = new Suite('');
+        rootSuite.root = true;
+        return new Mochawesome(new ParallelBufferedRunner(rootSuite), {
+          reporterOptions: { consoleReporter: 'none' },
+        });
+      };
+
+      it('warns in parallel mode when the register hook is not loaded', () => {
+        registerState.registered = false;
+        makeReporter();
+        warnStub.calledOnce.should.equal(true);
+        warnStub.args[0][0]
+          .includes('--require mochawesome/register')
+          .should.equal(true);
+      });
+
+      it('does not warn when the register hook is loaded', () => {
+        registerState.registered = true;
+        makeReporter();
+        warnStub.called.should.equal(false);
+      });
     });
   });
 });

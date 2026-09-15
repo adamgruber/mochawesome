@@ -52,7 +52,7 @@ const mocha = new Mocha({
 
 ### Parallel Mode
 
-Since `mocha@8` test files can be run in parallel using the `--parallel` flag. In order for mochawesome to work properly it needs to be registered as a hook.
+Since `mocha@8` test files can be run in parallel using the `--parallel` flag. In parallel mode tests run in worker processes, and their data is serialized back to the main process to build the report. Mochawesome must be registered as a hook so that information added via [`addContext`](#adding-test-context) (and skipped-test counts) survives that serialization — without it, that data is silently dropped and the reporter logs a warning.
 
 ```bash
 mocha tests --reporter mochawesome --require mochawesome/register

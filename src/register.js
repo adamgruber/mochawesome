@@ -1,5 +1,9 @@
 const Mocha = require('mocha');
 
+// Signal that the register hook is loaded so the reporter can warn when
+// running in parallel mode without it (context would otherwise be lost).
+require('./registerState').registered = true;
+
 const mochaSerializeSuite = Mocha.Suite.prototype.serialize;
 
 // Serialize the full root suite state to count `Skipped` tests.
