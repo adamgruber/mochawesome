@@ -7,7 +7,8 @@ const utils = proxyquire('../src/utils', {
   'node:crypto': { randomUUID: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' },
 });
 
-const { log, cleanCode, cleanTest, cleanSuite, getFinalizedStats } = utils;
+const { log, cleanCode, cleanTest, cleanSuite, getFinalizedStats, stripCwd } =
+  utils;
 
 describe('Mochawesome Utils', () => {
   describe('log', () => {
@@ -357,6 +358,25 @@ describe('Mochawesome Utils', () => {
       });
       out.should.not.equal(stats);
       stats.should.deepEqual({ passes: 1, failures: 1, pending: 0, tests: 1 });
+    });
+  });
+
+  describe('stripCwd', () => {
+    it('strips the cwd prefix from an absolute path', () => {
+      stripCwd('/home/proj/test/x.js', '/home/proj').should.equal('/test/x.js');
+    });
+
+    it('leaves a relative path unchanged when run from root (#394)', () => {
+      // cwd `/` must not strip the first slash out of a relative path
+      stripCwd('my/relative/path/to/test.js', '/').should.equal(
+        'my/relative/path/to/test.js'
+      );
+    });
+
+    it('leaves a path that does not start with the cwd unchanged', () => {
+      stripCwd('other/dir/test.js', '/home/proj').should.equal(
+        'other/dir/test.js'
+      );
     });
   });
 });
