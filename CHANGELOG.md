@@ -7,6 +7,11 @@
   list instead of inferred from `passes + failures + pending - tests`, which
   misfired when a runner excludes skipped tests from `stats.tests`
   [#366](https://github.com/adamgruber/mochawesome/issues/366).
+- Suite `file` paths are no longer mangled when mochawesome runs from a
+  directory whose path is a prefix inside the file path (e.g. from `/` in a
+  container): the cwd is now stripped only when it is an actual prefix, instead
+  of replacing its first occurrence anywhere in the path
+  [#394](https://github.com/adamgruber/mochawesome/issues/394).
 
 ## [8.1.0] - 2026-09-11
 ### Added

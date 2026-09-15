@@ -198,6 +198,19 @@ function cleanTest(test, config) {
 }
 
 /**
+ * Make a suite's file path relative to the cwd by stripping the cwd prefix.
+ * Paths that don't start with the cwd (already relative, or run from a
+ * different root) are returned unchanged.
+ *
+ * @param {String} file Suite file path
+ * @param {String} cwd  Directory to strip (defaults to process.cwd())
+ * @return {String} file relative to cwd
+ */
+function stripCwd(file, cwd = process.cwd()) {
+  return file.startsWith(cwd) ? file.slice(cwd.length) : file;
+}
+
+/**
  * Return a plain-object representation of `suite` with additional properties for rendering.
  *
  * @param {Object} suite
@@ -239,7 +252,7 @@ function cleanSuite(suite, testTotals, config) {
     uuid: suite.uuid || /* c8 ignore next */ randomUUID(),
     title: stripVTControlCharacters(suite.title),
     fullFile: suite.file || '',
-    file: suite.file ? suite.file.replace(process.cwd(), '') : '',
+    file: suite.file ? stripCwd(suite.file) : '',
     beforeHooks,
     afterHooks,
     tests,
@@ -323,4 +336,5 @@ module.exports = {
   cleanSuite,
   mapSuites,
   getFinalizedStats,
+  stripCwd,
 };
