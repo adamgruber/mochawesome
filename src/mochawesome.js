@@ -11,7 +11,7 @@ const Mocha = require('mocha');
 const { EVENT_SUITE_END } = Mocha.Runner.constants;
 
 // Import the utility functions
-const { log, mapSuites } = utils;
+const { log, mapSuites, getFinalizedStats } = utils;
 
 // Track the total number of tests registered/skipped
 const testTotals = {
@@ -207,19 +207,7 @@ function Mochawesome(runner, options) {
           },
         };
 
-        obj.stats.testsRegistered = testTotals.registered;
-
-        const { passes, failures, pending, tests, testsRegistered } = obj.stats;
-        const passPercentage = (passes / (testsRegistered - pending)) * 100;
-        const pendingPercentage = (pending / testsRegistered) * 100;
-
-        obj.stats.passPercent = passPercentage;
-        obj.stats.pendingPercent = pendingPercentage;
-        obj.stats.other = passes + failures + pending - tests; // Failed hooks
-        obj.stats.hasOther = obj.stats.other > 0;
-        obj.stats.skipped = testTotals.skipped;
-        obj.stats.hasSkipped = obj.stats.skipped > 0;
-        obj.stats.failures -= obj.stats.other;
+        obj.stats = getFinalizedStats(obj.stats, this.failures, testTotals);
 
         // Save the final output to be used in the done function
         this.output = obj;
