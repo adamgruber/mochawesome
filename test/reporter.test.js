@@ -87,7 +87,7 @@ describe('Mochawesome Reporter', () => {
 
       runner.run(failureCount => {
         failureCount.should.equal(0);
-        mochaReporter.stats.passPercent.should.equal(100);
+        mochaReporter.output.stats.passPercent.should.equal(100);
         done();
       });
     });
@@ -99,7 +99,7 @@ describe('Mochawesome Reporter', () => {
 
       runner.run(failureCount => {
         failureCount.should.equal(1);
-        mochaReporter.stats.passPercent.should.equal(0);
+        mochaReporter.output.stats.passPercent.should.equal(0);
         done();
       });
     });
@@ -110,8 +110,8 @@ describe('Mochawesome Reporter', () => {
 
       runner.run(failureCount => {
         failureCount.should.equal(0);
-        mochaReporter.stats.pending.should.equal(1);
-        mochaReporter.stats.pendingPercent.should.equal(100);
+        mochaReporter.output.stats.pending.should.equal(1);
+        mochaReporter.output.stats.pendingPercent.should.equal(100);
         done();
       });
     });
@@ -129,9 +129,9 @@ describe('Mochawesome Reporter', () => {
       );
 
       runner.run(() => {
-        mochaReporter.stats.passes.should.equal(3);
-        mochaReporter.stats.failures.should.equal(1);
-        mochaReporter.stats.passPercent.should.equal(75);
+        mochaReporter.output.stats.passes.should.equal(3);
+        mochaReporter.output.stats.failures.should.equal(1);
+        mochaReporter.output.stats.passPercent.should.equal(75);
         done();
       });
     });

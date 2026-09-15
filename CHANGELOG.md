@@ -1,6 +1,12 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- Skipped tests (e.g. Cypress `it.skip`) no longer decrement the failed-test
+  count. Failed hooks (`stats.other`) are now counted directly from the failure
+  list instead of inferred from `passes + failures + pending - tests`, which
+  misfired when a runner excludes skipped tests from `stats.tests`
+  [#366](https://github.com/adamgruber/mochawesome/issues/366).
 
 ## [8.1.0] - 2026-09-11
 ### Added

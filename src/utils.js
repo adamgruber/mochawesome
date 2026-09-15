@@ -285,10 +285,42 @@ function mapSuites(suite, testTotals, config) {
   return cleanSuite(toBeCleaned, testTotals, config);
 }
 
+/**
+ * Build the finalized report stats from mocha's stats: derived percentages
+ * plus failed-hook (`other`) reconciliation. Returns a new object.
+ *
+ * @param {Object} stats      mocha stats object
+ * @param {Array}  failures   failed runnables collected by the Base reporter
+ * @param {Object} testTotals Cumulative counts { registered, skipped }
+ * @return {Object} a new stats object
+ */
+function getFinalizedStats(stats, failures, testTotals) {
+  const { passes, failures: totalFailures, pending } = stats;
+  const { registered, skipped } = testTotals;
+
+  // `other` counts failed hooks, which are not test failures.
+  const hookFailures = (failures || []).filter(
+    f => f && f.type === 'hook'
+  ).length;
+
+  return {
+    ...stats,
+    testsRegistered: registered,
+    passPercent: (passes / (registered - pending)) * 100,
+    pendingPercent: (pending / registered) * 100,
+    other: hookFailures,
+    hasOther: hookFailures > 0,
+    skipped,
+    hasSkipped: skipped > 0,
+    failures: totalFailures - hookFailures,
+  };
+}
+
 module.exports = {
   log,
   cleanCode,
   cleanTest,
   cleanSuite,
   mapSuites,
+  getFinalizedStats,
 };

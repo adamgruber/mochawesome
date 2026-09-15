@@ -7,7 +7,7 @@ const utils = proxyquire('../src/utils', {
   'node:crypto': { randomUUID: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' },
 });
 
-const { log, cleanCode, cleanTest, cleanSuite } = utils;
+const { log, cleanCode, cleanTest, cleanSuite, getFinalizedStats } = utils;
 
 describe('Mochawesome Utils', () => {
   describe('log', () => {
@@ -287,6 +287,76 @@ describe('Mochawesome Utils', () => {
         config
       );
       cleaned.should.equal(sampleSuite.three.cleaned);
+    });
+  });
+
+  describe('getFinalizedStats', () => {
+    it('computes derived percentages and totals', () => {
+      const stats = { passes: 3, failures: 1, pending: 0, tests: 4 };
+      const out = getFinalizedStats(stats, [{ type: 'test' }], {
+        registered: 4,
+        skipped: 0,
+      });
+      out.testsRegistered.should.equal(4);
+      out.passPercent.should.equal(75);
+      out.pendingPercent.should.equal(0);
+      out.other.should.equal(0);
+      out.hasOther.should.equal(false);
+      out.failures.should.equal(1);
+      out.skipped.should.equal(0);
+      out.hasSkipped.should.equal(false);
+    });
+
+    it('reports a failed hook as `other`, not a test failure', () => {
+      const stats = { passes: 1, failures: 1, pending: 0, tests: 1 };
+      const out = getFinalizedStats(stats, [{ type: 'hook' }], {
+        registered: 1,
+        skipped: 0,
+      });
+      out.other.should.equal(1);
+      out.hasOther.should.equal(true);
+      out.failures.should.equal(0);
+    });
+
+    it('separates a failed hook from a failed test', () => {
+      const stats = { passes: 1, failures: 2, pending: 1, tests: 3 };
+      const out = getFinalizedStats(
+        stats,
+        [{ type: 'hook' }, { type: 'test' }],
+        {
+          registered: 4,
+          skipped: 1,
+        }
+      );
+      out.other.should.equal(1);
+      out.failures.should.equal(1);
+      out.skipped.should.equal(1);
+      out.hasSkipped.should.equal(true);
+    });
+
+    it('does not decrement failures when a runner undercounts `tests` for skipped tests (#366)', () => {
+      // Cypress reports `it.skip` as pending but excludes it from `tests`,
+      // so `passes + failures + pending - tests` wrongly infers a failed hook.
+      const stats = { passes: 1, failures: 1, pending: 1, tests: 2 };
+      const out = getFinalizedStats(stats, [{ type: 'test' }], {
+        registered: 3,
+        skipped: 1,
+      });
+      out.other.should.equal(0);
+      out.hasOther.should.equal(false);
+      out.failures.should.equal(1);
+      out.skipped.should.equal(1);
+      out.hasSkipped.should.equal(true);
+    });
+
+    it('returns a new object without mutating the input stats', () => {
+      const stats = { passes: 1, failures: 1, pending: 0, tests: 1 };
+      const out = getFinalizedStats(stats, [{ type: 'hook' }], {
+        registered: 1,
+        skipped: 0,
+      });
+      out.should.not.equal(stats);
+      stats.should.deepEqual({ passes: 1, failures: 1, pending: 0, tests: 1 });
     });
   });
 });
