@@ -12,6 +12,7 @@ const { EVENT_SUITE_END } = Mocha.Runner.constants;
 
 // Import the utility functions
 const { log, mapSuites, getFinalizedStats } = utils;
+const registerState = require('./registerState');
 
 // Track the total number of tests registered/skipped
 const testTotals = {
@@ -142,6 +143,16 @@ function Mochawesome(runner, options) {
 
   // Handle events from workers in parallel mode
   if (runner.constructor.name === 'ParallelBufferedRunner') {
+    if (!registerState.registered) {
+      log(
+        'Running in parallel mode without the register hook. Context added via ' +
+          '`addContext` will be missing from the report. Add ' +
+          '`--require mochawesome/register` to your mocha command.',
+        'warn',
+        this.config
+      );
+    }
+
     const setSuiteDefaults = suite => {
       [
         'suites',

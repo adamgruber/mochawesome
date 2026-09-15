@@ -1,6 +1,11 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Changed
+- In parallel mode, the reporter now warns when the `mochawesome/register` hook
+  is not loaded, since `addContext` data and skipped-test counts are otherwise
+  silently dropped during worker serialization
+  [#339](https://github.com/adamgruber/mochawesome/issues/339).
 
 ## [8.1.1] - 2026-09-15
 ### Fixed
