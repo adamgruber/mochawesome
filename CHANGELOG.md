@@ -1,6 +1,12 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Fixed
+- Nested suites now inherit the file path of their parent when the runner does
+  not set one. Cypress only populates `file`/`fullFile` on the root suite, so
+  the spec filename was missing from every nested suite in the report
+  [#380](https://github.com/adamgruber/mochawesome/issues/380).
+
 ### Changed
 - In parallel mode, the reporter now warns when the `mochawesome/register` hook
   is not loaded, since `addContext` data and skipped-test counts are otherwise
