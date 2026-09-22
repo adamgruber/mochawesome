@@ -7,8 +7,15 @@ const utils = proxyquire('../src/utils', {
   'node:crypto': { randomUUID: () => 'fc3f8bee-4feb-4f28-8e27-a680704c9176' },
 });
 
-const { log, cleanCode, cleanTest, cleanSuite, getFinalizedStats, stripCwd } =
-  utils;
+const {
+  log,
+  cleanCode,
+  cleanTest,
+  cleanSuite,
+  mapSuites,
+  getFinalizedStats,
+  stripCwd,
+} = utils;
 
 describe('Mochawesome Utils', () => {
   describe('log', () => {
@@ -288,6 +295,53 @@ describe('Mochawesome Utils', () => {
         config
       );
       cleaned.should.equal(sampleSuite.three.cleaned);
+    });
+  });
+
+  describe('mapSuites', () => {
+    const config = { code: true };
+
+    // Cypress only sets `file` on the root suite, leaving every nested suite
+    // with an empty one. Mocha sets it on all of them.
+    const nestedSuite = (title, file, suites = []) => ({
+      title,
+      file,
+      suites,
+      tests: [sampleTests.passing.raw],
+      _beforeAll: [],
+      _beforeEach: [],
+      _afterAll: [],
+      _afterEach: [],
+      root: false,
+      _timeout: 2000,
+    });
+
+    it('inherits the parent file when a nested suite has none (#380)', () => {
+      const mapped = mapSuites(
+        sampleSuite.one.raw,
+        { registered: 0, skipped: 0 },
+        config
+      );
+      mapped.suites[0].file.should.equal('test.js');
+      mapped.suites[0].fullFile.should.equal('test.js');
+    });
+
+    it('inherits through multiple levels of nesting (#380)', () => {
+      const raw = nestedSuite('root', 'spec.js', [
+        nestedSuite('outer', '', [nestedSuite('inner', '')]),
+      ]);
+      const mapped = mapSuites(raw, { registered: 0, skipped: 0 }, config);
+      const outer = mapped.suites[0];
+      outer.file.should.equal('spec.js');
+      outer.suites[0].file.should.equal('spec.js');
+    });
+
+    it('keeps a nested suite own file when it has one', () => {
+      const raw = nestedSuite('root', 'spec.js', [
+        nestedSuite('shared', 'helpers/shared.js'),
+      ]);
+      const mapped = mapSuites(raw, { registered: 0, skipped: 0 }, config);
+      mapped.suites[0].file.should.equal('helpers/shared.js');
     });
   });
 

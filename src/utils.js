@@ -285,16 +285,20 @@ function cleanSuite(suite, testTotals, config) {
  * @param {Integer} testTotals.registered
  * @param {Integer} testTotals.skipped
  * @param {Object} config         Reporter configuration
+ * @param {String} parentFile     File of the enclosing suite, inherited when
+ *                                this suite has none. Cypress only sets `file`
+ *                                on the root suite (#380).
  */
-function mapSuites(suite, testTotals, config) {
+function mapSuites(suite, testTotals, config, parentFile = '') {
+  const file = suite.file || parentFile;
   const suites = suite.suites.reduce((acc, subSuite) => {
-    const mappedSuites = mapSuites(subSuite, testTotals, config);
+    const mappedSuites = mapSuites(subSuite, testTotals, config, file);
     if (mappedSuites) {
       acc.push(mappedSuites);
     }
     return acc;
   }, []);
-  const toBeCleaned = { ...suite, suites };
+  const toBeCleaned = { ...suite, file, suites };
   return cleanSuite(toBeCleaned, testTotals, config);
 }
 
