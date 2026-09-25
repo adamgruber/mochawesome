@@ -173,9 +173,17 @@ function cleanTest(test, config) {
       ? stripVTControlCharacters(test.fullTitle())
       : stripVTControlCharacters(test.title);
 
+  // Retried tests report a zero-based attempt index. Serialized test objects
+  // (Cypress, parallel-mode workers) carry the property but not the method.
+  const currentRetry =
+    typeof test.currentRetry === 'function'
+      ? test.currentRetry()
+      : test._currentRetry;
+
   const cleaned = {
     title: stripVTControlCharacters(test.title),
     fullTitle,
+    attempts: (currentRetry || 0) + 1,
     timedOut: test.timedOut,
     duration: test.duration || 0,
     state: test.state,

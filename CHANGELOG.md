@@ -1,6 +1,12 @@
 # mochawesome changelog
 
 ## [Unreleased]
+### Added
+- Each test in the report JSON now carries an `attempts` count, so retried
+  tests show how many times they ran and which attempt they passed on. A test
+  that ran once reports `1`
+  [#396](https://github.com/adamgruber/mochawesome/issues/396).
+
 ### Fixed
 - Nested suites now inherit the file path of their parent when the runner does
   not set one. Cypress only populates `file`/`fullFile` on the root suite, so

@@ -63,6 +63,7 @@ module.exports = {
     cleaned: {
       title: 'passing test',
       fullTitle: 'passing test',
+      attempts: 1,
       timedOut: false,
       duration: 0,
       state: 'passed',
@@ -159,6 +160,7 @@ module.exports = {
     cleaned: {
       title: 'failing test',
       fullTitle: 'failing test',
+      attempts: 1,
       timedOut: false,
       duration: 2,
       state: 'failed',
@@ -181,6 +183,7 @@ module.exports = {
     cleanedWithInlineDiff: {
       title: 'failing test',
       fullTitle: 'failing test',
+      attempts: 1,
       timedOut: false,
       duration: 2,
       state: 'failed',
@@ -263,6 +266,7 @@ module.exports = {
     cleaned: {
       title: 'pending test',
       fullTitle: 'pending test',
+      attempts: 1,
       timedOut: false,
       duration: 0,
       state: undefined,
@@ -457,6 +461,7 @@ module.exports = {
       title: '"before each" hook: failing beforeEach hook for "passing test"',
       fullTitle:
         '"before each" hook: failing beforeEach hook for "passing test"',
+      attempts: 1,
       timedOut: false,
       duration: 0,
       state: 'failed',
