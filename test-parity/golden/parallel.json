@@ -20,6 +20,7 @@
           "afterHooks": [],
           "beforeHooks": [
             {
+              "attempts": 1,
               "code": "addContext(this, 'beforeEach context');",
               "context": null,
               "duration": 0,
@@ -72,6 +73,7 @@
               "suites": [],
               "tests": [
                 {
+                  "attempts": 1,
                   "code": "assert.strictEqual(typeof 'x', 'string');",
                   "context": "\"beforeEach context\"",
                   "duration": 0,
@@ -96,6 +98,7 @@
           ],
           "tests": [
             {
+              "attempts": 1,
               "code": "addContext(this, 'a simple string');\naddContext(this, { title: 'an object', value: { a: 1, b: '2' } });\nassert.strictEqual(1 + 1, 2);",
               "context": "[\n  \"beforeEach context\",\n  \"a simple string\",\n  {\n    \"title\": \"an object\",\n    \"value\": {\n      \"a\": 1,\n      \"b\": \"2\"\n    }\n  }\n]",
               "duration": 0,
@@ -114,6 +117,7 @@
               "uuid": "X"
             },
             {
+              "attempts": 1,
               "code": "// Build the error by hand so the message/diff do not depend on the\n// Node version's assertion-message formatting.\nconst err = new Error('values are not equal');\nerr.name = 'AssertionError';\nerr.actual = { a: 2 };\nerr.expected = { a: 1 };\nerr.showDiff = true;\nthrow err;",
               "context": "\"beforeEach context\"",
               "duration": 0,
@@ -136,6 +140,7 @@
               "uuid": "X"
             },
             {
+              "attempts": 1,
               "code": "",
               "context": null,
               "duration": 0,
@@ -177,6 +182,7 @@
           "suites": [],
           "tests": [
             {
+              "attempts": 1,
               "code": "assert.ok(true);",
               "context": null,
               "duration": 0,
@@ -195,6 +201,7 @@
               "uuid": "X"
             },
             {
+              "attempts": 1,
               "code": "const err = new Error('nope');\nerr.name = 'AssertionError';\nthrow err;",
               "context": null,
               "duration": 0,

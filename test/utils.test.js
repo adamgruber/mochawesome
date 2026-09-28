@@ -190,6 +190,7 @@ describe('Mochawesome Utils', () => {
     const expectedProps = [
       'title',
       'fullTitle',
+      'attempts',
       'timedOut',
       'duration',
       'state',
@@ -237,6 +238,29 @@ describe('Mochawesome Utils', () => {
       const cleaned = cleanTest(sampleTests.hook.raw, config);
       cleaned.should.have.properties(expectedProps);
       cleaned.should.deepEqual(sampleTests.hook.cleaned);
+    });
+
+    it('reports a single attempt for a test that was not retried', () => {
+      const cleaned = cleanTest(sampleTests.passing.raw, { code: true });
+      cleaned.attempts.should.equal(1);
+    });
+
+    it('reports the number of attempts for a retried test (#396)', () => {
+      const cleaned = cleanTest(
+        { ...sampleTests.passing.raw, currentRetry: () => 2 },
+        { code: true }
+      );
+      cleaned.attempts.should.equal(3);
+    });
+
+    it('falls back to `_currentRetry` when `currentRetry()` is unavailable (#396)', () => {
+      // Cypress and parallel-mode workers hand over serialized test objects,
+      // which carry the property but not the method.
+      const cleaned = cleanTest(
+        { ...sampleTests.passing.raw, _currentRetry: 1 },
+        { code: true }
+      );
+      cleaned.attempts.should.equal(2);
     });
 
     it('returns cleaned test when `code` is `false`', () => {

@@ -202,6 +202,7 @@ module.exports = {
         {
           title: 'passing test',
           fullTitle: 'passing test',
+          attempts: 1,
           timedOut: false,
           duration: 0,
           state: 'passed',
